@@ -17,6 +17,9 @@ local.properties
 .loadpath
 log/
 target/
+lib/
+*.properties
+*.bu
 
 # External tool builders
 .externalToolBuilders/
