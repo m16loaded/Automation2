@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><sut validators="">
+    <device>
+        <class>com.cellrox.infra.CellRoxDevice</class>
+        <privePort>3435</privePort>
+        <corpPort>4321</corpPort>
+        <deviceAsRootOnInit>true</deviceAsRootOnInit>
+    </device>
+</sut>
