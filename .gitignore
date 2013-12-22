@@ -19,6 +19,7 @@ log/
 target/
 lib/
 *.properties
+*.bu
 
 # External tool builders
 .externalToolBuilders/
