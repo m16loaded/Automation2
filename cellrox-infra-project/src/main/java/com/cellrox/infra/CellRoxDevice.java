@@ -7,16 +7,13 @@ import java.util.ArrayList;
 import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
-import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.utils.FileUtils;
 
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
-import org.jsystemtest.mobile.core.ConnectionException;
 import org.jsystemtest.mobile.core.device.USBDevice;
-import org.python.modules.re;
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.client.DeviceClient;
 
@@ -622,7 +619,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 		String log = getLogcatLastLines(50).replace("\n", "<br>").replace(line,
 				"<b>" + line + "</b>");
-		report.report("Click Here to See Logcar Result", log,
+		report.report("Click Here to See Logcat Result", log,
 				ReportAttribute.HTML);
 		return true;
 	}
@@ -676,6 +673,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// savePID();
 	}
 
+	@Deprecated
 	public void reportToLogcat(String TAG, String msg) {
 		device.reportToLogcat(TAG, msg);
 	}
