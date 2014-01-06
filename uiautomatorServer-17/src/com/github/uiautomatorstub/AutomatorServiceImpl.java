@@ -1,15 +1,25 @@
 package com.github.uiautomatorstub;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import android.os.Build;
 import android.os.Environment;
 import android.os.RemoteException;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 import android.view.KeyEvent;
-import com.android.uiautomator.core.*;
+
+import com.android.uiautomator.core.UiCollection;
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
 import com.github.uiautomatorstub.watcher.ClickUiObjectWatcher;
 import com.github.uiautomatorstub.watcher.PressKeysWatcher;
 
@@ -113,6 +123,9 @@ public class AutomatorServiceImpl implements AutomatorService {
 
         
     }
+    
+    
+    
 
     /**
      * Performs a swipe from one coordinate to another using the number of steps to determine smoothness and speed. Each step execution is throttled to 5ms per step. So for a 100 steps, the swipe will take about 1/2 second to complete.
@@ -1498,4 +1511,28 @@ public class AutomatorServiceImpl implements AutomatorService {
     public boolean waitUntilGone(String obj, long timeout) throws UiObjectNotFoundException {
         return getUiObject(obj).waitUntilGone(timeout);
     }
+    
+    /**
+     * Click on the app button , scroll to the side, click on the wanted application
+     * @param appName application wanted name to open
+     * @return true if the element is clicked and opened new window, false if we catch exception
+     */
+	public boolean openApp(String appName) throws UiObjectNotFoundException {
+
+		System.out.println("opening application");
+		UiDevice.getInstance().pressHome();
+		UiObject allAppsButton = new UiObject(new UiSelector().description("Apps"));
+		allAppsButton.clickAndWaitForNewWindow();
+		UiObject appsTab = new UiObject(new UiSelector().text("Apps"));
+		appsTab.click();
+		UiScrollable appViews = new UiScrollable(new UiSelector().scrollable(true));
+		appViews.setAsHorizontalList();
+		try {
+			UiObject app = appViews.getChildByText(new UiSelector().className(android.widget.TextView.class.getName()),appName);
+			app.clickAndWaitForNewWindow();
+		} catch (UiObjectNotFoundException e) {
+			return false;
+		}
+		return true;
+	}
 }

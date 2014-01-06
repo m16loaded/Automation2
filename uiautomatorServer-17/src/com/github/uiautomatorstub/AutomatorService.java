@@ -805,4 +805,11 @@ public interface AutomatorService {
      */
     @JsonRpcErrors({@JsonRpcError(exception=UiObjectNotFoundException.class, code=ERROR_CODE_BASE-2)})
     boolean waitUntilGone (String obj, long timeout) throws UiObjectNotFoundException;
+    
+    /**
+     * Click on the app button , scroll to the side, click on the wanted application
+     * @param appName application wanted name to open
+     * @return true if the element is clicked and opened new window, false if we catch exception
+     */
+    boolean openApp(String appName) throws UiObjectNotFoundException;
 }
