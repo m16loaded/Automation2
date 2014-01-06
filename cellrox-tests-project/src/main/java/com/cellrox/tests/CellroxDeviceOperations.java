@@ -2,15 +2,10 @@ package com.cellrox.tests;
 
 import java.io.File;
 
-import jsystem.framework.FrameworkOptions;
-import jsystem.framework.JSystemProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.analyzer.AnalyzerException;
-import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.scenario.UseProvider;
-import jsystem.runner.remote.RemoteTestRunner;
-import jsystem.treeui.GracefulStopListener;
 import junit.framework.SystemTestCase4;
 
 import org.jsystemtest.mobile.core.ConnectionException;
@@ -20,7 +15,6 @@ import org.junit.Test;
 import org.topq.uiautomator.Selector;
 
 import com.cellrox.infra.CellRoxDevice;
-import com.cellrox.infra.enums.Color;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.log.LogParser;
@@ -62,6 +56,18 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
+	public void ortziExample() throws Exception {
+		device.setDeviceAsRoot();
+		device.configureDeviceForAutomation(true);
+		device.connectToServers();
+		device.getPersona(Persona.PRIV).wakeUp();
+		device.getPersona(Persona.PRIV).openApp("Voice Search");
+		device.getPersona(Persona.PRIV).waitForExists(
+				new Selector().setIndex(1).setPackageName("com.google.android.googlequicksearchbox")
+						.setClassName("android.widget.TextView"), 10000);
+	}
+
+	@Test
 	public void testME() throws Exception {
 		device.configureDeviceForAutomation(true);
 		device.connectToServers();
@@ -70,8 +76,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		device.getPersona(Persona.PRIV).click(new Selector().setText("1"));
 		device.getPersona(Persona.PRIV).click(new Selector().setText("1"));
 		device.getPersona(Persona.PRIV).click(new Selector().setText("1"));
-		device.getPersona(Persona.PRIV).waitForExists(
-				new Selector().setDescription("Status widget."), 10000);
+		device.getPersona(Persona.PRIV).waitForExists(new Selector().setDescription("Status widget."), 10000);
 	}
 
 	@Test
@@ -224,6 +229,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Unlock Device by Swipe on ${persona}", paramsInclude={"persona"})
 	public void unlockBySwipe() throws Exception{
 		device.getPersona(persona).swipe(new Selector().setDescription("Slide area."), Direction.LEFT.getDir(), 20);
+		device.getPersona(persona).pressKey("back");
 	}
 	//android.support.v4.view.ViewPager
 	@Test
