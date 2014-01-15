@@ -39,9 +39,11 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		
 		p = new Prompt();
 		p.setAddEnter(true);
-		p.setPrompt("Console opened. Press enter if you don't see a prompt.\\s*");
+		p.setPrompt("Console opened. Press enter if you don't see a prompt\\.\\s*");
 		p.setRegularExpression(true);
-		p.setStringToSend(String.valueOf((char) 13));
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
+		
+		p.setAddEnter(true);
 		prompts.add(p);
 
 		p = new Prompt();
@@ -54,7 +56,25 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setPrompt("> ");
 		prompts.add(p);
 		
+	/*	p = new Prompt();
+		p.setCommandEnd(true);
+		p.setPrompt("Console opened. Press enter if you don't see a prompt.");
+		prompts.add(p);*/
 		
+		p = new Prompt();
+		p.setCommandEnd(true);
+		p.setPrompt("INSTRUMENTATION_CODE: 0");
+		prompts.add(p);
+		
+		p = new Prompt();
+		p.setCommandEnd(true);
+		p.setPrompt("INSTRUMENTATION_STATUS_CODE: 1");
+		prompts.add(p);
+		
+		p = new Prompt();
+		p.setCommandEnd(true);
+		p.setPrompt("nc: bind: Address already in use");
+		prompts.add(p);
 		
 		p = new Prompt();
 		p.setPrompt("login: ");
