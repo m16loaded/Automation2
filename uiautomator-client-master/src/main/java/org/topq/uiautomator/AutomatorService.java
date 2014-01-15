@@ -2,6 +2,7 @@ package org.topq.uiautomator;
 
 import java.rmi.RemoteException;
 
+import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.googlecode.jsonrpc4j.JsonRpcError;
 import com.googlecode.jsonrpc4j.JsonRpcErrors;
@@ -30,6 +31,17 @@ public interface AutomatorService {
 	 * @return true if the click succeeded else false
 	 */
 	boolean click(int x, int y);
+	
+	/**
+	 * Perform a double click at arbitrary coordinates specified by the user.
+	 * 
+	 * @param x
+	 *            coordinate
+	 * @param y
+	 *            coordinate
+	 * @return true if the click succeeded else false
+	 */
+	boolean doubleClick(int x, int y);
 
 	/**
 	 * Performs a swipe from one coordinate to another coordinate. You can
@@ -259,6 +271,20 @@ public interface AutomatorService {
 	@JsonRpcErrors({ @JsonRpcError(exception = RemoteException.class, code = ERROR_CODE_BASE - 1) })
 	boolean pressKey(String key) throws RemoteException;
 
+	
+	/**
+	 * Simulates a short press using key name.
+	 * 
+	 * @param key
+	 *            possible key name is home, back, left, right, up, down,
+	 *            center, menu, search, enter, delete(or del), recent(recent
+	 *            apps), volume_up, volume_down, volume_mute, camera, power
+	 * @return true if successful, else return false
+	 * @throws RemoteException
+	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = RemoteException.class, code = ERROR_CODE_BASE - 1) })
+	boolean pressKeyDouble(String key) throws RemoteException;
+	
 	/**
 	 * Simulates a short press using a key code. See KeyEvent.
 	 * 
@@ -1323,7 +1349,29 @@ public interface AutomatorService {
 	
 	
 	
+	/**
+    * return the screen Height
+    * */
+	int getScreenHeight();
 	
+    /**
+    * return the screen width
+    * */
+	int getScreenWidth();
 	
+	/**
+	 * returns system property from persona
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
+	public String getProp(String key) throws Exception;
+	
+	/**
+	 * returns the system answer after excuting the command
+	 * @param command - the wanted command to exe
+	 * @return system answer
+	 * */
+	String excuteCommand(String command) throws Exception;
 	
 }

@@ -26,6 +26,7 @@ public class DeviceClient {
 		JsonRpcHttpClient client = new JsonRpcHttpClient(serverURL);
 		deviceService = ProxyUtil.createClientProxy(
 				getClass().getClassLoader(), AutomatorService.class, client);
+		
 	}
 	
 	public static AutomatorService getUiAutomatorClient(String serverUrl) throws MalformedURLException{

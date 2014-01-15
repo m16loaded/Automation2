@@ -822,5 +822,22 @@ public interface AutomatorService {
      * return the screen width
      * */
 	int getScreenWidth();
+	
+	/**
+	 * returns system property from persona
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
+	public String getProp(String key) throws Exception;
     
+	/**
+	 * returns the system answer after excuting the command
+	 * @param command - the wanted command to exe
+	 * @return system answer
+	 * */
+	public String excuteCommand(String command) throws Exception;
+		
+	
+	
 }

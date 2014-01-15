@@ -3,6 +3,7 @@ package com.github.uiautomatorstub;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,11 +23,14 @@ import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 import com.github.uiautomatorstub.watcher.ClickUiObjectWatcher;
 import com.github.uiautomatorstub.watcher.PressKeysWatcher;
+import com.googlecode.jsonrpc4j.JsonRpcError;
+import com.googlecode.jsonrpc4j.JsonRpcErrors;
 
 
 public class AutomatorServiceImpl implements AutomatorService {
 
-    final static String STORAGE_PATH = "/data/local/tmp/";
+	
+    final static String STORAGE_PATH = "/sdcard/";//"/data/local/tmp/";
     private final HashSet<String> watchers = new HashSet<String>();
     private final ConcurrentHashMap<String, UiObject> uiObjects = new ConcurrentHashMap<String, UiObject>();
 
@@ -428,6 +432,56 @@ public class AutomatorServiceImpl implements AutomatorService {
 
         return result;
     }
+    
+    
+    /**
+     * Simulates a short double press using key name.
+     * @param key possible key name is home, back, left, right, up, down, center, menu, search, enter, delete(or del), recent(recent apps), volume_up, volume_down, volume_mute, camera, power
+     * @return true if successful, else return false
+     * @throws RemoteException
+     */
+	@JsonRpcErrors({ @JsonRpcError(exception = RemoteException.class, code = ERROR_CODE_BASE - 1) })
+	public boolean pressKeyDouble(String key) throws RemoteException {
+        boolean result;
+        key = key.toLowerCase();
+        if ("home".equals(key)){
+            result = UiDevice.getInstance().pressHome();
+            result = UiDevice.getInstance().pressHome();
+        }
+        else if ("back".equals(key)) 
+            result = UiDevice.getInstance().pressBack();
+        else if ("left".equals(key))
+            result = UiDevice.getInstance().pressDPadLeft();
+        else if ("right".equals(key))
+            result = UiDevice.getInstance().pressDPadRight();
+        else if ("up".equals(key))
+            result = UiDevice.getInstance().pressDPadUp();
+        else if ("down".equals(key))
+            result = UiDevice.getInstance().pressDPadDown();
+        else if ("center".equals(key))
+            result = UiDevice.getInstance().pressDPadCenter();
+        else if ("menu".equals(key))
+            result = UiDevice.getInstance().pressMenu();
+        else if ("search".equals(key))
+            result = UiDevice.getInstance().pressSearch();
+        else if ("enter".equals(key))
+            result = UiDevice.getInstance().pressEnter();
+        else if ("delete".equals(key) || "del".equals(key))
+            result = UiDevice.getInstance().pressDelete();
+        else if ("recent".equals(key))
+            result = UiDevice.getInstance().pressRecentApps();
+        else if ("volume_up".equals(key))
+            result = UiDevice.getInstance().pressKeyCode(KeyEvent.KEYCODE_VOLUME_UP);
+        else if ("volume_down".equals(key))
+            result = UiDevice.getInstance().pressKeyCode(KeyEvent.KEYCODE_VOLUME_DOWN);
+        else if ("volume_mute".equals(key))
+            result = UiDevice.getInstance().pressKeyCode(KeyEvent.KEYCODE_VOLUME_MUTE);
+        else if ("camera".equals(key))
+            result = UiDevice.getInstance().pressKeyCode(KeyEvent.KEYCODE_CAMERA);
+        else result = "power".equals(key) && UiDevice.getInstance().pressKeyCode(KeyEvent.KEYCODE_POWER);
+
+        return result;
+	}
 
     /**
      * Simulates a short press using a key code. See KeyEvent.
@@ -1535,4 +1589,34 @@ public class AutomatorServiceImpl implements AutomatorService {
 		}
 		return true;
 	}
+	
+	
+    /**
+     * return the screen Height
+     * */
+	public int getScreenHeight() {
+		return UiDevice.getInstance().getDisplayHeight();
+	}
+	
+    /**
+     * return the screen width
+     * */
+	public int getScreenWidth() {
+		return UiDevice.getInstance().getDisplayWidth();
+	}
+	
+	/**
+	 * Perform a double click at arbitrary coordinates specified by the user.
+	 * 
+	 * @param x
+	 *            coordinate
+	 * @param y
+	 *            coordinate
+	 * @return true if the click succeeded else false
+	 */
+	public boolean doubleClick(int x, int y) {
+		UiDevice.getInstance().click(x, y);
+		return UiDevice.getInstance().click(x, y);
+	}
+	
 }
