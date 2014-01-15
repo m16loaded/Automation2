@@ -3,10 +3,17 @@ package com.cellrox.infra;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
+import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.utils.FileUtils;
@@ -15,6 +22,8 @@ import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
 import org.topq.uiautomator.AutomatorService;
+import org.topq.uiautomator.ObjInfo;
+import org.topq.uiautomator.Selector;
 import org.topq.uiautomator.client.DeviceClient;
 
 import com.android.ddmlib.AdbCommandRejectedException;
@@ -22,6 +31,7 @@ import com.android.ddmlib.FileListingService;
 import com.android.ddmlib.InstallException;
 import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.aqua.sysobj.conn.CliCommand;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.log.LogParser;
@@ -40,9 +50,13 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private USBDevice device;
 	private AdbConnection cli;
 	private String deviceSerial;
-	public AutomatorService[] uiClient = new AutomatorService[2];
+	// public AutomatorService[] uiClient = new AutomatorService[2];
+
+	List<AutomatorService> uiClient = Collections.synchronizedList(new ArrayList<AutomatorService>());
 	private ArrayList<String> pidArray = new ArrayList<String>();
 	private boolean afterCrush = false;
+	private ExecutorService executor;
+	private boolean isrun = true;
 
 	public CellRoxDevice() throws Exception {
 		adbController = AdbController.getInstance();
@@ -52,7 +66,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setDeviceSerial(devices[deviceIndex].getSerialNumber());
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		cli = new AdbConnection("127.0.0.1", getUser(), getPassword());
-		// cli.connect();
+		cli.connect();
 
 	}
 
@@ -61,9 +75,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 		super.init();
 		getDeviceFromAdb();
 		cli = new AdbConnection("127.0.0.1", "topq", "Aa123456");
+//		cli.connect();
 		// set device as root
 		if (deviceAsRootOnInit) {
 			setDeviceAsRoot();
+			isDeviceConnected();
 		}
 		// validate that syslog is enabled
 		String status = device.getProperty("persist.service.syslogs.enable");
@@ -73,6 +89,27 @@ public class CellRoxDevice extends SystemObjectImpl {
 		} else if (status.equals("0")) {
 			device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
 		}
+	}
+
+	public void printNetworkData(Persona persona) throws Exception {
+
+		
+//		executeCliCommand("adb shell");
+//		if (persona == Persona.PRIV) {
+//			executeCliCommand("cell console priv");
+//		} else {
+//			executeCliCommand("cell console corp");
+//		}
+
+//		report.report(getPersona(persona).excuteCommand(""));//		executeCliCommand("");
+		report.report("netcfg : " + getPersona(persona).excuteCommand("netcfg"));//		executeCliCommand("netcfg");
+		report.report("iptables : " + getPersona(persona).excuteCommand("iptables"));//		executeCliCommand("iptables");
+		report.report("iptables nat : " + getPersona(persona).excuteCommand("iptables nat"));//		executeCliCommand("iptables nat");
+		report.report("ip route : " + getPersona(persona).excuteCommand("ip route"));//		executeCliCommand("ip route");
+		report.report("ifconfig : " + getPersona(persona).excuteCommand("ifconfig"));//		executeCliCommand("ifconfig");
+		report.report("netstat : " + getPersona(persona).excuteCommand("netstat"));//		executeCliCommand("netstat");
+		report.report("ip rule : " + getPersona(persona).excuteCommand("ip rule"));//		executeCliCommand("ip rule");
+		report.report("ip route list table main : " + getPersona(persona).excuteCommand("ip route list table main"));//		executeCliCommand("ip route list table main");
 	}
 
 	public void getDeviceFromAdb() throws Exception {
@@ -85,6 +122,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 	}
 
 	/**
+	 * This function checks that the adb devices return only one device
+	 * */
+	public void isDeviceConnected() throws Exception {
+		cli.connect();
+		executeCliCommand("adb devices");
+		String devices = cli.getTestAgainstObject().toString();
+		if (devices.split("device").length < 4) {
+			cli.disconnect();
+			throw new Exception("There is no devices connected.");
+		}
+		cli.disconnect();
+	}
+
+	/**
 	 * This function will configure a device with all the pipes needed for port
 	 * forwarding between the host and the cells
 	 * 
@@ -92,8 +143,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param corpPort
 	 * @throws Exception
 	 */
-	public void configureDeviceForAutomation(boolean runServer)
-			throws Exception {
+	public void configureDeviceForAutomation(boolean runServer) throws Exception {
+		
 		cli.connect();
 
 		executeCliCommand("adb shell");
@@ -105,12 +156,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("mkfifo /data/containers/priv/data/data/noipout_priv");
 		executeCliCommand("mkfifo /data/containers/corp/data/data/noipin_corp");
 		executeCliCommand("mkfifo /data/containers/corp/data/data/noipout_corp");
+		Thread.sleep(200);
 		cli.switchToPersona(Persona.PRIV);
 		/**
 		 * For QA mode this line will open a mock server
 		 * executeShellCommand(String
 		 * .format("busybox nc -l -p %d -e /system/bin/sh&",privPort));
 		 */
+		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 		}
@@ -122,17 +175,23 @@ public class CellRoxDevice extends SystemObjectImpl {
 		 * executeShellCommand(String
 		 * .format("busybox nc -l -p %d -e /system/bin/sh&",corpPort));
 		 */
+		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 		}
 		executeCliCommand("busybox nc localhost 9008 < /data/data/noipin_corp > /data/data/noipout_corp &");
 		cli.switchToHost();
+		Thread.sleep(200);
 		executeCliCommand(String
 				.format("busybox nc -l -p %d > /data/containers/priv/data/data/noipin_priv < /data/containers/priv/data/data/noipout_priv &",
 						getPrivePort()));
+		Thread.sleep(200);
 		executeCliCommand(String
 				.format("busybox nc -l -p %d > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp &",
 						getCorpPort()));
+//		System.out.println("#####################################");
+//		System.out.println("About to dissconnect");
+//		Thread.sleep(2000);
 		cli.disconnect();
 	}
 
@@ -144,12 +203,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// "4dZ6Gc3t7afbJM6CoAyZ");
 		String md5 = cellRoxDevice.md5sum("/home/topq/nir.txt");
 		String fileSize = "" + new File("/home/topq/nir.txt").length();
-		String result = cellRoxDevice.uploadRomOldServer(
-				"mdm-stg.cellrox.com/root", "/home/topq/nir.txt", "test",
+		String result = cellRoxDevice.uploadRomOldServer("mdm-stg.cellrox.com/root", "/home/topq/nir.txt", "test",
 				"4dZ6Gc3t7afbJM6CoAyZ", md5);
-		cellRoxDevice.remoteUpdateOldServer(result, "mdm-stg.cellrox.com/beta",
-				"355136058547913", md5, fileSize, "test",
-				"4dZ6Gc3t7afbJM6CoAyZ");
+		cellRoxDevice.remoteUpdateOldServer(result, "mdm-stg.cellrox.com/beta", "355136058547913", md5, fileSize,
+				"test", "4dZ6Gc3t7afbJM6CoAyZ");
 	}
 
 	/**
@@ -159,8 +216,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *            on local file system
 	 * @param reinstall
 	 */
-	public void installPackage(String apkLocation, boolean reinstall)
-			throws InstallException {
+	public void installPackage(String apkLocation, boolean reinstall) throws InstallException {
 		try {
 			device.installPackage(apkLocation, reinstall);
 		} catch (InstallException e) {
@@ -178,14 +234,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws IOException
 	 */
 	public void rebootDevice(Persona... personas) throws Exception {
+		rebootDevice(5 * 60 * 1000, personas);
+	}
+
+	public void rebootDevice(int timeout, Persona... personas) throws Exception {
+		long currentTime = System.currentTimeMillis();
 		try {
+			sync();
 			device.reboot();
 			report.report("reboot command was sent");
 			Thread.sleep(1000);
 		} catch (Exception e) {
 			// igonore
 		}
-		validateDeviceIsOnline(personas);
+		validateDeviceIsOnline(currentTime, timeout, personas);
 		setDeviceAsRoot();
 	}
 
@@ -199,6 +261,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws IOException
 	 */
 	public void rebootRecoveryDevice(Persona... personas) throws Exception {
+		sync();
 		device.executeShellCommand("reboot recovery");
 		report.report("reboot recovery command was sent");
 		Thread.sleep(1000);
@@ -217,9 +280,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 	}
 
 	public void validateDeviceIsOnline(Persona... personas) throws Exception {
+		validateDeviceIsOnline(System.currentTimeMillis(), 5 * 60 * 1000, personas);
+	}
+
+	public void validateDeviceIsOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 		vlidateDeviceIsOffline(personas);
+		Thread.sleep(2000);
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
-		validatePersonasAreOnline(personas);
+		validatePersonasAreOnline(beginTime, timeout, personas);
 	}
 
 	/**
@@ -264,13 +332,19 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param personas
 	 * @throws Exception
 	 */
-	public void validatePersonasAreOnline(Persona... personas) throws Exception {
+	public void validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 		boolean online = false;
 		String result = null;
 		int found = 0;
 		while (online != true) {
+
+			if (timeout < System.currentTimeMillis() - beginTime) {
+				report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
+				return;
+			}
+
 			try {
-				result = device.executeShellCommand("cell list");
+				result = device.executeShellCommand("cell list state");
 			} catch (AdbControllerException e) {
 				continue;
 			}
@@ -278,7 +352,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 				continue;
 			}
 			for (Persona persona : personas) {
-				if (result.contains(persona.toString())) {
+				if (result.contains(persona.toString() + " (3)")) {
 					found++;
 				}
 			}
@@ -288,7 +362,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 				found = 0;
 			}
 		}
-		report.report("device is online");
+		report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
+				+ " seconds.");
 		Thread.sleep(2000);
 	}
 
@@ -346,13 +421,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *            file name on the device
 	 * @throws Exception
 	 */
-	public void pushFileToDevice(String localLocation, String remotefileLocation)
-			throws Exception {
+	public void pushFileToDevice(String localLocation, String remotefileLocation) throws Exception {
 		try {
 			device.pushFileToDevice(remotefileLocation, localLocation);
 		} catch (Exception e) {
-			report.report("Error while pushing the file " + localLocation
-					+ " to " + remotefileLocation, report.FAIL);
+			report.report("Error while pushing the file " + localLocation + " to " + remotefileLocation, report.FAIL);
 		}
 	}
 
@@ -373,13 +446,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @see FileListingService.FileEntry
 	 * @see #getNullProgressMonitor()
 	 */
-	public void pullFileFromDevice(String remoteFilepath, String localFilename)
-			throws Exception {
+	public void pullFileFromDevice(String remoteFilepath, String localFilename) throws Exception {
 		try {
 			device.pullFileFromDevice(remoteFilepath, localFilename);
 		} catch (Exception e) {
-			report.report("Error while pulling the file " + remoteFilepath
-					+ " to " + localFilename + "\n" + e, report.FAIL);
+			report.report("Error while pulling the file " + remoteFilepath + " to " + localFilename + "\n" + e,
+					report.FAIL);
 		}
 	}
 
@@ -391,8 +463,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param remotePort
 	 * @throws Exception
 	 */
-	public void setPortForwarding(int localPort, int remotePort)
-			throws Exception {
+	public void setPortForwarding(int localPort, int remotePort) throws Exception {
 		device.setPortForwarding(localPort, remotePort);
 	}
 
@@ -413,10 +484,33 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setPortForwarding(corpPort, corpPort);
 
 		// connect client to server
-		uiClient[Persona.PRIV.ordinal()] = DeviceClient
-				.getUiAutomatorClient("http://localhost:" + privePort);
-		uiClient[Persona.CORP.ordinal()] = DeviceClient
-				.getUiAutomatorClient("http://localhost:" + corpPort);
+		uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
+		uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
+
+		// TODO comments + maybe to change executer?
+//		executor = Executors.newFixedThreadPool(1);
+//		Runnable worker = new Runnable() {
+//
+//			public void run() {
+//				while (isrun) {
+//					try {
+//						for (AutomatorService client : uiClient) {
+//							client.ping();
+//						}
+//						Thread.sleep(500);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//
+//			}
+//		};
+//		executor.execute(worker);
+//		report.report("Keep Alive");
+//		Thread.sleep(2000);
+//		executor.shutdown();
+
 	}
 
 	/**
@@ -445,12 +539,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.connect();
 		String userHome = System.getProperty("user.home");
 		executeCliCommand("adb logcat -c", true);
-		executeCliCommand("adb logcat -v time > " + userHome
-				+ "/testLogcat.txt &", true);
-		executeCliCommand("adb logcat -b radio -v time > " + userHome
-				+ "/testRadioLogcat.txt &", true);
-		executeCliCommand("adb shell cat /proc/kmsg > " + userHome
-				+ "/testKmsg.txt &", true);
+		executeCliCommand("adb logcat -v time > " + userHome + "/testLogcat.txt &", true);
+		executeCliCommand("adb logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", true);
+		executeCliCommand("adb shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", true);
 		cli.disconnect();
 	}
 
@@ -479,13 +570,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void getLogsOfRun(LogParser parser) throws Exception {
 		String userHome = System.getProperty("user.home");
 		// get the files
-		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt",
-				userHome + "/system_kmsg.txt");
-		device.pullFileFromDevice(
-				"/data/agent/syslogs/system_logcat-radio.txt", userHome
-						+ "/system_logcat-radio.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt",
-				userHome + "/system_logcat.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
 		File logcat = new File(userHome + "/system_logcat.txt");
 		File kmsg = new File(userHome + "/system_kmsg.txt");
 		File radioLogcat = new File(userHome + "/system_logcat-radio.txt");
@@ -509,30 +596,50 @@ public class CellRoxDevice extends SystemObjectImpl {
 	}
 
 	public AutomatorService getPersona(Persona persona) {
-		return uiClient[persona.ordinal()];
+		return uiClient.get(persona.ordinal());
 	}
 
 	/**
-	 * set root persmission on deivce with adb root command
+	 * set root persmission on deivce and that there is no unknown device
+	 * (?????) with adb root command - try to o it for 3 times.
 	 * 
 	 * @throws Exception
 	 */
 	public void setDeviceAsRoot() throws Exception {
+
+		String retString = "";
+		final int numberOfRootAttempts = 3;
+
 		cli.connect();
-		executeCliCommand("adb root", true);
+		for (int i = 0; i < numberOfRootAttempts; i++) {
+			executeCliCommand("adb root", true);
+			retString = cli.getTestAgainstObject().toString();
+			if (retString.contains("error: device unauthorized.")) {
+				executeCliCommand("adb kill-server");
+			} else {
+				if (retString.contains("?????")) {
+					cli.disconnect();
+					throw new Exception("error: device is ?????, couldn't make adb root.");
+				} else {
+					break;
+				}
+			}
+		}
+		if (retString.contains("error: device unauthorized.")) {
+			cli.disconnect();
+			throw new Exception("error: device unauthorized, couldn't make adb root.");
+		}
 		Thread.sleep(2000);
-		// cli.analyze(new FindText("as root"));
 		cli.disconnect();
 	}
 
-	public String uploadRomOldServer(String serverHost, String imgFile,
-			String version, String adminToken, String md5sum) throws Exception {
+	public String uploadRomOldServer(String serverHost, String imgFile, String version, String adminToken, String md5sum)
+			throws Exception {
 		cli.connect();
 		CliCommand cmd = new CliCommand();
 		cmd.setCommand(String
 				.format("curl -i -k -H \"Accept: application/json\" -F \"auth_token=%s\" -F \"rom[version]=%s\" -F \"rom[argument_attributes][attachment]=@%s\" -F \"rom[argument_attributes][md5]=%s\" https://%s/roms | tee /tmp/upload.result | tail -1 | sed 's/,/\\\"/g' | sed 's/://g' | awk -F\\\" '{ print $14\"/\"$10}'",
-						adminToken, version, imgFile, md5sum, serverHost)
-				.replace("\r\n", ""));
+						adminToken, version, imgFile, md5sum, serverHost).replace("\r\n", ""));
 		// timeout up to 30 min.
 		cmd.setTimeout(1800000);
 		cli.handleCliCommand("Uploading image " + imgFile, cmd);
@@ -549,18 +656,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 		return result;
 	}
 
-	public String remoteUpdateOldServer(String result, String serverUrl,
-			String deviceId, String md5, String fileSize, String version,
-			String adminToken) throws Exception {
+	public String remoteUpdateOldServer(String result, String serverUrl, String deviceId, String md5, String fileSize,
+			String version, String adminToken) throws Exception {
 
-		String command = String.format("COMMAND DOWNLOAD %s %s %s %s", version,
-				result, md5, fileSize);
+		String command = String.format("COMMAND DOWNLOAD %s %s %s %s", version, result, md5, fileSize);
 		String description = "Remote Update " + version;
 		String date = getDate();
 		String remoteUpdateCmd = String
 				.format("curl -k -H \"Accept: application/json\" -X POST https://%s/devices/%s/messages.json -d \"auth_token=%s\" -d \"message[due_at]=%s\" -d \"message[payload]=%s\" -d \"message[description]=%s\" 2>&1 | tee post.result | tail -1 | sed 's/,/\\n/g' | sed 's/[{}]/\\n/g'\r\n",
-						serverUrl, deviceId, adminToken, date, command,
-						description);
+						serverUrl, deviceId, adminToken, date, command, description);
 		CliCommand cmd = new CliCommand(remoteUpdateCmd);
 		cmd.setTimeout(1800000);
 		cli.connect();
@@ -581,9 +685,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	public String md5sum(String fileName) throws Exception {
 		cli.connect();
-		CliCommand cmd = new CliCommand(String.format(
-				"echo -n R ; md5sum %s | awk '{print \"esult: \" $1}'",
-				fileName));
+		CliCommand cmd = new CliCommand(String.format("echo -n R ; md5sum %s | awk '{print \"esult: \" $1}'", fileName));
 		cmd.setSuppressEcho(true);
 		cmd.addErrors("No such file or directory");
 		cli.handleCliCommand("getting image file MD5SUM", cmd);
@@ -606,8 +708,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean waitForLineInTomcat(String line, long timeout, long interval)
-			throws Exception {
+	public boolean waitForLineInTomcat(String line, long timeout, long interval) throws Exception {
 		final long start = System.currentTimeMillis();
 		// TODO add RegEx support
 		while (!getLogcatLastLines(100).contains(line)) {
@@ -617,10 +718,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 			}
 			Thread.sleep(interval);
 		}
-		String log = getLogcatLastLines(50).replace("\n", "<br>").replace(line,
-				"<b>" + line + "</b>");
-		report.report("Click Here to See Logcat Result", log,
-				ReportAttribute.HTML);
+		String log = getLogcatLastLines(50).replace("\n", "<br>").replace(line, "<b>" + line + "</b>");
+		report.report("Click Here to See Logcat Result", log, ReportAttribute.HTML);
 		return true;
 	}
 
@@ -651,10 +750,97 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 */
 	private String getLogcatLastLines(int lines) throws Exception {
 		// logcat -v time -d | tail -n 10 | grep corp
-		String logcat = device.executeShellCommand(String.format(
-				"logcat -v time -d | tail -n %d", lines));
+		String logcat = device.executeShellCommand(String.format("logcat -v time -d | tail -n %d", lines));
 		System.out.println(logcat);
 		return logcat;
+	}
+
+	/**
+	 * find the expression to find after cli command in the adb shell
+	 * 
+	 * @param cliCommand
+	 *            - the wanted cli command after the adb shell
+	 * @param expression
+	 *            - the wanted text/expression to find
+	 * @param isRegularExpression
+	 *            - is this expression is a regular expression
+	 * */
+	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression)
+			throws Exception {
+
+		cli.connect();
+		executeCliCommand("adb shell");
+		executeCliCommand(cliCommand);
+		FindText findText = new FindText(expression, isRegularExpression);
+		cli.analyze(findText);
+		cli.disconnect();
+
+	}
+
+	/**
+	 * find the expression to find after cli command in the adb shell
+	 * 
+	 * @param cliCommand
+	 *            - the wanted cli command after the adb shell
+	 * @param expression
+	 *            - the wanted text/expression to find
+	 * @param isRegularExpression
+	 *            - is this expression is a regular expression
+	 * @param persona
+	 *            - the cell console and the wanted persona
+	 * */
+	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression,
+			Persona persona) throws Exception {
+
+//		cli.connect();
+//		executeCliCommand("adb shell");
+//		if (persona == Persona.PRIV) {
+//			executeCliCommand("cell console priv");
+//		} else {
+//			executeCliCommand("cell console corp");
+//		}
+		//executeCliCommand("");
+		//executeCliCommand(cliCommand);
+		String responce = getPersona(persona).excuteCommand(cliCommand);
+		if(isRegularExpression) {
+			
+		    Pattern pattern = Pattern.compile(expression);
+	        Matcher matcher = pattern.matcher(responce);
+
+	        if(matcher.find())
+	        	report.report("Find : " + expression + " in : " +responce);
+	        else
+	        	report.report("Couldnt find : " + expression + " in : " +responce ,Reporter.FAIL);
+		}
+		else {
+			if(!responce.contains(expression)) 
+				report.report("Couldnt find : " + expression + " in : " +responce ,Reporter.FAIL);
+			else 
+				report.report("Find : " + expression + " in : " + responce);
+		}
+		
+//		FindText findText = new FindText(expression, isRegularExpression);
+//		cli.analyze(findText);
+//		cli.switchToHost();
+//		cli.disconnect();
+
+	}
+
+	/**
+	 * get the path of the application and push it to the priv and the corp
+	 * 
+	 * @param appFullPath
+	 *            - the application full path on the local cpu
+	 * */
+	public void pushApplicationToDevice(String appFullPath) throws Exception {
+
+		cli.connect();
+		report.report("about to do : " + "adb push " + appFullPath + " /data/containers/corp/data/app/");
+		executeCliCommand("adb push " + appFullPath + " /data/containers/corp/data/app/");
+		report.report("about to do : adb push " + appFullPath + " /data/containers/priv/data/app/");
+		executeCliCommand("adb push " + appFullPath + " /data/containers/priv/data/app/");
+		cli.disconnect();
+
 	}
 
 	private void executeCliCommand(String Command) throws Exception {
@@ -662,8 +848,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		Thread.sleep(500);
 	}
 
-	private void executeCliCommand(String Command, boolean silent)
-			throws Exception {
+	private void executeCliCommand(String Command, boolean silent) throws Exception {
 
 		CliCommand cmd = new CliCommand(Command);
 		cmd.setSilent(silent);
@@ -671,6 +856,27 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.handleCliCommand(Command, cmd);
 
 		// savePID();
+	}
+
+	/**
+	 * The following functions click on the button by the x y cordinate
+	 * */
+	public void clickOnSelectorByUi(ObjInfo info, Persona persona) throws UiObjectNotFoundException {
+
+		int horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
+		int vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+		report.report("About to click point at : " + horizon + "," + vertical);
+		getPersona(persona).click(horizon, vertical);
+	}
+
+	public void clickOnSelectorByUi(String id, Persona persona) throws UiObjectNotFoundException {
+		ObjInfo obj = getPersona(persona).objInfo(id);
+		clickOnSelectorByUi(obj, persona);
+	}
+
+	public void clickOnSelectorByUi(Selector s, Persona persona) throws UiObjectNotFoundException {
+		String id = getPersona(persona).getUiObject(s);
+		clickOnSelectorByUi(id, persona);
 	}
 
 	@Deprecated
@@ -691,7 +897,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void close() {
 		// TODO : need to think if we want to stop by PID (means we will need to
 		// access each persona) or by process name
+		// cli.disconnect();
+		isrun = false;
+		if (executor != null) {
+			while (!executor.isTerminated()) {
+			}
+		}
 		stopAllActiveAutomationProecess();
+
 		super.close();
 	}
 
@@ -702,6 +915,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 		} catch (Exception e) {
 			report.report("Error in closing automation processes", report.FAIL);
 		}
+	}
+
+	public void sync() throws Exception {
+		cli.connect();
+		executeCliCommand("sync");
+		cli.disconnect();
 	}
 
 	public int getPrivePort() {
