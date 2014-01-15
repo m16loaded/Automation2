@@ -469,6 +469,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Switch network \"${wifiNetwork}\" connection ${onOff} on ${persona}", paramsInclude = { "persona,onOff,wifiNetwork,wifiPassword" })
 	public void switchTheNetworkConnection() throws Exception {
 
+		report.report("About to switch the the net work connectivity to : " + onOff + " on : "+ wifiNetwork);
+		
 		device.getPersona(persona).pressKey("home");
 		device.getPersona(persona).click(new Selector().setText("Settings"));
 		device.getPersona(persona).waitForExists(new Selector().setText("WIRELESS & NETWORKS"), 10000);
@@ -519,6 +521,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Switch the wifi : ${onOff} Text on ${persona}", paramsInclude = { "persona,onOff" })
 	public void switchTheWiFi() throws Exception {
 
+		report.report("About to switch the the Wi-Fi to : " + onOff);
+		
 		if (onOff == State.ON)
 			onOff = State.OFF;
 		else
@@ -552,16 +556,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * */
 	@Test
 	@TestProperties(name = "Ping Dns to : \"${text}\" Text on ${persona}", paramsInclude = { "persona,text,timeout" })
-	public void pingDnsText() throws Exception {
+	public void pingDnsTest() throws Exception {
 
 		final int numberOfTries = 3;
 		interval = 100;
 		boolean passTheTest = false;
 		Selector s;
 		String textFromTheRun;
-		// text = "www.yahoo.com";
-		// persona = Persona.PRIV;
-		// timeout = "120000";
 
 		report.report("Runing dns test.");
 
@@ -607,6 +608,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 			if (textFromTheRun.contains("0% packet loss")) {
 				passTheTest = true;
+				report.report(textFromTheRun);
 				report.report("The run took : " + (double) ((System.currentTimeMillis() - start) / 1000) + " seconeds.");
 				break;
 
