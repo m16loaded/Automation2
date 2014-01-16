@@ -1,11 +1,10 @@
 package com.cellrox.tests;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jsystem.extensions.analyzers.compare.CompareValues;
-import jsystem.extensions.analyzers.text.FindText;
 import jsystem.framework.TestProperties;
 import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.report.Reporter;
@@ -20,14 +19,11 @@ import org.junit.Test;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
-import android.inputmethodservice.Keyboard;
-
-import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.enums.Direction;
-import com.cellrox.infra.enums.State;
 import com.cellrox.infra.enums.Persona;
+import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.object.LogParserExpression;
 
@@ -51,7 +47,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String serverUrl;
 	private String deviceId;
 	private int index;
-	private String expectedLine;
+	private String expectedLine, expectedNumber;
+	public String getExpectedNumber() {
+		return expectedNumber;
+	}
+
+	public void setExpectedNumber(String expectedNumber) {
+		this.expectedNumber = expectedNumber;
+	}
+
 	private long interval;
 	private String timeout = "10000";
 	private boolean isExists;
@@ -71,6 +75,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String wifiNetwork;
 	private String propertyName;
 	private String expectedValue;
+	private String x, y;
 
 	@Before
 	public void init() throws Exception {
@@ -81,14 +86,22 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	@Test
 	public void orConnectivityTest() throws Exception {
+		
+//		device.pushFileToDevice("~/git/automation/uiautomatorServer-19/bin/bundle.jar", "/data/containers/corp/data/local/tmp/");
+//		device.pushFileToDevice("~/git/automation/uiautomatorServer-19/bin/uiautomator-stub.jar", "/data/containers/corp/data/local/tmp/");
+		
 		device.configureDeviceForAutomation(true);
 		device.connectToServers();
-		device.clickOnSelectorByUi(new Selector().setText("Settings"), persona.PRIV);
 		
-		device.getPersona(Persona.PRIV).pressKey("home");
 		
-		device.getPersona(persona.PRIV).setText(
+		
+//		device.clickOnSelectorByUi(new Selector().setText("Settings"), persona.PRIV);
+//		
+//		device.getPersona(Persona.PRIV).pressKey("home");
+//		
+		device.getPersona(persona.CORP).setText(
 				new Selector().setClassName("android.widget.EditText"), "1111");
+		System.out.println("");
 		
 	}
 
@@ -188,6 +201,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		device.connectToServers();
 	}
 
+	
+	@Test
+	@TestProperties(name = "Click on x,y on ${persona}", paramsInclude = { "x,y,persona" })
+	public void clickByCordinate() {
+		device.getPersona(persona).click(Integer.valueOf(x), Integer.valueOf(y));
+	}
+	
 	@Test
 	@TestProperties(name = "Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "text,selector,persona,waitForNewWindow,exceptionThrower" })
 	public void clickByText() throws Exception {
@@ -654,6 +674,37 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		isExists = device.getPersona(persona).exist(new Selector().setDescription(text));
 		runProperties.setRunProperty("isExists", String.valueOf(isExists));
 	}
+	
+	/**
+	 * This test :
+	 * 1. get the return result from a class
+	 * 2. validate that the expectedLine is exist in regex pattern
+	 * 3. validate that the number is smaller that the first group of the pattern
+	 * */
+	@Test
+	@TestProperties(name = "Validate Expression is smaller with Class \"${text}\" than ${expectedLine}", paramsInclude = { "persona,text,index,expectedLine,expectedNumber" })
+	public void validateExpressionIsSmallerByClass() throws Exception {
+		
+		report.report("bout to validate expression is smaller than : " +expectedNumber);
+		String res = device.getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
+		report.report("The return result : "+res);
+		Pattern pattern = Pattern.compile(expectedLine);
+	    Matcher matcher = pattern.matcher(res);
+
+	    if(matcher.find()) {
+	        	report.report("Find : " + expectedLine + " in : " +res);
+	        	String number = matcher.group(1);
+	        	if(Double.valueOf(number) < Double.valueOf(expectedNumber)) {
+	        		report.report("The value is smaller than : "+expectedLine);
+	        	}
+	        	else {
+	        		report.report("The value isn't smaller than : "+expectedLine, Reporter.FAIL);
+	        	}
+	    }
+	    else
+	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
+	}
+	
 
 	@Test
 	@TestProperties(name = "Start Logs of Test", paramsInclude = {})
@@ -1215,6 +1266,34 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	public void setExpectedValue(String expectedValue) {
 		this.expectedValue = expectedValue;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public String getY() {
+		return y;
+	}
+
+	/**
+	 * @param y the y to set
+	 */
+	public void setY(String y) {
+		this.y = y;
+	}
+
+	/**
+	 * @return the x
+	 */
+	public String getX() {
+		return x;
+	}
+
+	/**
+	 * @param x the x to set
+	 */
+	public void setX(String x) {
+		this.x = x;
 	}
 
 }
