@@ -146,7 +146,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void configureDeviceForAutomation(boolean runServer) throws Exception {
 		
 		cli.connect();
-
+		executeCliCommand("adb root");
 		executeCliCommand("adb shell");
 		executeCliCommand("rm /data/containers/priv/data/data/noipin_priv");
 		executeCliCommand("rm /data/containers/priv/data/data/noipout_priv");
@@ -169,6 +169,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 		executeCliCommand("busybox nc localhost 9008 < /data/data/noipin_priv > /data/data/noipout_priv &");
 		cli.switchToHost();
+		executeCliCommand("adb root");
 		cli.switchToPersona(Persona.CORP);
 		/**
 		 * For QA mode this line will open a mock server
@@ -181,6 +182,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 		executeCliCommand("busybox nc localhost 9008 < /data/data/noipin_corp > /data/data/noipout_corp &");
 		cli.switchToHost();
+		executeCliCommand("adb root");
 		Thread.sleep(200);
 		executeCliCommand(String
 				.format("busybox nc -l -p %d > /data/containers/priv/data/data/noipin_priv < /data/containers/priv/data/data/noipout_priv &",
@@ -189,9 +191,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand(String
 				.format("busybox nc -l -p %d > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp &",
 						getCorpPort()));
-//		System.out.println("#####################################");
-//		System.out.println("About to dissconnect");
-//		Thread.sleep(2000);
 		cli.disconnect();
 	}
 
