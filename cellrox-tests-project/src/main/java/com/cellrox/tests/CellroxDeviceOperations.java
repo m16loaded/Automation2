@@ -92,16 +92,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		
 		device.configureDeviceForAutomation(true);
 		device.connectToServers();
+
+		System.out.println("##########################");
 		
-		
-		
+		device.getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 //		device.clickOnSelectorByUi(new Selector().setText("Settings"), persona.PRIV);
-//		
-//		device.getPersona(Persona.PRIV).pressKey("home");
-//		
-		device.getPersona(persona.CORP).setText(
-				new Selector().setClassName("android.widget.EditText"), "1111");
-		System.out.println("");
+		
+		device.getPersona(Persona.PRIV).pressKey("home");
 		
 	}
 
@@ -315,6 +312,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
 				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000
 						+ " sec.", report.FAIL);
+				break;
 			}
 			Thread.sleep(interval);
 		}
@@ -328,6 +326,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
 				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000
 						+ " sec.", report.FAIL);
+				break;
 			}
 			Thread.sleep(interval);
 		}
@@ -695,6 +694,75 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
 	        	if(Double.valueOf(number) < Double.valueOf(expectedNumber)) {
+	        		report.report("The value is smaller than : "+expectedLine);
+	        	}
+	        	else {
+	        		report.report("The value isn't smaller than : "+expectedLine, Reporter.FAIL);
+	        	}
+	    }
+	    else
+	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
+	}
+	
+	
+	/**
+	 * This test :
+	 * 1. get the return result from a class
+	 * 2. validate that the expectedLine is exist in regex pattern
+	 * 3. validate that the number is smaller that the first group of the pattern
+	 * */
+	@Test
+	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine}", paramsInclude = { "persona,text,index,expectedLine,expectedNumber" })
+	public void validateExpressionIsBiggerByClass() throws Exception {
+		
+		report.report("bout to validate expression is smaller than : " +expectedNumber);
+		String res = device.getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
+		report.report("The return result : "+res);
+		Pattern pattern = Pattern.compile(expectedLine);
+	    Matcher matcher = pattern.matcher(res);
+
+	    if(matcher.find()) {
+	        	report.report("Find : " + expectedLine + " in : " +res);
+	        	String number = matcher.group(1);
+	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
+	        		report.report("The value is smaller than : "+expectedLine);
+	        	}
+	        	else {
+	        		report.report("The value isn't smaller than : "+expectedLine, Reporter.FAIL);
+	        	}
+	    }
+	    else
+	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
+	}
+	
+	/**
+	 * This test :
+	 * 1. get the return result from a class of the child from the father
+	 * 2. validate that the expectedLine is exist in regex pattern
+	 * 3. validate that the number is smaller that the first group of the pattern
+	 * */
+	@Test
+	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine} from the father", paramsInclude = { "persona,text,index,expectedLine,expectedNumber,fatherClass,fatherIndex" })
+	public void validateExpressionIsBiggerByClassAndFather() throws Exception {
+		
+		
+		Selector father = new Selector().setClassName(fatherClass).setIndex(Integer.valueOf(fatherIndex));
+		
+		String fatherInstance = device.getPersona(persona).getUiObject(father);
+		report.report("The father id : " + fatherInstance);
+		
+		report.report("bout to validate expression is smaller than : " +expectedNumber);
+		String objectId = device.getPersona(persona).getChild(fatherInstance, new Selector().setClassName(text).setIndex(index));
+		
+		String res = device.getPersona(persona).getText(objectId);
+		report.report("The return result : "+res);
+		Pattern pattern = Pattern.compile(expectedLine);
+	    Matcher matcher = pattern.matcher(res);
+
+	    if(matcher.find()) {
+	        	report.report("Find : " + expectedLine + " in : " +res);
+	        	String number = matcher.group(1);
+	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
 	        		report.report("The value is smaller than : "+expectedLine);
 	        	}
 	        	else {
