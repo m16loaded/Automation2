@@ -145,6 +145,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 */
 	public void configureDeviceForAutomation(boolean runServer) throws Exception {
 		
+		report.startLevel("Configure Device For Automation");
+		
 		cli.connect();
 		executeCliCommand("adb root");
 		executeCliCommand("adb shell");
@@ -191,6 +193,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand(String
 				.format("busybox nc -l -p %d > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp &",
 						getCorpPort()));
+	
+		report.stopLevel();
 		cli.disconnect();
 	}
 
