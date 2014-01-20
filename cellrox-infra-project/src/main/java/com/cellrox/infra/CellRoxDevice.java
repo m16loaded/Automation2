@@ -2,6 +2,7 @@ package com.cellrox.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,26 +92,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 	}
 
-	public void printNetworkData(Persona persona) throws Exception {
-
-		
-//		executeCliCommand("adb shell");
-//		if (persona == Persona.PRIV) {
-//			executeCliCommand("cell console priv");
-//		} else {
-//			executeCliCommand("cell console corp");
-//		}
-
-//		report.report(getPersona(persona).excuteCommand(""));//		executeCliCommand("");
-		report.report("netcfg : " + getPersona(persona).excuteCommand("netcfg"));//		executeCliCommand("netcfg");
-		report.report("iptables : " + getPersona(persona).excuteCommand("iptables"));//		executeCliCommand("iptables");
-		report.report("iptables nat : " + getPersona(persona).excuteCommand("iptables nat"));//		executeCliCommand("iptables nat");
-		report.report("ip route : " + getPersona(persona).excuteCommand("ip route"));//		executeCliCommand("ip route");
-		report.report("ifconfig : " + getPersona(persona).excuteCommand("ifconfig"));//		executeCliCommand("ifconfig");
-		report.report("netstat : " + getPersona(persona).excuteCommand("netstat"));//		executeCliCommand("netstat");
-		report.report("ip rule : " + getPersona(persona).excuteCommand("ip rule"));//		executeCliCommand("ip rule");
-		report.report("ip route list table main : " + getPersona(persona).excuteCommand("ip route list table main"));//		executeCliCommand("ip route list table main");
-	}
+	
 
 	public void getDeviceFromAdb() throws Exception {
 		adbController = AdbController.getInstance();
@@ -169,7 +151,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 		}
-		executeCliCommand("busybox nc localhost 9008 < /data/data/noipin_priv > /data/data/noipout_priv &");
+		executeCliCommand("while (true) do busybox nc localhost 9008 < /data/data/noipin_priv > /data/data/noipout_priv;done &");
 		cli.switchToHost();
 		executeCliCommand("adb root");
 		cli.switchToPersona(Persona.CORP);
@@ -182,22 +164,26 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 		}
-		executeCliCommand("busybox nc localhost 9008 < /data/data/noipin_corp > /data/data/noipout_corp &");
+		executeCliCommand("while (true) do busybox nc localhost 9008 < /data/data/noipin_corp > /data/data/noipout_corp;done &");
 		cli.switchToHost();
 		executeCliCommand("adb root");
 		Thread.sleep(200);
 		executeCliCommand(String
-				.format("busybox nc -l -p %d > /data/containers/priv/data/data/noipin_priv < /data/containers/priv/data/data/noipout_priv &",
+				.format("while (true) do busybox nc -l -p %d > /data/containers/priv/data/data/noipin_priv < /data/containers/priv/data/data/noipout_priv;done &",
 						getPrivePort()));
 		Thread.sleep(200);
 		executeCliCommand(String
-				.format("busybox nc -l -p %d > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp &",
+				.format("while (true) do busybox nc -l -p %d > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp;done &",
 						getCorpPort()));
 	
 		report.stopLevel();
 		cli.disconnect();
 	}
 
+	
+	
+
+	
 	public static void main(String[] args) throws Exception {
 		CellRoxDevice cellRoxDevice = new CellRoxDevice();
 		// cellRoxDevice.uploadRom( "mdm-stg.cellrox.com/root",
@@ -490,29 +476,29 @@ public class CellRoxDevice extends SystemObjectImpl {
 		uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
 		uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
 
-		// TODO comments + maybe to change executer?
-//		executor = Executors.newFixedThreadPool(1);
-//		Runnable worker = new Runnable() {
-//
-//			public void run() {
-//				while (isrun) {
-//					try {
-//						for (AutomatorService client : uiClient) {
-//							client.ping();
-//						}
-//						Thread.sleep(500);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//
-//			}
-//		};
-//		executor.execute(worker);
-//		report.report("Keep Alive");
-//		Thread.sleep(2000);
-//		executor.shutdown();
+		/*// TODO comments + maybe to change executer?
+		executor = Executors.newFixedThreadPool(1);
+		Runnable worker = new Runnable() {
+
+			public void run() {
+				while (isrun) {
+					try {
+						for (AutomatorService client : uiClient) {
+							client.count(new Selector());
+						}
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+				}
+
+			}
+		};
+		executor.execute(worker);
+		report.report("Keep Alive");
+		Thread.sleep(2000);
+		executor.shutdown();*/
 
 	}
 
