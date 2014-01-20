@@ -87,19 +87,22 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	public void orConnectivityTest() throws Exception {
 		
-//		device.pushFileToDevice("~/git/automation/uiautomatorServer-19/bin/bundle.jar", "/data/containers/corp/data/local/tmp/");
-//		device.pushFileToDevice("~/git/automation/uiautomatorServer-19/bin/uiautomator-stub.jar", "/data/containers/corp/data/local/tmp/");
+/*		device.pushFileToDevice("~/git/automation/uiautomatorServer-19/bin/bundle.jar", "/tmp/");
+		device.pushFileToDevice("~/git/automation/uiautomatorServer-19/bin/uiautomator-stub.jar", "/tmp/");*/
 		
 		device.configureDeviceForAutomation(true);
 		device.connectToServers();
+		
+		
 
 		System.out.println("##########################");
-		
+//		
 		device.getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
-//		device.clickOnSelectorByUi(new Selector().setText("Settings"), persona.PRIV);
+////		device.clickOnSelectorByUi(new Selector().setText("Settings"), persona.PRIV);
+		sleep(20000);
 		
 		device.getPersona(Persona.PRIV).pressKey("home");
-		
+//		
 	}
 
 	@Test
@@ -352,14 +355,18 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Unlock Device by Swipe on ${persona}", paramsInclude = { "persona" })
 	public void unlockBySwipe() throws Exception {
 
-		ObjInfo oInfo = device.getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
-
-		int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
-		int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-		device.getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
-
-		device.getPersona(persona).pressKey("home");
-
+		try {
+			ObjInfo oInfo = device.getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+	
+			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
+			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
+			device.getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+	
+			device.getPersona(persona).pressKey("home");
+		}
+		catch(Exception e) {
+			report.report("Error in unlocking the device.");
+		}
 	}
 
 	@Test
@@ -398,7 +405,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Wake Up", paramsInclude = {})
 	public void wakeUp() throws Exception {
-		device.getPersona(device.getForegroundPersona()).wakeUp();
+		try {
+			device.getPersona(device.getForegroundPersona()).wakeUp();
+		}
+		catch(Exception e) {
+			report.report("Error in the waking up.");
+		}
 	}
 
 	@Test
@@ -585,9 +597,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		report.report("Runing dns test.");
 
-		// device.configureDeviceForAutomation(true);
-		// device.connectToServers();
-
 		device.getPersona(persona).pressKey("home");
 
 		device.getPersona(persona).openApp("Ping & DNS");
@@ -655,9 +664,17 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Print all the network data from ${persona}", paramsInclude = { "persona" })
 	public void printNetworkData() throws Exception {
-
-		device.printNetworkData(persona);
-
+		report.startLevel("Click Here for Device Net Configurations ("+persona+")");
+		report.report("********netcfg********\n" + device.getPersona(persona).excuteCommand("netcfg"));
+		report.report("********iptables********\n" + device.getPersona(persona).excuteCommand("iptables"));
+		report.report("********iptables nat********\n" + device.getPersona(persona).excuteCommand("iptables nat"));
+		report.report("********ip route********\n" + device.getPersona(persona).excuteCommand("ip route"));
+		report.report("********ifconfig********\n" + device.getPersona(persona).excuteCommand("ifconfig"));
+		report.report("********netstat********\n" + device.getPersona(persona).excuteCommand("netstat"));
+		report.report("********ip rule********\n" + device.getPersona(persona).excuteCommand("ip rule"));
+		report.report("********ip route list table main********\n" + device.getPersona(persona).excuteCommand("ip route list table main"));
+		//TODO add network properties
+		report.stopLevel();
 	}
 
 
@@ -715,7 +732,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine}", paramsInclude = { "persona,text,index,expectedLine,expectedNumber" })
 	public void validateExpressionIsBiggerByClass() throws Exception {
 		
-		report.report("bout to validate expression is smaller than : " +expectedNumber);
+		report.report("about to validate expression is smaller than : " +expectedNumber);
 		String res = device.getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
 		report.report("The return result : "+res);
 		Pattern pattern = Pattern.compile(expectedLine);
@@ -795,10 +812,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "persona,value" })
 	public void enterPassword() throws Exception {
-		for (char c : value.toCharArray()) {
-			device.getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
+		try {
+			for (char c : value.toCharArray()) {
+				device.getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
+			}
+			device.getPersona(persona).click(new Selector().setDescription("Enter"));
 		}
-
+		catch(Exception e) {
+			report.report("There was an error in entering the password.");
+		}
 	}
 
 	@Test
