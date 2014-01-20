@@ -98,10 +98,10 @@
     </target>
     <target name="t9">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="747c4958-b83f-4191-a5fd-45dae8ce66f7"/>
+            <sysproperty key="jsystem.uuid" value="1030a618-226f-4755-9b60-b51dcccae619"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByClassName"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByText"/>
         </jsystem>
     </target>
 </project>
