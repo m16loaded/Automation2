@@ -37,13 +37,45 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setPrompt("# ");
 		prompts.add(p);
 		
+
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("Console opened. Press enter if you don't see a prompt.");
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
+		prompts.add(p);
+		
 		p = new Prompt();
 		p.setAddEnter(true);
 		p.setPrompt("Console opened. Press enter if you don't see a prompt\\.\\s*");
 		p.setRegularExpression(true);
 		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
+		prompts.add(p);
 		
+		p = new Prompt();
 		p.setAddEnter(true);
+		p.setPrompt("Console opened. Press enter if you don't see a prompt.\\s*");
+		p.setRegularExpression(true);
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
+		prompts.add(p);
+		
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("nc: can't connect to remote host (127.0.0.1): Connection refused\\s*");
+		p.setRegularExpression(true);
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));		
+		prompts.add(p);
+		
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("nc: can't connect to remote host (127.0.0.1): Connection refused");
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));		
+		prompts.add(p);
+		
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("opening application");
+		p.setRegularExpression(true);
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));		
 		prompts.add(p);
 
 		p = new Prompt();
