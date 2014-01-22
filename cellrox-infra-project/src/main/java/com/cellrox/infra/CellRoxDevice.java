@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
+import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.system.SystemObjectImpl;
@@ -22,6 +23,7 @@ import jsystem.utils.FileUtils;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
+import org.junit.Test;
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -67,6 +69,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setDeviceSerial(devices[deviceIndex].getSerialNumber());
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		cli = new AdbConnection("127.0.0.1", getUser(), getPassword());
+		cli.setExitTimeout(60*1000);
 		cli.connect();
 
 	}
@@ -86,7 +89,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		String status = device.getProperty("persist.service.syslogs.enable");
 		// if not enabled enable it...
 		if (status == null) {
-			report.report("no persist.service.syslogs.enable", report.WARNING);
+			report.report("no persist.service.syslogs.enable"/*, report.WARNING*/);
 		} else if (status.equals("0")) {
 			device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
 		}
@@ -180,8 +183,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.disconnect();
 	}
 
-	
-	
+//	while (true) do busybox nc -l -p 3435 > /data/containers/priv/data/data/noipin_priv < /data/containers/priv/data/data/noipout_priv;done &
+//	while (true) do busybox nc -l -p 4321 > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp;done &
 
 	
 	public static void main(String[] args) throws Exception {
@@ -465,6 +468,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public void connectToServers() throws Exception {
+		
 		// port forward
 		while (!device.isOnline()) {
 		}
@@ -781,6 +785,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression,
 			Persona persona) throws Exception {
 
+		
 //		cli.connect();
 //		executeCliCommand("adb shell");
 //		if (persona == Persona.PRIV) {
@@ -790,28 +795,66 @@ public class CellRoxDevice extends SystemObjectImpl {
 //		}
 		//executeCliCommand("");
 		//executeCliCommand(cliCommand);
-		String responce = getPersona(persona).excuteCommand(cliCommand);
-		if(isRegularExpression) {
-			
-		    Pattern pattern = Pattern.compile(expression);
-	        Matcher matcher = pattern.matcher(responce);
-
-	        if(matcher.find())
-	        	report.report("Find : " + expression + " in : " +responce);
-	        else
-	        	report.report("Couldnt find : " + expression + " in : " +responce ,Reporter.FAIL);
+		try {
+			report.report(cliCommand);
+			String responce = getPersona(persona).excuteCommand(cliCommand);
+			report.report(responce);
+			if(isRegularExpression) {
+				
+			    Pattern pattern = Pattern.compile(expression);
+		        Matcher matcher = pattern.matcher(responce);
+	
+		        if(matcher.find())
+		        	report.report("Find : " + expression + " in : " +responce);
+		        else
+		        	report.report("Couldnt find : " + expression + " in : " +responce ,Reporter.FAIL);
+			}
+			else {
+				if(!responce.contains(expression)) 
+					report.report("Couldnt find : " + expression + " in : " +responce ,Reporter.FAIL);
+				else 
+					report.report("Find : " + expression + " in : " + responce);
+			}
 		}
-		else {
-			if(!responce.contains(expression)) 
-				report.report("Couldnt find : " + expression + " in : " +responce ,Reporter.FAIL);
-			else 
-				report.report("Find : " + expression + " in : " + responce);
+		catch(Exception e) {
+			report.report("Error : " +e.getMessage(),Reporter.FAIL);
 		}
 		
 //		FindText findText = new FindText(expression, isRegularExpression);
 //		cli.analyze(findText);
 //		cli.switchToHost();
 //		cli.disconnect();
+
+	}
+	
+	public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
+			Persona persona) throws Exception {
+
+		
+		cli.connect();
+		executeCliCommand("adb shell");
+		if (persona == Persona.PRIV) {
+			executeCliCommand("cell console priv");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+		} else {
+			executeCliCommand("cell console corp");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+			executeCliCommand(" ");
+		}
+		executeCliCommand("");
+		executeCliCommand(cliCommand);
+		
+		FindText findText = new FindText(expression, isRegularExpression);
+		cli.analyze(findText);
+		cli.switchToHost();
+		cli.disconnect();
 
 	}
 
@@ -832,6 +875,23 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	}
 
+	public void pushApplicationToPriv(String appFullPath) throws Exception {
+
+		cli.connect();
+		report.report("about to do : adb push " + appFullPath + " /data/containers/priv/data/app/");
+		executeCliCommand("adb push " + appFullPath + " /data/containers/priv/data/app/");
+		cli.disconnect();
+
+	}
+	
+	public void pushApplicationToCorp(String appFullPath) throws Exception {
+
+		cli.connect();
+		report.report("about to do : " + "adb push " + appFullPath + " /data/containers/corp/data/app/");
+		executeCliCommand("adb push " + appFullPath + " /data/containers/corp/data/app/");
+		cli.disconnect();
+
+	}
 	private void executeCliCommand(String Command) throws Exception {
 		executeCliCommand(Command, false);
 		Thread.sleep(500);
@@ -899,8 +959,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	private void stopAllActiveAutomationProecess() {
 		try {
-			String a = device.executeShellCommand("killall busybox");
-			a = device.executeShellCommand("killall uiautomator");
+//			String a = device.executeShellCommand("killall busybox");
+//			device.executeShellCommand("killall uiautomator");
 		} catch (Exception e) {
 			report.report("Error in closing automation processes", report.FAIL);
 		}
