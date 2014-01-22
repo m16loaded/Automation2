@@ -18,7 +18,7 @@ public class Example {
 
 	public static void main(String[] args) throws Exception {
 		try {
-			client = DeviceClient.getUiAutomatorClient("http://localhost:4321");
+			client = DeviceClient.getUiAutomatorClient("http://localhost:9008");
 
 			/*
 			 * ScheduledExecutorService scheduledExecutorService =
@@ -31,27 +31,27 @@ public class Example {
 			 * 500, TimeUnit.MILLISECONDS);
 			 */
 
-			ExecutorService executor = Executors.newFixedThreadPool(1);
-			Runnable worker = new Runnable() {
-
-				public void run() {
-				while (isrun) {
-						client.ping();
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-
-				}
-			};
-			executor.execute(worker);
-			executor.shutdown();
-			isrun = false;
-			while (!executor.isTerminated()) {
-			}
+//			ExecutorService executor = Executors.newFixedThreadPool(1);
+//			Runnable worker = new Runnable() {
+//
+//				public void run() {
+//				while (isrun) {
+//						client.ping();
+//						try {
+//							Thread.sleep(500);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//
+//				}
+//			};
+//			executor.execute(worker);
+//			executor.shutdown();
+//			isrun = false;
+//			while (!executor.isTerminated()) {
+//			}
 
 			// create new selector for app drawer
 			Selector selector = new Selector();
@@ -61,7 +61,9 @@ public class Example {
 			client.click(selector);
 			client.pressKey("home");
 			client.click(selector);
+			System.out.println("about to sleep");
 			Thread.sleep(10000);
+			System.out.println("done sleeping");
 			client.pressKey("home");
 			// press home
 			client.pressKey("home");
