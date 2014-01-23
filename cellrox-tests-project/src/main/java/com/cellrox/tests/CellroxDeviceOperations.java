@@ -67,6 +67,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String expectedValue;
 	private String x, y;
 	private String packageName;
+	private boolean deviceEncrypted = true;
 
 	@Before
 	public void init() throws Exception {
@@ -78,14 +79,17 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	public void orConnectivityTest() throws Exception {
 		
-		device.configureDeviceForAutomation(true);
+//		device.configureDeviceForAutomation(true);
 		device.connectToServers();
 		
 		System.out.println("##########################");
-		device.getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
+		device.getPersona(Persona.CORP).wakeUp();
+		
+		
+/*		device.getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 //		sleep(20000);
 		
-		device.getPersona(Persona.PRIV).pressKey("home");
+		device.getPersona(Persona.PRIV).pressKey("home");*/
 //		
 	}
 
@@ -189,7 +193,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Wait Until Device is Online", paramsInclude = {})
 	public void validateDeviceIsOnline() throws Exception {
-		device.validateDeviceIsOnline(Persona.PRIV, Persona.CORP);
+		device.validateDeviceIsOnline(false, Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
@@ -471,27 +475,29 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Reboot Device", paramsInclude = {})
+	@TestProperties(name = "Reboot Device", paramsInclude = {"deviceEncrypted"})
 	public void rebootDevice() throws Exception {
-		device.rebootDevice(Persona.PRIV, Persona.CORP);
+		device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 	}
-
+	
+	
 	@Test
-	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "timeout" })
+	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "timeout, deviceEncrypted" })
 	public void rebootDeviceTimout() throws Exception {
-		device.rebootDevice(Integer.valueOf(timeout), Persona.PRIV, Persona.CORP);
+		device.rebootDevice(Integer.valueOf(timeout), deviceEncrypted, Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
-	@TestProperties(name = "Reboot Recovery", paramsInclude = { "updateVersion" })
+	@TestProperties(name = "Reboot Recovery", paramsInclude = { "updateVersion, deviceEncrypted" })
 	public void rebootRecovery() throws Exception {
+		updateVersion = true;
 		if (updateVersion) {
 			String version = runProperties.getRunProperty("adb.push.file.location");
 			report.report("New Version File " + version);
 			device.executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
 			device.executeHostShellCommand("echo '--update_package=" + version + "'>> /cache/recovery/command");
 		}
-		device.rebootRecoveryDevice(Persona.PRIV, Persona.CORP);
+		device.rebootRecoveryDevice(deviceEncrypted,Persona.PRIV, Persona.CORP);
 		Thread.sleep(2000);
 	}
 
@@ -866,7 +872,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Factory Data Reset", paramsInclude = { "persona" })
+	@TestProperties(name = "Factory Data Reset", paramsInclude = { "persona,deviceEncrypted" })
 	public void factoryDataReset() throws Exception {
 		// device.getPersona(persona).pressKey("home");
 		device.getPersona(persona).click(new Selector().setText("Settings"));
@@ -882,7 +888,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 		device.getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
-		device.validateDeviceIsOnline(Persona.PRIV, Persona.CORP);
+		device.validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
@@ -1136,7 +1142,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			try {
 				// this function has a timeout in case the device cannot be
 				// restarted
-				device.validateDeviceIsOnline(Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
 				// TODO add crush report
 				report.report("Getting online after Crush", ReportAttribute.BOLD);
 			} catch (Exception e) {
@@ -1580,6 +1586,20 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 */
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
+	}
+
+	/**
+	 * @return the isDeviceEncrypted
+	 */
+	public boolean isDeviceEncrypted() {
+		return deviceEncrypted;
+	}
+
+	/**
+	 * @param isDeviceEncrypted the isDeviceEncrypted to set
+	 */
+	public void setDeviceEncrypted(boolean isDeviceEncrypted) {
+		this.deviceEncrypted = isDeviceEncrypted;
 	}
 
 }

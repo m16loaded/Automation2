@@ -20,6 +20,7 @@ import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.utils.FileUtils;
 
+import org.apache.tools.ant.taskdefs.Sleep;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
@@ -42,6 +43,7 @@ import com.cellrox.infra.log.LogParser;
 public class CellRoxDevice extends SystemObjectImpl {
 
 	// init from the SUT
+	private int encryptPasseord = 1111;
 	private int privePort = 3435;
 	private int corpPort = 4321;
 	private int deviceIndex = 0;
@@ -225,23 +227,25 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *             if adb rejects the command
 	 * @throws IOException
 	 */
-	public void rebootDevice(Persona... personas) throws Exception {
-		rebootDevice(5 * 60 * 1000, personas);
+	public void rebootDevice(boolean isEncrypted, Persona... personas) throws Exception {
+		rebootDevice(5 * 60 * 1000, isEncrypted, personas);
 	}
 
-	public void rebootDevice(int timeout, Persona... personas) throws Exception {
+	public void rebootDevice(int timeout, boolean isEncrypted, Persona... personas) throws Exception {
 		long currentTime = System.currentTimeMillis();
 		try {
 			sync();
 			device.reboot();
 			report.report("reboot command was sent");
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		} catch (Exception e) {
 			// igonore
 		}
-		validateDeviceIsOnline(currentTime, timeout, personas);
+		
+		validateDeviceIsOnline(currentTime, timeout, isEncrypted, personas);
 		setDeviceAsRoot();
 	}
+	
 
 	/**
 	 * Reboot Recovery the device, waits until personas are up
@@ -252,12 +256,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *             if adb rejects the command
 	 * @throws IOException
 	 */
-	public void rebootRecoveryDevice(Persona... personas) throws Exception {
+	public void rebootRecoveryDevice(boolean isEncrypted, Persona... personas) throws Exception {
 		sync();
 		device.executeShellCommand("reboot recovery");
 		report.report("reboot recovery command was sent");
 		Thread.sleep(1000);
-		validateDeviceIsOnline(personas);
+		validateDeviceIsOnline(isEncrypted, personas);
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 	}
 
@@ -271,15 +275,58 @@ public class CellRoxDevice extends SystemObjectImpl {
 		device.executeShellCommand(shellCommand);
 	}
 
-	public void validateDeviceIsOnline(Persona... personas) throws Exception {
-		validateDeviceIsOnline(System.currentTimeMillis(), 5 * 60 * 1000, personas);
+	public void validateDeviceIsOnline(boolean isEncrypted, Persona... personas) throws Exception {
+		validateDeviceIsOnline(System.currentTimeMillis(), 5 * 60 * 1000, isEncrypted, personas);
 	}
 
-	public void validateDeviceIsOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+	public void validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, Persona... personas) throws Exception {
 		vlidateDeviceIsOffline(personas);
 		Thread.sleep(2000);
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
-		validatePersonasAreOnline(beginTime, timeout, personas);
+		if(isEncrypted) {
+			validateEncryptedPersonasAreOnline(beginTime, timeout, personas);
+			Thread.sleep(3000);
+			clickOnEncryptedDeviceAfterReboot();
+			validatePersonasAreOnline(beginTime, timeout, personas);
+		}
+		else {
+			validatePersonasAreOnline(beginTime, timeout, personas);
+		}
+	}
+	
+	/**
+	 * This function insert to the encrypted screen the password "1111" and press enter.
+	 * This connection is made by the adb connection;
+	 * */
+	public void clickOnEncryptedDeviceAfterReboot() throws Exception {
+		cli.connect();
+		Thread.sleep(2000);
+		executeCliCommand("adb root");
+		Thread.sleep(2000);
+		executeCliCommand("adb shell");
+		Thread.sleep(2000);
+		executeCliCommand("cell console corp");
+		Thread.sleep(2000);
+		executeCliCommand("sudo apt-get install yagiuda");
+		executeCliCommand("y");
+		Thread.sleep(2000);
+		executeCliCommand("");
+		executeCliCommand("");
+		executeCliCommand("input keyevent 8");
+		executeCliCommand("");
+		Thread.sleep(1000);
+		executeCliCommand("input keyevent 8");
+		executeCliCommand("");
+		Thread.sleep(1000);
+		executeCliCommand("input keyevent 8");
+		Thread.sleep(1000);
+		executeCliCommand("");
+		executeCliCommand("input keyevent 8");
+		Thread.sleep(1000);
+		executeCliCommand("");
+		executeCliCommand("input keyevent 66");//this is the enter
+		Thread.sleep(1000);
+		cli.disconnect();
 	}
 
 	/**
@@ -352,6 +399,42 @@ public class CellRoxDevice extends SystemObjectImpl {
 				online = true;
 			} else {
 				found = 0;
+			}
+		}
+		report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
+				+ " seconds.");
+		Thread.sleep(7000);
+	}
+	
+	
+	/**
+	 * validate the requested persona(s) are online with cell list command
+	 * 
+	 * @param personas
+	 * @throws Exception
+	 */
+	public void validateEncryptedPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+		boolean online = false;
+		String result = null;
+		int found = 0;
+		while (online != true) {
+
+			if (timeout < System.currentTimeMillis() - beginTime) {
+				report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
+				return;
+			}
+
+			try {
+				result = device.executeShellCommand("cell list state");
+			} catch (AdbControllerException e) {
+				continue;
+			}
+			if (result == null) {
+				continue;
+			}
+			if((result.contains("(2)")) && (result.contains("(3)"))) {
+				online = true;
+				break;
 			}
 		}
 		report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
@@ -1034,6 +1117,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	public void setAfterCrush(boolean afterCrush) {
 		this.afterCrush = afterCrush;
+	}
+
+	public int getEncryptPasseord() {
+		return encryptPasseord;
+	}
+
+	public void setEncryptPasseord(int encryptPasseord) {
+		this.encryptPasseord = encryptPasseord;
 	}
 
 }
