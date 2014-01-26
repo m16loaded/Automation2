@@ -69,6 +69,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String packageName;
 	private boolean deviceEncrypted = true;
 	private String applyUpdateLocation;//, otaFileLocation;
+	private String phoneNumber; 
+	private String messageContent = "Hello from automation.";
 	
 	@Before
 	public void init() throws Exception {
@@ -86,12 +88,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		System.out.println("##########################");
 		device.getPersona(Persona.CORP).wakeUp();
 		
-		
-/*		device.getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
-//		sleep(20000);
-		
-		device.getPersona(Persona.PRIV).pressKey("home");*/
-//		
 	}
 
 	@Test
@@ -182,7 +178,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		device.pushApplicationToPriv(localLocation.getAbsolutePath());
 	}
 	
-	
 	@Test
 	@TestProperties(name = "push ${localLocation} to CORP", paramsInclude = { "localLocation" })
 	public void pushApplicationToCorp() throws Exception {
@@ -193,7 +188,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Configure Device", paramsInclude = {})
 	public void configureDevice() throws Exception {
 		device.configureDeviceForAutomation(true);
-
 	}
 
 	@Test
@@ -207,7 +201,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	public void connectToServers() throws Exception {
 		device.connectToServers();
 	}
-
 	
 	@Test
 	@TestProperties(name = "Click on x,y on ${persona}", paramsInclude = { "x,y,persona" })
@@ -412,7 +405,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			}
 		}
 	}
-	
+
 	
 	@Test
 	@TestProperties(name = "Click on UiObject by Text \"${text}\"and class \"${childClass}\" on ${persona}", paramsInclude = { "childClass,text,selector,persona,waitForNewWindow,index" })
@@ -443,6 +436,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		isPass = device.getPersona(persona).setText(s, value);
 	}
 
+	
 	@Test
 	@TestProperties(name = "Wake Up", paramsInclude = {})
 	public void wakeUp() throws Exception {
@@ -455,7 +449,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 	/**
-	 * This test 
+	 * This test is installing new version with ApplyUpdate.sh
 	 * 
 	 * */
 	@Test
@@ -730,8 +724,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	public void printNetworkData() throws Exception {
 		report.startLevel("Click Here for Device Net Configurations ("+persona+")");
 		report.report("********netcfg********\n" + device.getPersona(persona).excuteCommand("netcfg"));
-//		report.report("********iptables********\n" + device.getPersona(persona).excuteCommand("iptables"));
-//		report.report("********iptables nat********\n" + device.getPersona(persona).excuteCommand("iptables nat"));
 		report.report("********ip route********\n" + device.getPersona(persona).excuteCommand("ip route"));
 		report.report("********netstat********\n" + device.getPersona(persona).excuteCommand("netstat"));
 		report.report("********ip rule********\n" + device.getPersona(persona).excuteCommand("ip rule"));
@@ -1154,9 +1146,137 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 	
+	/**
+	 * This test is making a phone call to the wanted phone number.  
+	 * 
+	 * */
+	@Test
+	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona" })
+	public void callToAnotherPhone() throws Exception {
+		
+		try{
+			report.startLevel("Calling to : "+ phoneNumber);
+			device.getPersona(persona).click(new Selector().setText("Phone"));
+			device.getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
+					.setPackageName("com.android.dialer").setIndex(1));
+			device.getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			//call
+			report.report("Dailing...");
+			device.getPersona(persona).click(new Selector().setDescription("dial"));
+			sleep(11000);
+			//hangup
+			report.report("hangup.");
+			device.getPersona(persona).click(new Selector().setDescription("End"));
+			device.getPersona(persona).pressKey("back");
+		}
+		finally{
+			report.stopLevel();
+		}
+		
+	}
+	
+	/**
+	 * This test is validate the missed call from the wanted number and clear the call log.
+	 * Please insert the number including "-".
+	 * */
+	@Test
+	@TestProperties(name = "Validate missed call from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona" })
+	public void validateMissedCall() throws Exception {
+		
+//		phoneNumber = "052-542-7444";
+	
+		try{
+			report.startLevel("Validate income call from : "+ phoneNumber);
+			device.getPersona(persona).click(new Selector().setText("Phone"));
+			device.getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
+					.setPackageName("com.android.dialer").setIndex(0));
+			
+			device.clickOnSelectorByUi(new Selector().setText("Missed"), persona);
+			
+			if(!device.getPersona(persona).exist(new Selector().setText(phoneNumber))) {
+				report.report("Couldn't find the incoming call from : "+ phoneNumber , Reporter.FAIL);
+			}
+			else {
+				report.report("Find the incoming call from : "+ phoneNumber);
+			}
+	
+			//clear call log
+			String fatherInstance = device.getPersona(persona).getUiObject(new Selector().setClassName("android.view.View").setIndex(0));
+			report.report("The father id : " + fatherInstance);
+			String objectId = device.getPersona(persona).getChild(fatherInstance, new Selector().setClassName("android.widget.ImageButton").setIndex(0));
+			device.getPersona(persona).click(objectId);
+			device.getPersona(persona).click(new Selector().setText("Clear call log"));
+			device.getPersona(persona).click(new Selector().setText("OK"));
+			
+			device.getPersona(persona).pressKey("back");
+			device.getPersona(persona).pressKey("back");
+		
+		}
+		finally{
+			report.stopLevel();
+		}
+		
+	}
 	
 	
+	/**
+	 * The test send sms to the wanted number.
+	 * */
+	@Test
+	@TestProperties(name = "Send sms to : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona,messageContent" })
+	public void sendSms() throws Exception {
+		
+//		phoneNumber = "052-542-7444";
+		try{
+			report.startLevel("Send sms to : "+ phoneNumber);
+			device.getPersona(persona).click(new Selector().setText("Messaging"));
+			device.getPersona(persona).click(new Selector().setDescription("New message"));
+			device.getPersona(persona).setText(new Selector().setText("To"), phoneNumber);
+			device.getPersona(persona).setText(new Selector().setText("Type message"), messageContent);
+			//sending the sms
+			device.getPersona(persona).click(new Selector().setDescription("Send"));
+			device.getPersona(persona).pressKey("back");
+			device.getPersona(persona).pressKey("back");
+			device.getPersona(persona).pressKey("back");
+			
+		}
+		finally{
+			report.stopLevel();
+		}
+	}
 	
+	
+	/**
+	 * The test validate that the sms recived and delete the message.
+	 * Please insert the number including "-".
+	 * */
+	@Test
+	@TestProperties(name = "Validate sms recieved from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona" })
+	public void validateSmsRecieved() throws Exception {
+		
+		try{
+			report.startLevel("Validate recieved sms from : "+ phoneNumber);
+			device.getPersona(persona).click(new Selector().setText("Messaging"));
+			device.clickOnSelectorByUi(new Selector().setTextContains(phoneNumber), persona);
+			
+			if(!device.getPersona(persona).exist(new Selector().setClassName("android.widget.QuickContactBadge").setIndex(0))) {
+				report.report("Couldn't find the recieved sms from : "+ phoneNumber , Reporter.FAIL);
+			}
+			else {
+				report.report("Find the recieved sms from : "+ phoneNumber);
+			}
+			//delete this thread
+			device.getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton").setIndex(2));
+			device.clickOnSelectorByUi(new Selector().setText("Delete thread"), persona);
+			device.getPersona(persona).click(new Selector().setText("Delete"));
+			
+			device.getPersona(persona).pressKey("back");
+			
+		}
+		finally{
+			report.stopLevel();
+		}
+	}
 	
 	
 
@@ -1640,6 +1760,34 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 */
 	public void setApplyUpdateLocation(String applyUpdateLocation) {
 		this.applyUpdateLocation = applyUpdateLocation;
+	}
+
+	/**
+	 * @return the phoneNumber
+	 */
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	/**
+	 * @param phoneNumber the phoneNumber to set
+	 */
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	/**
+	 * @return the messageContent
+	 */
+	public String getMessageContent() {
+		return messageContent;
+	}
+
+	/**
+	 * @param messageContent the messageContent to set
+	 */
+	public void setMessageContent(String messageContent) {
+		this.messageContent = messageContent;
 	}
 
 }
