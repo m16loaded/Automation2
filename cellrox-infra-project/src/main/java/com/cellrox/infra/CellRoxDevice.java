@@ -62,6 +62,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private boolean afterCrush = false;
 	private ExecutorService executor;
 	private boolean isrun = true;
+	//the otaFileLocation is for the jenkins/the local run to know where is the ota file located and what is it name 
+	private String otaFileLocation; 
 
 	public CellRoxDevice() throws Exception {
 		adbController = AdbController.getInstance();
@@ -1154,6 +1156,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	public void setEncryptPasseord(int encryptPasseord) {
 		this.encryptPasseord = encryptPasseord;
+	}
+
+	/**
+	 * @return the otaFileLocation
+	 */
+	public String getOtaFileLocation() {
+		return otaFileLocation;
+	}
+
+	/**
+	 * @param otaFileLocation the otaFileLocation to set
+	 */
+	public void setOtaFileLocation(String otaFileLocation) {
+		this.otaFileLocation = otaFileLocation;
 	}
 
 }

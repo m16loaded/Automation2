@@ -4,6 +4,6 @@
         <privePort>3435</privePort>
         <corpPort>4321</corpPort>
         <deviceAsRootOnInit>true</deviceAsRootOnInit>
-	<otaFileLocation>/home/topq/dev/ota/kitkat-mako-20140122.121349-ota.zip</otaFileLocation>
+	<otaFileLocation>/home/topq/jenkins/workspace/Automation_Nightly/ota/kitkat-mako-20140122.121349-ota.zip</otaFileLocation>
     </device>
 </sut>

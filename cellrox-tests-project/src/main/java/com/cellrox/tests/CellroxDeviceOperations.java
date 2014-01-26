@@ -68,7 +68,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String x, y;
 	private String packageName;
 	private boolean deviceEncrypted = true;
-	private String applyUpdateLocation, otaFileLocation;
+	private String applyUpdateLocation;//, otaFileLocation;
 	
 	@Before
 	public void init() throws Exception {
@@ -459,11 +459,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 
 	 * */
 	@Test
-	@TestProperties(name = "Install New Version On The Device", paramsInclude = {"deviceEncrypted,applyUpdateLocation,otaFileLocation"} )
+	@TestProperties(name = "Install New Version On The Device", paramsInclude = {"deviceEncrypted,applyUpdateLocation"} )
 	public void installNewVersion() throws Exception {
-		String applyUpdateLocation = "/home/topq/dev/ota/ApplyUpdate.sh";
-		String otaFileLocation = "/home/topq/dev/ota/kitkat-mako-20140122.121349-ota.zip";
-		device.runApplayUpdateScript(applyUpdateLocation, otaFileLocation);
+//		String applyUpdateLocation = "/home/topq/dev/ota/ApplyUpdate.sh";
+//		String otaFileLocation = "/home/topq/dev/ota/kitkat-mako-20140122.121349-ota.zip";
+		device.runApplayUpdateScript(applyUpdateLocation, device.getOtaFileLocation());
 		device.validateDeviceIsOnline(System.currentTimeMillis(), 10*60*1000, deviceEncrypted, Persona.PRIV , Persona.CORP);
 	}
 
@@ -1640,20 +1640,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 */
 	public void setApplyUpdateLocation(String applyUpdateLocation) {
 		this.applyUpdateLocation = applyUpdateLocation;
-	}
-
-	/**
-	 * @return the otaFileLocation
-	 */
-	public String getOtaFileLocation() {
-		return otaFileLocation;
-	}
-
-	/**
-	 * @param otaFileLocation the otaFileLocation to set
-	 */
-	public void setOtaFileLocation(String otaFileLocation) {
-		this.otaFileLocation = otaFileLocation;
 	}
 
 }
