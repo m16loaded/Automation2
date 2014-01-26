@@ -307,10 +307,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		Thread.sleep(2000);
 		executeCliCommand("cell console corp");
 		Thread.sleep(2000);
-		executeCliCommand("sudo apt-get install yagiuda");
+		executeCliCommand("");
 		executeCliCommand("y");
 		Thread.sleep(2000);
-		executeCliCommand("");
 		executeCliCommand("");
 		executeCliCommand("input keyevent 8");
 		executeCliCommand("");
@@ -371,8 +370,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param personas
 	 * @throws Exception
 	 */
-	public void validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 		boolean online = false;
+		public void validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 		String result = null;
 		int found = 0;
 		while (online != true) {
@@ -841,16 +840,22 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param isRegularExpression
 	 *            - is this expression is a regular expression
 	 * */
-	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression)
+	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell)
 			throws Exception {
 
 		cli.connect();
-		executeCliCommand("adb shell");
+		if(isShell)
+			executeCliCommand("adb shell");
 		executeCliCommand(cliCommand);
 		FindText findText = new FindText(expression, isRegularExpression);
 		cli.analyze(findText);
 		cli.disconnect();
 
+	}
+	
+	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression)
+			throws Exception {
+		validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true);
 	}
 
 	/**
@@ -1010,7 +1015,30 @@ public class CellRoxDevice extends SystemObjectImpl {
 		String id = getPersona(persona).getUiObject(s);
 		clickOnSelectorByUi(id, persona);
 	}
-
+	
+	
+	
+	/**
+	 * This function runs apply update script
+	 * */
+	public void runApplayUpdateScript(String applyUpdateLocation, String otaFileLocation) throws Exception {
+		
+		cli.connect();
+		cli.setExitTimeout(10*60*1000);
+		executeCliCommand("adb root");
+		executeCliCommand("su -" , false);
+		executeCliCommand("");
+		Thread.sleep(1500);
+//		try {
+			executeCliCommand(applyUpdateLocation  + " " + otaFileLocation);
+//		}
+//		catch(Exception e) {
+//		}
+		Thread.sleep(100*1000);
+		cli.disconnect();
+	}
+	
+	
 	@Deprecated
 	public void reportToLogcat(String TAG, String msg) {
 		device.reportToLogcat(TAG, msg);
@@ -1048,13 +1076,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 			report.report("Error in closing automation processes", report.FAIL);
 		}
 	}
-
+	
+	
 	public void sync() throws Exception {
 		cli.connect();
 		executeCliCommand("sync");
 		cli.disconnect();
 	}
-
+	
 	public int getPrivePort() {
 		return privePort;
 	}

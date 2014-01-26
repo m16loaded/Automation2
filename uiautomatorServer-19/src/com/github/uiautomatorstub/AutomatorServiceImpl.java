@@ -461,7 +461,7 @@ public class AutomatorServiceImpl implements AutomatorService {
 	public boolean pressKey(String key) throws RemoteException {
 		boolean result;
 		key = key.toLowerCase();
-		if ("home".equals(key))
+		if ("home".equals(key)) 
 			result = UiDevice.getInstance().pressHome();
 		else if ("back".equals(key))
 			result = UiDevice.getInstance().pressBack();
@@ -2022,6 +2022,7 @@ public class AutomatorServiceImpl implements AutomatorService {
 	}
 	
 	
+	
 	/**
 	 * returns the system answer after excuting the command
 	 * @param command - the wanted command to exe
@@ -2035,7 +2036,9 @@ public class AutomatorServiceImpl implements AutomatorService {
 			                                new InputStreamReader(p.getInputStream()));  
 			String line = null; 
 			StringBuilder output = new StringBuilder();
+//			p.waitFor();
 			output.append("");
+			
 			while ((line = in.readLine()) != null) {  
 				output.append(line);
 				output.append("\n");
@@ -2043,7 +2046,7 @@ public class AutomatorServiceImpl implements AutomatorService {
 			return output.toString();
 		} catch (Exception e) {  
 				e.printStackTrace();  
-				return "Error";
+				return "Error :" + e.getMessage() ;
 		} 
 		
 		

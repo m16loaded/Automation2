@@ -2,17 +2,9 @@ package org.topq.uiautomator.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.RemoteException;
 
 import org.topq.uiautomator.AutomatorService;
-import org.topq.uiautomator.NotImplementedException;
-import org.topq.uiautomator.ObjInfo;
-import org.topq.uiautomator.Point;
-import org.topq.uiautomator.Selector;
 
-import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.googlecode.jsonrpc4j.JsonRpcError;
-import com.googlecode.jsonrpc4j.JsonRpcErrors;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
 import com.googlecode.jsonrpc4j.ProxyUtil;
 
@@ -24,6 +16,7 @@ public class DeviceClient {
 	private DeviceClient(String serverUrl) throws MalformedURLException {
 		URL serverURL = new URL(serverUrl);
 		JsonRpcHttpClient client = new JsonRpcHttpClient(serverURL);
+		client.setConnectionTimeoutMillis(60 * 60 * 1000);
 		deviceService = ProxyUtil.createClientProxy(
 				getClass().getClassLoader(), AutomatorService.class, client);
 		

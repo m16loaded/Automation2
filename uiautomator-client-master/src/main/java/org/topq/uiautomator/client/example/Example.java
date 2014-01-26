@@ -18,7 +18,11 @@ public class Example {
 
 	public static void main(String[] args) throws Exception {
 		try {
-			client = DeviceClient.getUiAutomatorClient("http://localhost:9008");
+			client = DeviceClient.getUiAutomatorClient("http://localhost:4321");
+			
+			client.wakeUp();
+//			client.setText(new Selector().setClassName("android.widget.EditText"), "1");
+			
 
 			/*
 			 * ScheduledExecutorService scheduledExecutorService =

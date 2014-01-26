@@ -29,8 +29,8 @@ import com.cellrox.infra.object.LogParserExpression;
 public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	CellRoxDevice device;
-	File localLocation;
-	String remotefileLocation;
+	private File localLocation;
+	private String remotefileLocation;
 	Persona persona;
 	Selector selector;
 	private String button;
@@ -68,7 +68,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String x, y;
 	private String packageName;
 	private boolean deviceEncrypted = true;
-
+	private String applyUpdateLocation, otaFileLocation;
+	
 	@Before
 	public void init() throws Exception {
 		device = (CellRoxDevice) system.getSystemObject("device");
@@ -166,7 +167,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "push ${localLocation} to ${remotefileLocation}", paramsInclude = { "localLocation,remotefileLocation" })
 	public void pushToDevice() throws Exception {
+		
+		report.report("About to push file to device");
+		report.report(localLocation.getAbsolutePath());
+		report.report(remotefileLocation);
 		device.pushFileToDevice(localLocation.getAbsolutePath(), remotefileLocation);
+		report.report("Finish to push file to device");
 		runProperties.setRunProperty("adb.push.file.location", remotefileLocation);
 	}
 	
@@ -447,7 +453,21 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			report.report("Error in the waking up.");
 		}
 	}
+	
+	/**
+	 * This test 
+	 * 
+	 * */
+	@Test
+	@TestProperties(name = "Install New Version On The Device", paramsInclude = {"deviceEncrypted,applyUpdateLocation,otaFileLocation"} )
+	public void installNewVersion() throws Exception {
+		String applyUpdateLocation = "/home/topq/dev/ota/ApplyUpdate.sh";
+		String otaFileLocation = "/home/topq/dev/ota/kitkat-mako-20140122.121349-ota.zip";
+		device.runApplayUpdateScript(applyUpdateLocation, otaFileLocation);
+		device.validateDeviceIsOnline(System.currentTimeMillis(), 10*60*1000, deviceEncrypted, Persona.PRIV , Persona.CORP);
+	}
 
+	
 	@Test
 	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "childClassName,childDescription,childIndex,childText,value,persona" })
 	public void enterTextBy() throws Exception {
@@ -987,6 +1007,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "cliCommand,text,regularExpression" })
 	public void validateExpressionCliCommand() throws Exception {
 		device.validateExpressionCliCommand(cliCommand, text, regularExpression);
+	}
+	
+	@Test
+	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "cliCommand,text,regularExpression" })
+	public void validateExpressionCpuCliCommand() throws Exception {
+		device.validateExpressionCliCommand(cliCommand, text, regularExpression, false);
 	}
 
 	/**
@@ -1600,6 +1626,34 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 */
 	public void setDeviceEncrypted(boolean isDeviceEncrypted) {
 		this.deviceEncrypted = isDeviceEncrypted;
+	}
+
+	/**
+	 * @return the applyUpdateLocation
+	 */
+	public String getApplyUpdateLocation() {
+		return applyUpdateLocation;
+	}
+
+	/**
+	 * @param applyUpdateLocation the applyUpdateLocation to set
+	 */
+	public void setApplyUpdateLocation(String applyUpdateLocation) {
+		this.applyUpdateLocation = applyUpdateLocation;
+	}
+
+	/**
+	 * @return the otaFileLocation
+	 */
+	public String getOtaFileLocation() {
+		return otaFileLocation;
+	}
+
+	/**
+	 * @param otaFileLocation the otaFileLocation to set
+	 */
+	public void setOtaFileLocation(String otaFileLocation) {
+		this.otaFileLocation = otaFileLocation;
 	}
 
 }
