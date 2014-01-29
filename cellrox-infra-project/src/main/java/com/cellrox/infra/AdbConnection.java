@@ -12,8 +12,11 @@ import com.cellrox.infra.enums.Persona;
 
 public class AdbConnection extends LinuxDefaultCliConnection{
 
-	public AdbConnection(String host, String user, String pass) {
+	private String deviceSerial; 
+	
+	public AdbConnection(String host, String user, String pass, String deviceSerial) {
 		super(host, user, pass);
+		this.deviceSerial = deviceSerial;
 	}
 	
 	
@@ -25,7 +28,7 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 	public void switchToHost() throws Exception{
 		close();
 		connect();
-		handleCliCommand("Getting Back to Host", new CliCommand("adb shell"));
+		handleCliCommand("Getting Back to Host", new CliCommand("adb -s "+deviceSerial+" shell"));
 		handleCliCommand("validate Host",new CliCommand("getprop | grep role"));
 		analyze(new FindText("[ro.cellrox.role]: [host]"));
 	}
