@@ -19,16 +19,20 @@ import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.cellrox.infra.CellRoxDevice;
+import com.cellrox.infra.CellRoxDeviceManager;
+import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.object.LogParserExpression;
 
+
+
 public class CellroxDeviceOperations extends SystemTestCase4 {
 
-	CellRoxDevice device;
+	CellRoxDeviceManager devicesMannager;
+//	CellRoxDevice device;
 	private File localLocation;
 	private String remotefileLocation;
 	Persona persona;
@@ -51,7 +55,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private long interval;
 	private String timeout = "10000";
 	private boolean isExists;
-	private String sqlQuery;
+//	private String sqlQuery;
 	private Direction dir;
 	private String childClassName;
 	int instance = 0;
@@ -68,31 +72,49 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String x, y;
 	private String packageName;
 	private boolean deviceEncrypted = true;
-	private String applyUpdateLocation;//, otaFileLocation;
+	private String applyUpdateLocation;
 	private String phoneNumber; 
 	private String messageContent = "Hello from automation.";
+	private DeviceNumber currentDevice = DeviceNumber.PRIMARY;
+	
 	
 	@Before
 	public void init() throws Exception {
-		device = (CellRoxDevice) system.getSystemObject("device");
-		// device.configureDeviceForAutomation(true);
-		// device.connectToServers();
+		devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
+		
+		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+		// devicesMannager.getDevice(currentDevice).connectToServers();
 	}
 
 	@Test
 	public void orConnectivityTest() throws Exception {
 		
-//		device.configureDeviceForAutomation(true);
-		device.connectToServers();
+//		devicesMannager.getDevice(DeviceNumber.SECONDARY).configureDeviceForAutomation(true);
+//		devicesMannager.getDevice(DeviceNumber.SECONDARY).connectToServers();
+//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+//		devicesMannager.getDevice(currentDevice).connectToServers();
 		
-		System.out.println("##########################");
-		device.getPersona(Persona.CORP).wakeUp();
+		report.report("##########################");
 		
+//		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
+//		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
+//		devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(Persona.PRIV).pressKey("home");
+//		devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
+		
+
 	}
 
 	@Test
+	@TestProperties(name = "Kill All Automation Processes on ${currentDevice}", paramsInclude = { "currentDevice" })
+	public void killAllAutomationProcesses() throws Exception {
+		devicesMannager.getDevice(currentDevice).killAllAutomaionProcesses();
+	}
+
+	
+	@Test
+	@TestProperties(name = "Is The Device Connected on ${currentDevice}", paramsInclude = { "currentDevice" })
 	public void isTheDeviceConnected() throws Exception {
-		device.isDeviceConnected();
+		devicesMannager.getDevice(currentDevice).isDeviceConnected();
 	}
 
 	/**
@@ -104,7 +126,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * */
 	@Test
 	@TestProperties(name = "click on the child from father ${persona} . father : \"${fatherClass}\",\"${fatherDescription}\",\"${fatherText}\",\"${fatherIndex}\" "
-			+ " , child : \"${childClass}\",\"${childDescription}\",\"${childText}\" ,\"${chilsIndex}\".", paramsInclude = { "persona,fatherClass,fatherDescription,fatherText,fatherIndex,childClass,childDescription,childText,childIndex,waitForNewWindow" })
+			+ " , child : \"${childClass}\",\"${childDescription}\",\"${childText}\" ,\"${chilsIndex}\".", paramsInclude = { "currentDevice,persona,fatherClass,fatherDescription,fatherText,fatherIndex,childClass,childDescription,childText,childIndex,waitForNewWindow" })
 	public void clickChildFromFather() throws UiObjectNotFoundException {
 
 		Selector father = new Selector();
@@ -138,90 +160,94 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			child.setIndex(Integer.valueOf(childIndex));
 		}
 
-		String fatherInstance = device.getPersona(persona).getUiObject(father);
+		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(father);
 		report.report("The father id : " + fatherInstance);
-		String objectId = device.getPersona(persona).getChild(fatherInstance, child);
+		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
 		report.report("The child id : " + objectId);
 
 		if (waitForNewWindow) {
 			report.report("im clicking and waiting");
-			device.getPersona(persona).clickAndWaitForNewWindow(objectId, 10000);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(objectId, 10000);
 		} else {
 			report.report("im clicking");
 			System.out.println(objectId);
-			device.getPersona(persona).click(objectId);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
 		}
 
 	}
 
 	@Test
-	@TestProperties(name = "open application by Text \"${text}\" on ${persona}", paramsInclude = { "text,persona" })
+	@TestProperties(name = "open application by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void openApp() throws UiObjectNotFoundException {
-		device.getPersona(persona).openApp(text);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
 	}
 
 	@Test
-	@TestProperties(name = "push ${localLocation} to ${remotefileLocation}", paramsInclude = { "localLocation,remotefileLocation" })
+	@TestProperties(name = "push ${localLocation} to ${remotefileLocation}", paramsInclude = { "currentDevice,localLocation,remotefileLocation" })
 	public void pushToDevice() throws Exception {
+		
+//		currentDevice = DeviceNumber.PRIMARY;
+//		localLocation = new File("/home/topq/git/automation/uiautomatorServer-19/bin/bundle.jar");
+//		remotefileLocation = "/data/containers/corp/data/local/tmp/bundle.jar";
 		
 		report.report("About to push file to device");
 		report.report(localLocation.getAbsolutePath());
 		report.report(remotefileLocation);
-		device.pushFileToDevice(localLocation.getAbsolutePath(), remotefileLocation);
+		devicesMannager.getDevice(currentDevice).pushFileToDevice(localLocation.getAbsolutePath(), remotefileLocation);
 		report.report("Finish to push file to device");
 		runProperties.setRunProperty("adb.push.file.location", remotefileLocation);
 	}
 	
 	@Test
-	@TestProperties(name = "push ${localLocation} to PRIV", paramsInclude = { "localLocation" })
+	@TestProperties(name = "push ${localLocation} to PRIV", paramsInclude = { "currentDevice,localLocation" })
 	public void pushApplicationToPriv() throws Exception {
-		device.pushApplicationToPriv(localLocation.getAbsolutePath());
+		devicesMannager.getDevice(currentDevice).pushApplicationToPriv(localLocation.getAbsolutePath());
 	}
 	
 	@Test
-	@TestProperties(name = "push ${localLocation} to CORP", paramsInclude = { "localLocation" })
+	@TestProperties(name = "push ${localLocation} to CORP", paramsInclude = { "currentDevice,localLocation" })
 	public void pushApplicationToCorp() throws Exception {
-		device.pushApplicationToCorp(localLocation.getAbsolutePath());
+		devicesMannager.getDevice(currentDevice).pushApplicationToCorp(localLocation.getAbsolutePath());
 	}
 
 	@Test
-	@TestProperties(name = "Configure Device", paramsInclude = {})
+	@TestProperties(name = "Configure Device", paramsInclude = {"currentDevice"})
 	public void configureDevice() throws Exception {
-		device.configureDeviceForAutomation(true);
+		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 	}
 
 	@Test
-	@TestProperties(name = "Wait Until Device is Online", paramsInclude = {})
+	@TestProperties(name = "Wait Until Device is Online", paramsInclude = {"currentDevice"})
 	public void validateDeviceIsOnline() throws Exception {
-		device.validateDeviceIsOnline(false, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
-	@TestProperties(name = "Connect to Servers", paramsInclude = {})
+	@TestProperties(name = "Connect to Servers", paramsInclude = {"currentDevice"})
 	public void connectToServers() throws Exception {
-		device.connectToServers();
+		devicesMannager.getDevice(currentDevice).connectToServers();
 	}
 	
 	@Test
-	@TestProperties(name = "Click on x,y on ${persona}", paramsInclude = { "x,y,persona" })
+	@TestProperties(name = "Click on x,y on ${persona}", paramsInclude = { "currentDevice,x,y,persona" })
 	public void clickByCordinate() {
-		device.getPersona(persona).click(Integer.valueOf(x), Integer.valueOf(y));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(Integer.valueOf(x), Integer.valueOf(y));
 	}
 	
 	@Test
-	@TestProperties(name = "Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "text,selector,persona,waitForNewWindow,exceptionThrower" })
+	@TestProperties(name = "Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,selector,persona,waitForNewWindow,exceptionThrower" })
 	public void clickByText() throws Exception {
 		Selector s = new Selector();
 		s.setText(text);
 		try {
 			if (waitForNewWindow) {
-				device.getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
 			} else {
-				device.getPersona(persona).click(s);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
 			}
 		} catch (Exception e) {
 			if (exceptionThrower) {
-				report.report("Could not find UiObject " + e.getMessage(), report.FAIL);
+				report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 			} else {
 				report.report("Could not find UiObject " + e.getMessage());
 			}
@@ -229,49 +255,49 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Click on UiObject by Text Contains \"${text}\" on ${persona}", paramsInclude = { "text,selector,persona,waitForNewWindow" })
+	@TestProperties(name = "Click on UiObject by Text Contains \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,selector,persona,waitForNewWindow" })
 	public void clickByTextContains() throws Exception {
 		Selector s = new Selector();
 		s.setTextContains(text);
 		try {
 			if (waitForNewWindow) {
-				device.getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
 			} else {
-				device.getPersona(persona).click(s);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
 			}
 		} catch (Exception e) {
-			report.report("Could not find UiObject " + e.getMessage(), report.FAIL);
+			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 		}
 	}
 
 	@Test
-	@TestProperties(name = "Scroll and Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "text,persona" })
+	@TestProperties(name = "Scroll and Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void scrollAndClick() throws Exception {
 		Selector s = new Selector();
 		s.setText(text);
 		try {
-			String objectId = device.getPersona(persona).childByText(new Selector().setScrollable(true),
+			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 					new Selector().setText(text), text, true);
-			device.getPersona(persona).click(objectId);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
 		} catch (Exception e) {
-			report.report("Could not find UiObject " + e.getMessage(), report.FAIL);
+			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 		}
 	}
 
 	@Test
-	@TestProperties(name = "Click on UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "text,persona,waitForNewWindow,exceptionThrower" })
+	@TestProperties(name = "Click on UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,waitForNewWindow,exceptionThrower" })
 	public void clickByDesc() throws Exception {
 		Selector s = new Selector();
 		s.setDescription(text);
 		try {
 			if (waitForNewWindow) {
-				device.getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
 			} else {
-				device.getPersona(persona).click(s);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
 			}
 		} catch (Exception e) {
 			if (exceptionThrower) {
-				report.report("Could not find UiObject " + e.getMessage(), report.FAIL);
+				report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 			} else {
 				report.report("Could not find UiObject " + e.getMessage());
 			}
@@ -279,41 +305,41 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Wait for UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "text,persona" })
+	@TestProperties(name = "Wait for UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void waitByDesc() throws Exception {
 		Selector s = new Selector();
 		s.setDescription(text);
 		try {
-			device.getPersona(persona).waitForExists(new Selector().setDescription(text), 10000);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription(text), 10000);
 		} catch (Exception e) {
-			report.report("Could not find UiObject " + e.getMessage(), report.FAIL);
+			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 		}
 	}
 
 	@Test
-	@TestProperties(name = "Get Full Text of Text Contains \"${text}\" on ${persona}", paramsInclude = { "text,persona" })
+	@TestProperties(name = "Get Full Text of Text Contains \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void getTextByTextContains() throws Exception {
-		String msg = device.getPersona(persona).getText(new Selector().setTextContains(text));
+		String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
 		report.report(msg);
 	}
 
 	@Test
-	@TestProperties(name = "Get Full Text of UiObject \"${text}/${childClassName}\" index ${instance}", paramsInclude = { "text,persona,childClassName,instance,index" })
+	@TestProperties(name = "Get Full Text of UiObject \"${text}/${childClassName}\" index ${instance}", paramsInclude = { "currentDevice,text,persona,childClassName,instance,index" })
 	public void getTextTextViewFather() throws Exception {
 
-		String object = device.getPersona(persona).childByInstance(new Selector().setClassName(text).setIndex(index),
+		String object = devicesMannager.getDevice(currentDevice).getPersona(persona).childByInstance(new Selector().setClassName(text).setIndex(index),
 				new Selector().setClassName(childClassName), instance);
-		String msg = device.getPersona(persona).getText(object);
+		String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(object);
 		report.report(msg);
 	}
 
 	@Test
-	@TestProperties(name = "Wait for UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "text,persona,timeout,interval" })
+	@TestProperties(name = "Wait for UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,timeout,interval" })
 	public void waitByTextContains() throws Exception {
 		final long start = System.currentTimeMillis();
-		while (!device.getPersona(persona).exist(new Selector().setTextContains(text))) {
+		while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setTextContains(text))) {
 			if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
-				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000+ " sec.", report.FAIL);
+				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000+ " sec.", Reporter.FAIL);
 				break;
 			}
 			Thread.sleep(interval);
@@ -321,12 +347,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Wait for UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "text,persona,timeout,interval" })
+	@TestProperties(name = "Wait for UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,timeout,interval" })
 	public void waitByText() throws Exception {
 		final long start = System.currentTimeMillis();
-		while (!device.getPersona(persona).exist(new Selector().setText(text))) {
+		while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText(text))) {
 			if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
-				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000+ " sec.", report.FAIL);
+				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000+ " sec.", Reporter.FAIL);
 				break;
 			}
 			Thread.sleep(interval);
@@ -335,13 +361,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 	
 	@Test
-	@TestProperties(name = "Wait for UiObject by Class \"${text}\" on ${persona}", paramsInclude = { "text,persona,timeout,interval,index,packageName" })
+	@TestProperties(name = "Wait for UiObject by Class \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,timeout,interval,index,packageName" })
 	public void waitByClass() throws Exception {
 		final long start = System.currentTimeMillis();
-		while (!device.getPersona(persona).exist(new Selector().setClassName(text).setIndex(index).setPackageName(packageName))) {
+		while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setClassName(text).setIndex(index).setPackageName(packageName))) {
 			if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
 				report.report("Could not find UiObject with text " + text + " after " + Integer.valueOf(timeout) / 1000
-						+ " sec.", report.FAIL);
+						+ " sec.", Reporter.FAIL);
 				break;
 			}
 			Thread.sleep(interval);
@@ -349,10 +375,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Validate Property \"${propertyName}\" equels \"${expectedValue}\"", paramsInclude = { "persona,propertyName,expectedValue" })
+	@TestProperties(name = "Validate Property \"${propertyName}\" equels \"${expectedValue}\"", paramsInclude = { "currentDevice,persona,propertyName,expectedValue" })
 	public void validateProperty() throws Exception {
 
-		String actualProperty = device.getPersona(persona).getProp(propertyName);
+		String actualProperty = devicesMannager.getDevice(currentDevice).getPersona(persona).getProp(propertyName);
 		CompareValues compareValues = new CompareValues(expectedValue);
 		analyzer.setTestAgainstObject(actualProperty);
 		analyzer.analyze(compareValues);
@@ -365,17 +391,17 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * @throws Exception
 	 */
 	@Test
-	@TestProperties(name = "Unlock Device by Swipe on ${persona}", paramsInclude = { "persona" })
+	@TestProperties(name = "Unlock Device by Swipe on ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void unlockBySwipe() throws Exception {
 
 		try {
-			ObjInfo oInfo = device.getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+			ObjInfo oInfo = devicesMannager.getDevice(currentDevice).getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
 	
 			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
 			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-			device.getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
 	
-			device.getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		}
 		catch(Exception e) {
 			report.report("Error in unlocking the device.");
@@ -383,23 +409,23 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = " Swipe by Class Name on ${persona}", paramsInclude = { "persona,dir,text" })
+	@TestProperties(name = " Swipe by Class Name on ${persona}", paramsInclude = { "currentDevice,persona,dir,text" })
 	public void swipeByClassName() throws Exception {
-		device.getPersona(persona).swipe(new Selector().setClassName(text), dir.getDir(), 20);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName(text), dir.getDir(), 20);
 	}
 
 	@Test
-	@TestProperties(name = "Click on UiObject by ClassName \"${text}\" on ${persona}", paramsInclude = { "text,selector,persona,waitForNewWindow,index" })
+	@TestProperties(name = "Click on UiObject by ClassName \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,selector,persona,waitForNewWindow,index" })
 	public void clickByClassName() throws Exception {
 		Selector s = new Selector();
 		s.setClassName(text);
 		s.setIndex(index);
 		s.setClickable(true);
 		if (waitForNewWindow) {
-			isPass = device.getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+			isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
 		} else {
 			try {
-				isPass = device.getPersona(persona).click(s);
+				isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
 			} catch (Exception e) {
 				report.report("baaa");
 			}
@@ -408,7 +434,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	
 	@Test
-	@TestProperties(name = "Click on UiObject by Text \"${text}\"and class \"${childClass}\" on ${persona}", paramsInclude = { "childClass,text,selector,persona,waitForNewWindow,index" })
+	@TestProperties(name = "Click on UiObject by Text \"${text}\"and class \"${childClass}\" on ${persona}", paramsInclude = { "currentDevice,childClass,text,selector,persona,waitForNewWindow,index" })
 	public void clickByClassNameAndText() throws Exception {
 		Selector s = new Selector();
 		s.setText(text);
@@ -416,10 +442,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		s.setIndex(index);
 		s.setClickable(true);
 		if (waitForNewWindow) {
-			isPass = device.getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+			isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
 		} else {
 			try {
-				isPass = device.getPersona(persona).click(s);
+				isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
 			} catch (Exception e) {
 				report.report("baaa");
 			}
@@ -428,20 +454,20 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Class Name \"${text}\" on ${persona}", paramsInclude = { "text,value,persona,index" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Class Name \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,value,persona,index" })
 	public void enterTextByClassName() throws Exception {
 		Selector s = new Selector();
 		s.setClassName(text);
 		s.setIndex(index);
-		isPass = device.getPersona(persona).setText(s, value);
+		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
 	
 	@Test
-	@TestProperties(name = "Wake Up", paramsInclude = {})
+	@TestProperties(name = "Wake Up", paramsInclude = {"currentDevice"})
 	public void wakeUp() throws Exception {
 		try {
-			device.getPersona(device.getForegroundPersona()).wakeUp();
+			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
 		}
 		catch(Exception e) {
 			report.report("Error in the waking up.");
@@ -453,17 +479,18 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 
 	 * */
 	@Test
-	@TestProperties(name = "Install New Version On The Device", paramsInclude = {"deviceEncrypted,applyUpdateLocation"} )
+	@TestProperties(name = "Install New Version On The Device on ${currentDevice}", paramsInclude = {"deviceEncrypted,applyUpdateLocation,currentDevice"} )
 	public void installNewVersion() throws Exception {
 //		String applyUpdateLocation = "/home/topq/dev/ota/ApplyUpdate.sh";
 //		String otaFileLocation = "/home/topq/dev/ota/kitkat-mako-20140122.121349-ota.zip";
-		device.runApplayUpdateScript(applyUpdateLocation, device.getOtaFileLocation());
-		device.validateDeviceIsOnline(System.currentTimeMillis(), 10*60*1000, deviceEncrypted, Persona.PRIV , Persona.CORP);
+		report.report("Installing new version on the device : " + devicesMannager.getDevice(currentDevice).getDeviceSerial());
+		devicesMannager.getDevice(currentDevice).runApplayUpdateScript(applyUpdateLocation, devicesMannager.getDevice(currentDevice).getOtaFileLocation());
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(System.currentTimeMillis(), 10*60*1000, deviceEncrypted, Persona.PRIV , Persona.CORP);
 	}
 
 	
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "childClassName,childDescription,childIndex,childText,value,persona" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "currentDevice,childClassName,childDescription,childIndex,childText,value,persona" })
 	public void enterTextBy() throws Exception {
 
 		Selector s = new Selector();
@@ -477,76 +504,75 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		if (childDescription != null)
 			s.setDescription(childDescription);
 
-		isPass = device.getPersona(persona).setText(s, value);
+		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "text,value,persona" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,value,persona" })
 	public void enterTextByText() throws Exception {
 		Selector s = new Selector();
 		s.setText(text);
-		isPass = device.getPersona(persona).setText(s, value);
+		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
 	@Test
 	@TestProperties(name = "Reboot Device", paramsInclude = {"deviceEncrypted"})
 	public void rebootDevice() throws Exception {
-		device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 	}
 	
 	
 	@Test
-	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "timeout, deviceEncrypted" })
+	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "currentDevice,timeout, deviceEncrypted" })
 	public void rebootDeviceTimout() throws Exception {
-		device.rebootDevice(Integer.valueOf(timeout), deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(Integer.valueOf(timeout), deviceEncrypted, Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
-	@TestProperties(name = "Reboot Recovery", paramsInclude = { "updateVersion, deviceEncrypted" })
+	@TestProperties(name = "Reboot Recovery", paramsInclude = { "currentDevice,updateVersion, deviceEncrypted" })
 	public void rebootRecovery() throws Exception {
-		updateVersion = true;
+		
 		if (updateVersion) {
 			String version = runProperties.getRunProperty("adb.push.file.location");
 			report.report("New Version File " + version);
-			device.executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
-			device.executeHostShellCommand("echo '--update_package=" + version + "'>> /cache/recovery/command");
+			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
+			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /cache/recovery/command");
 		}
-		device.rebootRecoveryDevice(deviceEncrypted,Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted,Persona.PRIV, Persona.CORP);
 		Thread.sleep(2000);
 	}
 
 	@Test
-	@TestProperties(name = "Press on Button ${button} on ${persona}", paramsInclude = { "button,persona" })
+	@TestProperties(name = "Press on Button ${button} on ${persona}", paramsInclude = { "currentDevice,button,persona" })
 	public void pressBtn() throws Exception {
 		try {
-			device.getPersona(persona).pressKey(button);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey(button);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
 
 	@Test
-	@TestProperties(name = "Switch Persona to ${persona}", paramsInclude = { "persona" })
+	@TestProperties(name = "Switch Persona to ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void switchPersona() throws Exception {
-		Persona current = device.getForegroundPersona();
+		Persona current = devicesMannager.getDevice(currentDevice).getForegroundPersona();
 		if (current == persona) {
 			report.report("Persona " + persona + " is Already in the Foreground");
 		} else {
-			device.getPersona(current).click(5, 5);
-			current = device.getForegroundPersona();
+			devicesMannager.getDevice(currentDevice).getPersona(current).click(5, 5);
+			current = devicesMannager.getDevice(currentDevice).getForegroundPersona();
 			if (current == persona) {
 				report.report("Switch to " + persona);
 			} else {
-				report.report("Could not Switch to " + persona, report.FAIL);
+				report.report("Could not Switch to " + persona, Reporter.FAIL);
 			}
 		}
 	}
-
 	@Test
-	@TestProperties(name = "Click Text \"${text}\" , Class \"${text}\"  By Ui Location on ${persona}", paramsInclude = { "persona,text,childClassName" })
+	@TestProperties(name = "Click Text \"${text}\" , Class \"${text}\"  By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,text,childClassName" })
 	public void clickTextAndClassByUiLocation() throws Exception {
 		
-		device.clickOnSelectorByUi(new Selector().setText(text).setClassName(childClassName), persona);
+		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText(text).setClassName(childClassName), persona);
 	}
 	
 	
@@ -556,51 +582,51 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * @param wifiNetwoek
 	 * */
 	@Test
-	@TestProperties(name = "Switch network \"${wifiNetwork}\" connection ${onOff} on ${persona}", paramsInclude = { "persona,onOff,wifiNetwork,wifiPassword" })
+	@TestProperties(name = "Switch network \"${wifiNetwork}\" connection ${onOff} on ${persona}", paramsInclude = { "currentDevice,persona,onOff,wifiNetwork,wifiPassword" })
 	public void switchTheNetworkConnection() throws Exception {
 		
 		report.report("About to switch the the net work connectivity to : " + onOff + " on : "+ wifiNetwork);
-		device.getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		
-		device.getPersona(persona).openApp("Settings");
-//		device.getPersona(persona).waitForExists(new Selector().setText("WIRELESS & NETWORKS"), 10000);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("WIRELESS & NETWORKS"), 10000);
 
-		String id = device.getPersona(persona).childByInstance(new Selector().setScrollable(true),
+		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByInstance(new Selector().setScrollable(true),
 				new Selector().setClassName("android.widget.LinearLayout"), 1);
-		device.clickOnSelectorByUi(id, persona);
+		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
 
-		id = device.getPersona(persona).childByText(new Selector().setScrollable(true),
+		id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setClassName("android.widget.LinearLayout"), wifiNetwork, true);
 		//if the WiFi is disconnected it takes time to find the requested network
-		device.getPersona(persona).waitForExists(id, 20000);
-		device.clickOnSelectorByUi(id, persona);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(id, 20000);
+		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
 
 		try {
 			if (onOff == State.OFF) {
-				device.getPersona(persona).click(new Selector().setText("Forget"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Forget"));
 			} else {
 				try {
-					device.getPersona(persona).setText(
+					devicesMannager.getDevice(currentDevice).getPersona(persona).setText(
 							new Selector().setClassName("android.widget.EditText").setIndex(1), wifiPassword);
-					device.getPersona(persona).pressKey("back");
-					device.getPersona(persona).click(new Selector().setText("Connect"));
+					devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+					devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Connect"));
 				} catch (Exception e) {
-					device.getPersona(persona).click(new Selector().setText("Connect"));
+					devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Connect"));
 				}
 			}
 		} catch (Exception e) {
 			// the phone is in the correct condition
-			device.getPersona(persona).click(new Selector().setText("Cancel"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Cancel"));
 		}
-		device.getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		//sleep to get the system properties to update
 		sleep(3000);
 	}
 
 	@Test
-	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "persona,text" })
+	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "currentDevice,persona,text" })
 	public void setText() throws UiObjectNotFoundException {
-		device.getPersona(persona).setText(
+		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(
 				new Selector().setClassName("android.widget.EditText"), text);
 	}
 	
@@ -608,7 +634,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * This test is switching the wifi to the wanted condition
 	 * */
 	@Test
-	@TestProperties(name = "Switch the wifi : ${onOff} Text on ${persona}", paramsInclude = { "persona,onOff" })
+	@TestProperties(name = "Switch the wifi : ${onOff} Text on ${persona}", paramsInclude = { "currentDevice,persona,onOff" })
 	public void switchTheWiFi() throws Exception {
 
 		report.report("About to switch the the Wi-Fi to : " + onOff);
@@ -618,23 +644,23 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		else
 			onOff = State.ON;
 		
-		device.getPersona(persona).pressKey("home");
-		device.getPersona(persona).openApp("Settings");
-//		device.getPersona(persona).waitForExists(new Selector().setDescription("WIRELESS & NETWORKS"), 10000);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription("WIRELESS & NETWORKS"), 10000);
 
-		String fatherInstance = device.getPersona(persona).getUiObject(
+		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(
 				new Selector().setClassName("android.widget.LinearLayout").setIndex(1));
 
 		try {
-			String objectId = device.getPersona(persona).getChild(fatherInstance,
+			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance,
 					new Selector().setText(onOff.getValue()));
-			device.getPersona(persona).click(objectId);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
 		} catch (Exception e) {
 			// in this case we are on the correct condition of the wifi
 			// connection
 		}
 
-		device.getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 
 	}
 
@@ -645,7 +671,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * will pass 6. Press home
 	 * */
 	@Test
-	@TestProperties(name = "Ping Dns to : \"${text}\" Text on ${persona}", paramsInclude = { "persona,text,timeout" })
+	@TestProperties(name = "Ping Dns to : \"${text}\" Text on ${persona}", paramsInclude = { "currentDevice,persona,text,timeout" })
 	public void pingDnsTest() throws Exception {
 
 		final int numberOfTries = 3;
@@ -656,12 +682,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		report.report("Runing dns test.");
 
-		device.getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 
-		device.getPersona(persona).openApp("Ping & DNS");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Ping & DNS");
 
 		try {
-			device.getPersona(persona).click(new Selector().setText("OK"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
 		} catch (Exception e) {
 		}
 
@@ -669,13 +695,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		for (int i = 0; i < numberOfTries; i++) {
 
 			s = new Selector().setClassName("android.widget.EditText").setIndex(0);
-			device.getPersona(persona).setText(s, text);
-			device.getPersona(persona).click(s);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, text);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
 
-			device.getPersona(persona).click(new Selector().setText("Go"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Go"));
 			final long start = System.currentTimeMillis();
 
-			ObjInfo[] objInfoArray = device.getPersona(persona).objInfoOfAllInstances(
+			ObjInfo[] objInfoArray = devicesMannager.getDevice(currentDevice).getPersona(persona).objInfoOfAllInstances(
 					new Selector().setClassName("android.widget.TextView").setIndex(0)
 							.setPackageName("com.ulfdittmer.android.ping"));
 			textFromTheRun = objInfoArray[2].getText();
@@ -686,7 +712,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 							/ 1000 + " sec.");
 				}
 				Thread.sleep(interval);
-				objInfoArray = device.getPersona(persona).objInfoOfAllInstances(
+				objInfoArray = devicesMannager.getDevice(currentDevice).getPersona(persona).objInfoOfAllInstances(
 						new Selector().setClassName("android.widget.TextView").setIndex(0)
 								.setPackageName("com.ulfdittmer.android.ping"));
 				textFromTheRun = objInfoArray[2].getText();
@@ -702,13 +728,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 				report.report("Ping Dns number " + i + " failed.");
 				report.report(textFromTheRun, Reporter.WARNING);
 			}
-			device.getPersona(persona).click(
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(
 					new Selector().setClassName("android.widget.ImageButton").setIndex(0)
 							.setPackageName("com.ulfdittmer.android.ping"));
 		}
 
 		if (passTheTest) {
-			device.getPersona(persona).click(
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(
 					new Selector().setClassName("android.widget.ImageButton").setIndex(0)
 							.setPackageName("com.ulfdittmer.android.ping"));
 			report.report("Passed the ping & dns test.");
@@ -716,34 +742,34 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			report.report("Couldn't pass after " + numberOfTries + " tries.", Reporter.FAIL);
 		}
 
-		device.getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 	}
 
 	@Test
-	@TestProperties(name = "Print all the network data from ${persona}", paramsInclude = { "persona" })
+	@TestProperties(name = "Print all the network data from ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void printNetworkData() throws Exception {
 		report.startLevel("Click Here for Device Net Configurations ("+persona+")");
-		report.report("********netcfg********\n" + device.getPersona(persona).excuteCommand("netcfg"));
-		report.report("********ip route********\n" + device.getPersona(persona).excuteCommand("ip route"));
-		report.report("********netstat********\n" + device.getPersona(persona).excuteCommand("netstat"));
-		report.report("********ip rule********\n" + device.getPersona(persona).excuteCommand("ip rule"));
-		report.report("********ip route list table main********\n" + device.getPersona(persona).excuteCommand("ip route list table main"));
-		report.report("********properties********\n" +", net.mobile : " + device.getPersona(persona).getProp("net.mobile")
-				+", net.wifi : "+ device.getPersona(persona).getProp("net.wifi") + ", network.wifi : " + device.getPersona(persona).getProp("network.wifi"));
+		report.report("********netcfg********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("netcfg"));
+		report.report("********ip route********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip route"));
+		report.report("********netstat********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("netstat"));
+		report.report("********ip rule********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip rule"));
+		report.report("********ip route list table main********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip route list table main"));
+		report.report("********properties********\n" +", net.mobile : " + devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("net.mobile")
+				+", net.wifi : "+ devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("net.wifi") + ", network.wifi : " + devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("network.wifi"));
 		report.stopLevel();
 	}
 
 
 	@Test
-	@TestProperties(name = "Swipe Down Notification Bar on ${persona}", paramsInclude = { "persona" })
+	@TestProperties(name = "Swipe Down Notification Bar on ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void openNotificationBar() throws Exception {
-		device.getPersona(persona).openNotification();
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openNotification();
 	}
 
 	@Test
-	@TestProperties(name = "Validate UiObject with Description \"${text}\" Exists", paramsInclude = { "persona,text" })
+	@TestProperties(name = "Validate UiObject with Description \"${text}\" Exists", paramsInclude = { "currentDevice,persona,text" })
 	public void validateUiExistsByDesc() throws Exception {
-		isExists = device.getPersona(persona).exist(new Selector().setDescription(text));
+		isExists = devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription(text));
 		runProperties.setRunProperty("isExists", String.valueOf(isExists));
 	}
 	
@@ -754,11 +780,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is smaller with Class \"${text}\" than ${expectedLine}", paramsInclude = { "persona,text,index,expectedLine,expectedNumber" })
+	@TestProperties(name = "Validate Expression is smaller with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber" })
 	public void validateExpressionIsSmallerByClass() throws Exception {
 		
 		report.report("bout to validate expression is smaller than : " +expectedNumber);
-		String res = device.getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
+		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
 		report.report("The return result : "+res);
 		Pattern pattern = Pattern.compile(expectedLine);
 	    Matcher matcher = pattern.matcher(res);
@@ -785,11 +811,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine}", paramsInclude = { "persona,text,index,expectedLine,expectedNumber" })
+	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber" })
 	public void validateExpressionIsBiggerByClass() throws Exception {
 		
 		report.report("about to validate expression is smaller than : " +expectedNumber);
-		String res = device.getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
+		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
 		report.report("The return result : "+res);
 		Pattern pattern = Pattern.compile(expectedLine);
 	    Matcher matcher = pattern.matcher(res);
@@ -815,19 +841,19 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine} from the father", paramsInclude = { "persona,text,index,expectedLine,expectedNumber,fatherClass,fatherIndex" })
+	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine} from the father", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,fatherClass,fatherIndex" })
 	public void validateExpressionIsBiggerByClassAndFather() throws Exception {
 		
 		
 		Selector father = new Selector().setClassName(fatherClass).setIndex(Integer.valueOf(fatherIndex));
 		
-		String fatherInstance = device.getPersona(persona).getUiObject(father);
+		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(father);
 		report.report("The father id : " + fatherInstance);
 		
 		report.report("bout to validate expression is smaller than : " +expectedNumber);
-		String objectId = device.getPersona(persona).getChild(fatherInstance, new Selector().setClassName(text).setIndex(index));
+		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, new Selector().setClassName(text).setIndex(index));
 		
-		String res = device.getPersona(persona).getText(objectId);
+		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(objectId);
 		report.report("The return result : "+res);
 		Pattern pattern = Pattern.compile(expectedLine);
 	    Matcher matcher = pattern.matcher(res);
@@ -848,35 +874,35 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 
 	@Test
-	@TestProperties(name = "Start Logs of Test", paramsInclude = {})
+	@TestProperties(name = "Start Logs of Test", paramsInclude = {"currentDevice"})
 	public void startLogging() throws Exception {
-		device.initLogs();
+		devicesMannager.getDevice(currentDevice).initLogs();
 	}
 
 	@Test
-	@TestProperties(name = "sleep", paramsInclude = { "timeout" })
+	@TestProperties(name = "sleep", paramsInclude = { "currentDevice,timeout" })
 	public void sleep() throws Exception {
 		sleep(Integer.valueOf(timeout));
 	}
 
 	@Test
-	@TestProperties(name = "Set Device as Root", paramsInclude = {})
+	@TestProperties(name = "Set Device as Root", paramsInclude = {"currentDevice"})
 	public void setDeviceAsRoot() throws Exception {
-		device.setDeviceAsRoot();
+		devicesMannager.getDevice(currentDevice).setDeviceAsRoot();
 	}
 
 	@Test
-	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "persona,value" })
+	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "currentDevice,persona,value" })
 	public void enterPassword() throws Exception {
 		try {
-			device.getPersona(device.getForegroundPersona()).wakeUp();
+			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
 		}
 		catch(Exception e) {/*do nothing*/}
 		try {
 			for (char c : value.toCharArray()) {
-				device.getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
 			}
-			device.getPersona(persona).click(new Selector().setDescription("Enter"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
 		}
 		catch(Exception e) {
 			report.report("There was an error in entering the password.");
@@ -884,65 +910,65 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	@Test
-	@TestProperties(name = "Factory Data Reset", paramsInclude = { "persona,deviceEncrypted" })
+	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
 	public void factoryDataReset() throws Exception {
-		// device.getPersona(persona).pressKey("home");
-		device.getPersona(persona).click(new Selector().setText("Settings"));
-		String id = device.getPersona(persona).childByText(new Selector().setScrollable(true),
+		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Settings"));
+		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setText("Backup & reset"), "Backup & reset", true);
-		device.getPersona(persona).click(id);
-		device.getPersona(persona).click(new Selector().setText("Factory data reset"));
-		device.getPersona(persona).click(new Selector().setText("Reset phone"));
-		boolean pin = device.getPersona(persona).exist(new Selector().setText("Confirm your PIN"));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(id);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Factory data reset"));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset phone"));
+		boolean pin = devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Confirm your PIN"));
 		if (pin) {
-			device.getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), "1111");
-			device.getPersona(persona).click(new Selector().setText("Next"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), "1111");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Next"));
 		}
-		device.getPersona(persona).click(new Selector().setText("Erase everything"));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
-		device.validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
-	@TestProperties(name = "Rom Update Using Tucki", paramsInclude = { "serverHost,serverUrl,imgFile,version,adminToken,deviceId" })
+	@TestProperties(name = "Rom Update Using Tucki", paramsInclude = { "currentDevice,serverHost,serverUrl,imgFile,version,adminToken,deviceId" })
 	public void romUpdateWithTucki() throws Exception {
 		// get MD5 of the file
-		String md5 = device.md5sum(imgFile.getAbsolutePath());
+		String md5 = devicesMannager.getDevice(currentDevice).md5sum(imgFile.getAbsolutePath());
 		// get file size
 		String fileSize = "" + imgFile.length();
 		report.report("Take a sit , this will take a while (about 12-15 min.)");
 		// upload rom
-		String result = device.uploadRomOldServer(serverHost, imgFile.getAbsolutePath(), version, adminToken, md5);
+		String result = devicesMannager.getDevice(currentDevice).uploadRomOldServer(serverHost, imgFile.getAbsolutePath(), version, adminToken, md5);
 		// send the remote update command
-		String command = device.remoteUpdateOldServer(result, serverUrl, deviceId, md5, fileSize, version, adminToken);
+		String command = devicesMannager.getDevice(currentDevice).remoteUpdateOldServer(result, serverUrl, deviceId, md5, fileSize, version, adminToken);
 		runProperties.setRunProperty("download.command", command);
 	}
 
 	@Test
-	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "expectedLine,timeout,interval" })
+	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
 	public void waitforLineInLogcat() throws Exception {
-		device.waitForLineInTomcat(expectedLine, Integer.valueOf(timeout), interval);
+		devicesMannager.getDevice(currentDevice).waitForLineInTomcat(expectedLine, Integer.valueOf(timeout), interval);
 	}
 
 	@Test
-	@TestProperties(name = "delete file ${remotefileLocation} from Device", paramsInclude = { "remotefileLocation" })
+	@TestProperties(name = "delete file ${remotefileLocation} from Device", paramsInclude = { "currentDevice,remotefileLocation" })
 	public void deleteFile() throws Exception {
-		device.deleteFile(remotefileLocation);
+		devicesMannager.getDevice(currentDevice).deleteFile(remotefileLocation);
 	}
 
 	@Test
-	@TestProperties(name = "Clean Device DB after Mock Tucki", paramsInclude = {})
+	@TestProperties(name = "Clean Device DB after Mock Tucki", paramsInclude = {"currentDevice"})
 	public void cleanDBfromTucki() throws Exception {
 		String command = runProperties.getRunProperty("download.command");
 		if (command == null) {
-			// report.report("Cannot find download command",report.FAIL);
+			// report.report("Cannot find download command",Reporter.FAIL);
 			throw new AnalyzerException();
 		}
 		String sqlQuueryString = "update tasks set synced=0,result='done' where payload='" + command + "';";
 		report.report("SQL String = " + sqlQuueryString);
-		device.sendSqlQuery(sqlQuueryString);
-		device.executeHostShellCommand("agent_cli -s");
-		device.sendSqlQuery("select * from tasks where payload='" + command + "';");
+		devicesMannager.getDevice(currentDevice).sendSqlQuery(sqlQuueryString);
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("agent_cli -s");
+		devicesMannager.getDevice(currentDevice).sendSqlQuery("select * from tasks where payload='" + command + "';");
 
 	}
 
@@ -959,10 +985,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * @throws Exception
 	 */
 	@Test
-	@TestProperties(name = "Stop and Validate Logs of Test", paramsInclude = { "expression" })
+	@TestProperties(name = "Stop and Validate Logs of Test", paramsInclude = { "currentDevice,expression" })
 	public void stopLogAndValidate() throws Exception {
 		LogParser logParser = new LogParser(expression);
-		device.getLogs(logParser);
+		devicesMannager.getDevice(currentDevice).getLogs(logParser);
 	}
 
 	/**
@@ -978,10 +1004,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * @throws Exception
 	 */
 	@Test
-	@TestProperties(name = "Stop and Validate Syslogs", paramsInclude = { "expression" })
+	@TestProperties(name = "Stop and Validate Syslogs", paramsInclude = { "currentDevice,expression" })
 	public void stopSysLogAndValidate() throws Exception {
 		LogParser logParser = new LogParser(expression);
-		device.getLogsOfRun(logParser);
+		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
 	}
 
 	/**
@@ -996,15 +1022,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 *            - is this expression is a regular expression
 	 * */
 	@Test
-	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "cliCommand,text,regularExpression" })
+	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "currentDevice,cliCommand,text,regularExpression" })
 	public void validateExpressionCliCommand() throws Exception {
-		device.validateExpressionCliCommand(cliCommand, text, regularExpression);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression);
 	}
 	
 	@Test
-	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "cliCommand,text,regularExpression" })
+	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "currentDevice,cliCommand,text,regularExpression" })
 	public void validateExpressionCpuCliCommand() throws Exception {
-		device.validateExpressionCliCommand(cliCommand, text, regularExpression, false);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, false);
 	}
 
 	/**
@@ -1019,21 +1045,21 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 *            - is this expression is a regular expression
 	 * */
 	@Test
-	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "cliCommand,text,regularExpression,persona" })
+	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona" })
 	public void validateExpressionCliCommandPersona() throws Exception {
-		device.validateExpressionCliCommand(cliCommand, text, regularExpression, persona);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, persona);
 	}
 	
 	@Test
-	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "cliCommand,text,regularExpression,persona" })
+	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona" })
 	public void validateExpressionCliCommandCellPersona() throws Exception {
-		device.validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona);
 	}
 
 	@Test
-	@TestProperties(name = "download the application: \"${appFullPath}\"", paramsInclude = { "appFullPath" })
+	@TestProperties(name = "download the application: \"${appFullPath}\"", paramsInclude = { "currentDevice,appFullPath" })
 	public void pushApplication() throws Exception {
-		device.pushApplicationToDevice(appFullPath);
+		devicesMannager.getDevice(currentDevice).pushApplicationToDevice(appFullPath);
 	}
 	
 	/**
@@ -1043,39 +1069,39 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * appName - the name for the search
 	 * */
 	@Test
-	@TestProperties(name = "install the application: \"${text}\" from google Store, on persona : ${persona}", paramsInclude = { "appName,text,persona" })
+	@TestProperties(name = "install the application: \"${text}\" from google Store, on persona : ${persona}", paramsInclude = { "currentDevice,appName,text,persona" })
 	public void installApplication() throws Exception {
 		
 		try {
 		
 			report.startLevel("Install the application: " +text);
-			device.getPersona(persona).pressKey("home");
-			device.getPersona(persona).openApp("Play Store");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Play Store");
 			long start = System.currentTimeMillis();
-			while (!device.getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
 				if (System.currentTimeMillis() - start > Integer.valueOf(10 * 1000)) {
 					report.report("Could not find UiObject with text EDITORS' CHOICE after " + Integer.valueOf(10 * 1000) / 1000
-							+ " sec.", report.WARNING);
+							+ " sec.", Reporter.WARNING);
 					break;
 				}
 				Thread.sleep(1500);
 			}
-			device.getPersona(persona).click(new Selector().setDescription("Search Google Play"));
-			device.getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
-			device.getPersona(persona).pressKey("enter");
-			device.getPersona(persona).click(new Selector().setTextContains(text));
-			device.getPersona(persona).click(new Selector().setText("INSTALL"));
-			device.getPersona(persona).click(new Selector().setText("ACCEPT"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
 					
 			start = System.currentTimeMillis();
-			while (!device.getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
 				if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
-					report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", report.FAIL);
+					report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", Reporter.FAIL);
 					break;
 				}
 				Thread.sleep(1500);
 			}
-			device.getPersona(persona).click(new Selector().setText("OPEN"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OPEN"));
 		}
 		catch(Exception e) {
 			report.report("Error" + e.getMessage(),Reporter.FAIL);
@@ -1094,49 +1120,49 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * appName - the name for the search
 	 * */
 	@Test
-	@TestProperties(name = "uninstall the application: \"${text}\" from google Store, on persona : ${persona}", paramsInclude = { "appName,text,persona" })
+	@TestProperties(name = "uninstall the application: \"${text}\" from google Store, on persona : ${persona}", paramsInclude = { "currentDevice,appName,text,persona" })
 	public void uninstallApplication() throws Exception {		
 		try {
 			report.startLevel("Uninstall the application: " +text);
-			device.getPersona(persona).pressKey("home");
-			device.getPersona(persona).openApp("Play Store");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("home");
-			device.getPersona(persona).openApp("Play Store");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Play Store");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Play Store");
 			long start = System.currentTimeMillis();
-			while (!device.getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
 				if (System.currentTimeMillis() - start > Integer.valueOf(10 * 1000)) {
 					report.report("Could not find UiObject with text EDITORS' CHOICE after " + Integer.valueOf(10 * 1000) / 1000
-							+ " sec.", report.WARNING);
+							+ " sec.", Reporter.WARNING);
 					break;
 				}
 				Thread.sleep(1500);
 			}
-			device.getPersona(persona).click(new Selector().setDescription("Search Google Play"));
-			device.getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 			
-			device.getPersona(persona).pressKey("enter");
-			device.getPersona(persona).click(new Selector().setTextContains(text));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
 			
-			device.getPersona(persona).click(new Selector().setText("UNINSTALL"));
-			device.getPersona(persona).click(new Selector().setText("OK"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("UNINSTALL"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
 					
 			start = System.currentTimeMillis();
-			while (!device.getPersona(persona).exist(new Selector().setText("INSTALL"))) {
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("INSTALL"))) {
 				if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
-					report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", report.FAIL);
+					report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", Reporter.FAIL);
 					break;
 				}
 				Thread.sleep(1500);
 			}
 			
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		}
 		catch(Exception e) {
 			report.report("Error" + e.getMessage(),Reporter.FAIL);
@@ -1151,23 +1177,23 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 
 	 * */
 	@Test
-	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona" })
+	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona}", paramsInclude = { "currentDevice,phoneNumber,persona" })
 	public void callToAnotherPhone() throws Exception {
 		
 		try{
 			report.startLevel("Calling to : "+ phoneNumber);
-			device.getPersona(persona).click(new Selector().setText("Phone"));
-			device.getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Phone"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
 					.setPackageName("com.android.dialer").setIndex(1));
-			device.getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
 			//call
 			report.report("Dailing...");
-			device.getPersona(persona).click(new Selector().setDescription("dial"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial"));
 			sleep(11000);
 			//hangup
 			report.report("hangup.");
-			device.getPersona(persona).click(new Selector().setDescription("End"));
-			device.getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 		}
 		finally{
 			report.stopLevel();
@@ -1180,20 +1206,19 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * Please insert the number including "-".
 	 * */
 	@Test
-	@TestProperties(name = "Validate missed call from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona" })
+	@TestProperties(name = "Validate missed call from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "currentDevice,phoneNumber,persona" })
 	public void validateMissedCall() throws Exception {
 		
 //		phoneNumber = "052-542-7444";
-	
 		try{
 			report.startLevel("Validate income call from : "+ phoneNumber);
-			device.getPersona(persona).click(new Selector().setText("Phone"));
-			device.getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Phone"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
 					.setPackageName("com.android.dialer").setIndex(0));
 			
-			device.clickOnSelectorByUi(new Selector().setText("Missed"), persona);
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText("Missed"), persona);
 			
-			if(!device.getPersona(persona).exist(new Selector().setText(phoneNumber))) {
+			if(!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText(phoneNumber))) {
 				report.report("Couldn't find the incoming call from : "+ phoneNumber , Reporter.FAIL);
 			}
 			else {
@@ -1201,15 +1226,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			}
 	
 			//clear call log
-			String fatherInstance = device.getPersona(persona).getUiObject(new Selector().setClassName("android.view.View").setIndex(0));
+			String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(new Selector().setClassName("android.view.View").setIndex(0));
 			report.report("The father id : " + fatherInstance);
-			String objectId = device.getPersona(persona).getChild(fatherInstance, new Selector().setClassName("android.widget.ImageButton").setIndex(0));
-			device.getPersona(persona).click(objectId);
-			device.getPersona(persona).click(new Selector().setText("Clear call log"));
-			device.getPersona(persona).click(new Selector().setText("OK"));
+			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, new Selector().setClassName("android.widget.ImageButton").setIndex(0));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Clear call log"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
 			
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 		
 		}
 		finally{
@@ -1223,22 +1248,20 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * The test send sms to the wanted number.
 	 * */
 	@Test
-	@TestProperties(name = "Send sms to : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona,messageContent" })
+	@TestProperties(name = "Send sms to : \"${phoneNumber}\" : ${persona}", paramsInclude = { "currentDevice,phoneNumber,persona,messageContent" })
 	public void sendSms() throws Exception {
 		
-//		phoneNumber = "052-542-7444";
 		try{
 			report.startLevel("Send sms to : "+ phoneNumber);
-			device.getPersona(persona).click(new Selector().setText("Messaging"));
-			device.getPersona(persona).click(new Selector().setDescription("New message"));
-			device.getPersona(persona).setText(new Selector().setText("To"), phoneNumber);
-			device.getPersona(persona).setText(new Selector().setText("Type message"), messageContent);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Messaging"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("New message"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("To"), phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Type message"), messageContent);
 			//sending the sms
-			device.getPersona(persona).click(new Selector().setDescription("Send"));
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			device.getPersona(persona).pressKey("back");
-			
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Send"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 		}
 		finally{
 			report.stopLevel();
@@ -1251,26 +1274,26 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * Please insert the number including "-".
 	 * */
 	@Test
-	@TestProperties(name = "Validate sms recieved from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "phoneNumber,persona" })
+	@TestProperties(name = "Validate sms recieved from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "currentDevice,phoneNumber,persona" })
 	public void validateSmsRecieved() throws Exception {
 		
 		try{
 			report.startLevel("Validate recieved sms from : "+ phoneNumber);
-			device.getPersona(persona).click(new Selector().setText("Messaging"));
-			device.clickOnSelectorByUi(new Selector().setTextContains(phoneNumber), persona);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Messaging"));
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setTextContains(phoneNumber), persona);
 			
-			if(!device.getPersona(persona).exist(new Selector().setClassName("android.widget.QuickContactBadge").setIndex(0))) {
+			if(!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setClassName("android.widget.QuickContactBadge").setIndex(0))) {
 				report.report("Couldn't find the recieved sms from : "+ phoneNumber , Reporter.FAIL);
 			}
 			else {
 				report.report("Find the recieved sms from : "+ phoneNumber);
 			}
 			//delete this thread
-			device.getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton").setIndex(2));
-			device.clickOnSelectorByUi(new Selector().setText("Delete thread"), persona);
-			device.getPersona(persona).click(new Selector().setText("Delete"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton").setIndex(2));
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText("Delete thread"), persona);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Delete"));
 			
-			device.getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 			
 		}
 		finally{
@@ -1281,32 +1304,32 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 
 	private void validateDeviceStatus() throws Exception {
-		boolean isOnline = device.isOnline();
-		boolean personasUp = device.isPersonasAreOnline(Persona.PRIV, Persona.CORP);
+		boolean isOnline = devicesMannager.getDevice(currentDevice).isOnline();
+		boolean personasUp = devicesMannager.getDevice(currentDevice).isPersonasAreOnline(Persona.PRIV, Persona.CORP);
 		// validate the device is online and ready
 		if (!isOnline) {
 			try {
 				// this function has a timeout in case the device cannot be
 				// restarted
-				device.validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
+				devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
 				// TODO add crush report
 				report.report("Getting online after Crush", ReportAttribute.BOLD);
 			} catch (Exception e) {
-				report.report("Could not restart after reboot ", report.FAIL);
+				report.report("Could not restart after reboot ", Reporter.FAIL);
 			}
 		} else {
 			// validate both personas are up, if not, wait get the run logs and
 			// reboot the device (from host)
 			if (!personasUp) {
 				// TODO add expressions
-				// device.rebootDevice(Persona.PRIV, Persona.CORP);
+				// devicesMannager.getDevice(currentDevice).rebootDevice(Persona.PRIV, Persona.CORP);
 				// LogParserExpression ex = new LogParserExpression();
 				// ex.setColor(Color.RED);
 				// ex.setExpression("CRUSH");
 				// ex.setNiceName("CRUSH");
 				// expression = new LogParserExpression[] { ex };
 				// LogParser logParser = new LogParser(expression);
-				// device.getLogsOfRun(logParser);
+				// devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
 				report.report("Perona Crush was detected!", ReportAttribute.BOLD);
 
 			}
@@ -1788,6 +1811,14 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 */
 	public void setMessageContent(String messageContent) {
 		this.messageContent = messageContent;
+	}
+
+	public DeviceNumber getCurrentDevice() {
+		return currentDevice;
+	}
+
+	public void setCurrentDevice(DeviceNumber currentDevice) {
+		this.currentDevice = currentDevice;
 	}
 
 }
