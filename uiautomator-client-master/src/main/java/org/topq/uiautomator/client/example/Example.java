@@ -2,8 +2,6 @@ package org.topq.uiautomator.client.example;
 
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.Selector;

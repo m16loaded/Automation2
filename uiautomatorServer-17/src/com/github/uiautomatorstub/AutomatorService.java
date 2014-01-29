@@ -2,10 +2,9 @@ package com.github.uiautomatorstub;
 
 import android.os.RemoteException;
 
-import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.googlecode.jsonrpc4j.JsonRpcErrors;
 import com.googlecode.jsonrpc4j.JsonRpcError;
+import com.googlecode.jsonrpc4j.JsonRpcErrors;
 
 public interface AutomatorService {
 	

@@ -3,7 +3,6 @@ package com.github.uiautomatorstub;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;

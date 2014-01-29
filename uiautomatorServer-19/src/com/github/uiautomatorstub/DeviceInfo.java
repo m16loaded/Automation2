@@ -1,7 +1,5 @@
 package com.github.uiautomatorstub;
 
-import android.os.RemoteException;
-
 import com.android.uiautomator.core.UiDevice;
 
 public class DeviceInfo {

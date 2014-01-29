@@ -2,7 +2,6 @@ package org.topq.uiautomator;
 
 import java.rmi.RemoteException;
 
-import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.googlecode.jsonrpc4j.JsonRpcError;
 import com.googlecode.jsonrpc4j.JsonRpcErrors;

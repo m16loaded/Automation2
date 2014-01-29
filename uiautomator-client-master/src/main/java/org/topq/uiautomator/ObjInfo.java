@@ -3,7 +3,6 @@ package org.topq.uiautomator;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class ObjInfo {
 
