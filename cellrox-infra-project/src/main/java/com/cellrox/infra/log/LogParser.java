@@ -2,14 +2,14 @@ package com.cellrox.infra.log;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-
-import com.cellrox.infra.object.LogParserExpression;
 
 import jsystem.extensions.analyzers.text.CountText;
+import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.scenario.SystemObjectOperation;
 import jsystem.utils.FileUtils;
+
+import com.cellrox.infra.object.LogParserExpression;
 
 public class LogParser extends SystemObjectOperation {
 
@@ -35,7 +35,7 @@ public class LogParser extends SystemObjectOperation {
 							+ "</font></b>");
 					report.report(
 							"found error " + expression.getNiceName() + " in "
-									+ logFile.getName(), report.FAIL);
+									+ logFile.getName(), Reporter.FAIL);
 				}
 			}
 			// print log
