@@ -81,6 +81,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Before
 	public void init() throws Exception {
 		devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
+		devicesMannager.getDevice(DeviceNumber.PRIMARY).printKmsg();
 		
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		// devicesMannager.getDevice(currentDevice).connectToServers();
@@ -1339,6 +1340,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	@After
 	public void tearDown() throws Exception {
+		devicesMannager.getDevice(DeviceNumber.PRIMARY).printKmsg();
 		if (!isPass()) {
 			validateDeviceStatus();
 		}

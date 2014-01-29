@@ -60,6 +60,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         private boolean isrun = true;
         //the otaFileLocation is for the jenkins/the local run to know where is the ota file located and what is it name
         private String otaFileLocation;
+        private long defaultCliTimeout = 90000;
 
         
         public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber) throws Exception {
@@ -120,6 +121,30 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
         	cli.disconnect();
         }
+        
+        
+        /**
+         *	print out the kmesg 
+         * @throws IOException 
+         * */
+        public void printKmsg() throws IOException{
+        	
+        	try {
+        		report.startLevel("click here for kmsg logger");
+        		cli.connect();
+        		//this is a wanted exception!
+        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/kmsg" , true , 120 * 1000 , true);
+        	
+        		cli.disconnect();
+        	} catch (Exception e) { }
+        	finally {
+        		report.report(cli.getTestAgainstObject().toString());
+        		report.stopLevel();
+        	}
+        	
+        }
+        
+        
         
         /**
          * This function kills all the automation running processes:
@@ -1064,13 +1089,20 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
 
         private void executeCliCommand(String Command, boolean silent) throws Exception {
+        	executeCliCommand(Command, silent , defaultCliTimeout);
+        }
+        private void executeCliCommand(String Command, boolean silent, long timeout) throws Exception {
+        	executeCliCommand(Command, silent , defaultCliTimeout, false);
+        }
+        
+        private void executeCliCommand(String Command, boolean silent, long timeout, boolean ignoreErrors) throws Exception {
 
                 CliCommand cmd = new CliCommand(Command);
                 cmd.setSilent(silent);
                 cmd.setAddEnter(true);
-                cmd.setTimeout(90*1000);
+                cmd.setTimeout(timeout);
+                cmd.setIgnoreErrors(ignoreErrors);
                 cli.handleCliCommand(Command, cmd);
-
                 // savePID();
         }
 
