@@ -12,12 +12,12 @@ import org.jsystemtest.mobile.core.ConnectionException;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.InstallException;
-import com.android.ddmlib.Log;
 
 public class USBDevice extends AbstractAndroidDevice {
 
 	private final static Logger logger = Logger.getLogger(USBDevice.class);
-
+//	private String deviceSerial;
+	
 	public USBDevice(AndroidDebugBridge adb, IDevice device) throws Exception {
 		super(adb, device);
 	}
@@ -94,5 +94,19 @@ public class USBDevice extends AbstractAndroidDevice {
 			// Don't care
 		}
 	}
+
+//	/**
+//	 * @return the deviceSerial
+//	 */
+//	public String getDeviceSerial() {
+//		return deviceSerial;
+//	}
+//
+//	/**
+//	 * @param deviceSerial the deviceSerial to set
+//	 */
+//	public void setDeviceSerial(String deviceSerial) {
+//		this.deviceSerial = deviceSerial;
+//	}
 
 }
