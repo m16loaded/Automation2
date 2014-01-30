@@ -34,8 +34,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     	//to add to the summary properties
     	
     	getDevice(DeviceNumber.PRIMARY).addToTheSummarySystemProp();
-    	
-    	getDevice(DeviceNumber.PRIMARY).printKmsg();
+//    	getDevice(DeviceNumber.PRIMARY).printKmsg();
     	
     	
     }
@@ -47,11 +46,11 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     }
     
     
-    public void close(){
-			try {
-				getDevice(DeviceNumber.PRIMARY).printKmsg();
-			} catch (IOException e) { }
-    }
+//    public void close(){
+//			try {
+//				getDevice(DeviceNumber.PRIMARY).printKmsg();
+//			} catch (IOException e) { }
+//    }
     
     
     
