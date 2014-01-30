@@ -40,6 +40,9 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     }
     
 
+    public CellRoxDevice[] getCellroxDevicesList() {
+    	return cellroxDevicesList;
+    }
     
     public CellRoxDevice getDevice(DeviceNumber devNum) {
     	return cellroxDevicesList[devNum.ordinal()];

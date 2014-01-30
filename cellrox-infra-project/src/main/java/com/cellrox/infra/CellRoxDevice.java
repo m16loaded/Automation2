@@ -61,6 +61,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         //the otaFileLocation is for the jenkins/the local run to know where is the ota file located and what is it name
         private String otaFileLocation;
         private long defaultCliTimeout = 90000;
+        private long upTime;
 
         
         public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber) throws Exception {
@@ -87,10 +88,44 @@ public class CellRoxDevice extends SystemObjectImpl {
             } else if (status.equals("0")) {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
+            upTime = getCurrentUpTime();
         	
         	
         }
         
+        
+        
+        public long getCurrentUpTime() throws Exception {
+        	String upTime = "";
+        	cli.connect();
+        	executeCliCommand("adb -s "+ deviceSerial +" shell");
+        	executeCliCommand("uptime");
+        	upTime = cli.getTestAgainstObject().toString().replace("uptime", "").replace("shell@mako:/ $", "").replace("root@mako:/ #", "").trim();
+        	
+        	
+        	String upTimeTry = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
+        	if (upTimeTry.contains("days")) {
+        		upTime = upTime.split(",")[1].replace("up time: ", "").trim().replace(":", "");
+        	}
+        	else {
+        		upTime = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
+        	}
+        	
+//        	Pattern pattern = Pattern.compile(expectedLine);
+//    	    Matcher matcher = pattern.matcher(cli.getTestAgainstObject().toString());
+//
+//    	    if(matcher.find()) {
+//    	        	report.report("Find : " + expectedLine + " in : " +res);
+//    	        	String number = matcher.group(1);
+        	
+        	
+        	
+        	
+        	
+        	cli.disconnect();
+        	
+        	return Long.parseLong(upTime);
+        }
         /**
          * @throws Exception 
          * 
@@ -103,21 +138,21 @@ public class CellRoxDevice extends SystemObjectImpl {
         	executeCliCommand("getprop | fgrep ro.build.version.sdk");
         	String propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
         	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty(propToParse.split(":")[0], propToParse.split(":")[1]);
+        	Summary.getInstance().setProperty("Build sdk version", propToParse.split(":")[1]);
         	executeCliCommand("getprop | fgrep ro.build.display.id");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
         	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty(propToParse.split(":")[0], propToParse.split(":")[1]);
+        	Summary.getInstance().setProperty("Build display id", propToParse.split(":")[1]);
         	executeCliCommand("getprop | fgrep ro.build.date]");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
         	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty(propToParse.split(":")[0], propToParse.split(":")[1]);
+        	Summary.getInstance().setProperty("Build date", propToParse.split(":")[1]);
         	
         	cli.disconnect();
         }
@@ -127,13 +162,13 @@ public class CellRoxDevice extends SystemObjectImpl {
          *	print out the kmesg 
          * @throws IOException 
          * */
-        public void printKmsg() throws IOException{
+        public void printLastKmsg() throws IOException{
         	
         	try {
         		report.startLevel("click here for kmsg logger");
         		cli.connect();
         		//this is a wanted exception!
-        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/kmsg" , true , 120 * 1000 , true);
+        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 210 * 1000 , true);
         	
         		cli.disconnect();
         	} catch (Exception e) { }
@@ -348,6 +383,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 
                 validateDeviceIsOnline(currentTime, timeout, isEncrypted, personas);
                 setDeviceAsRoot();
+                upTime = getCurrentUpTime();
         }
         
 
@@ -366,7 +402,8 @@ public class CellRoxDevice extends SystemObjectImpl {
                 report.report("reboot recovery command was sent");
                 Thread.sleep(1000);
                 validateDeviceIsOnline(isEncrypted, personas);
-//                device = adbController.waitForDeviceToConnect(getDeviceSerial());
+//              device = adbController.waitForDeviceToConnect(getDeviceSerial());
+                upTime = getCurrentUpTime();
         }
 
         /**
@@ -1127,6 +1164,35 @@ public class CellRoxDevice extends SystemObjectImpl {
                 clickOnSelectorByUi(id, persona);
         }
         
+    	public void switchPersona(Persona persona) throws Exception {
+    		Persona current = getForegroundPersona();
+    		if (current == persona) {
+    			report.report("Persona " + persona + " is Already in the Foreground");
+    		} else {
+    			getPersona(current).click(5, 5);
+    			current = getForegroundPersona();
+    			if (current == persona) {
+    				report.report("Switch to " + persona);
+    			} else {
+    				report.report("Could not Switch to " + persona, Reporter.FAIL);
+    			}
+    		}
+    	}
+    	
+    	public void unlockBySwipe(Persona persona) throws Exception {
+    		try {
+    			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+    	
+    			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
+    			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
+    			getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+    	
+    			getPersona(persona).pressKey("home");
+    		}
+    		catch(Exception e) {
+    			report.report("Error in unlocking the device.");
+    		}
+    	}
         
         
         /**
@@ -1280,5 +1346,19 @@ public class CellRoxDevice extends SystemObjectImpl {
         public void setOtaFileLocation(String otaFileLocation) {
                 this.otaFileLocation = otaFileLocation;
         }
+
+		/**
+		 * @return the upTime
+		 */
+		public long getUpTime() {
+			return upTime;
+		}
+
+		/**
+		 * @param upTime the upTime to set
+		 */
+		public void setUpTime(long upTime) {
+			this.upTime = upTime;
+		}
 
 }
