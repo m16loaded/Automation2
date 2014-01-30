@@ -13,8 +13,8 @@ import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
 import jsystem.framework.report.Reporter;
-import jsystem.framework.report.Summary;
 import jsystem.framework.report.Reporter.ReportAttribute;
+import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.utils.FileUtils;
 

@@ -1,7 +1,5 @@
 package com.cellrox.infra;
 
-import java.io.IOException;
-
 import jsystem.framework.system.SystemObjectImpl;
 
 import org.jsystemtest.mobile.core.AdbController;

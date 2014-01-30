@@ -1,7 +1,6 @@
 package com.cellrox.tests;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,23 +8,22 @@ import jsystem.extensions.analyzers.compare.CompareValues;
 import jsystem.framework.TestProperties;
 import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.report.Reporter;
-import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.scenario.UseProvider;
 import junit.framework.SystemTestCase4;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.CellRoxDeviceManager;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.Persona;
+import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.object.LogParserExpression;
@@ -34,7 +32,7 @@ import com.cellrox.infra.object.LogParserExpression;
 
 public class CellroxDeviceOperations extends SystemTestCase4 {
 
-	static CellRoxDeviceManager devicesMannager;
+	CellRoxDeviceManager devicesMannager;
 //	CellRoxDevice device;
 	private File localLocation;
 	private String remotefileLocation;
@@ -79,13 +77,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String phoneNumber; 
 	private String messageContent = "Hello from automation.";
 	private DeviceNumber currentDevice = DeviceNumber.PRIMARY;
-	
+	private Size size = Size.Smaller; 
 	
 	
 	@Before
 	public void init() throws Exception {
 		devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-		
+		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
+			device.setUpTime(device.getCurrentUpTime());
+		}
 		
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		// devicesMannager.getDevice(currentDevice).connectToServers();
@@ -95,13 +95,19 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	public void orConnectivityTest() throws Exception {
 		
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).configureDeviceForAutomation(true);
+		System.out.println(devicesMannager.getDevice(currentDevice).getDeviceSerial());
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).connectToServers();
-//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-//		devicesMannager.getDevice(currentDevice).connectToServers();
+		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+		devicesMannager.getDevice(currentDevice).connectToServers();
 		
 		report.report("##########################");
 		
-//		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
+		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
+		Thread.sleep(10000);
+		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
+		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
+		
+		
 //		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(Persona.PRIV).pressKey("home");
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
@@ -398,21 +404,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Unlock Device by Swipe on ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void unlockBySwipe() throws Exception {
-
-		try {
-			ObjInfo oInfo = devicesMannager.getDevice(currentDevice).getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
-	
-			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
-			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
-	
-			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
-		}
-		catch(Exception e) {
-			report.report("Error in unlocking the device.");
-		}
+		devicesMannager.getDevice(currentDevice).unlockBySwipe(persona);
 	}
 
+
+	
 	@Test
 	@TestProperties(name = " Swipe by Class Name on ${persona}", paramsInclude = { "currentDevice,persona,dir,text" })
 	public void swipeByClassName() throws Exception {
@@ -560,19 +556,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Switch Persona to ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void switchPersona() throws Exception {
-		Persona current = devicesMannager.getDevice(currentDevice).getForegroundPersona();
-		if (current == persona) {
-			report.report("Persona " + persona + " is Already in the Foreground");
-		} else {
-			devicesMannager.getDevice(currentDevice).getPersona(current).click(5, 5);
-			current = devicesMannager.getDevice(currentDevice).getForegroundPersona();
-			if (current == persona) {
-				report.report("Switch to " + persona);
-			} else {
-				report.report("Could not Switch to " + persona, Reporter.FAIL);
-			}
-		}
+		
+		devicesMannager.getDevice(currentDevice).switchPersona(persona);
 	}
+	
+	
 	@Test
 	@TestProperties(name = "Click Text \"${text}\" , Class \"${text}\"  By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,text,childClassName" })
 	public void clickTextAndClassByUiLocation() throws Exception {
@@ -785,7 +773,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is smaller with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber" })
+	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size" })
 	public void validateExpressionIsSmallerByClass() throws Exception {
 		
 		report.report("bout to validate expression is smaller than : " +expectedNumber);
@@ -797,15 +785,23 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	    if(matcher.find()) {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
-	        	if(Double.valueOf(number) < Double.valueOf(expectedNumber)) {
-	        		report.report("The value is smaller than : "+expectedLine);
+	        	boolean isTrue;
+	        	if(size == Size.Smaller) {
+	        		isTrue = Double.valueOf(number) < Double.valueOf(expectedNumber);
 	        	}
 	        	else {
-	        		report.report("The value isn't smaller than : "+expectedLine, Reporter.FAIL);
+	        		isTrue = Double.valueOf(number) > Double.valueOf(expectedNumber);
+	        	}
+	        	
+	        	if(isTrue) {
+	        		report.report("The value is smaller than : "+res);
+	        	}
+	        	else {
+	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
 	        	}
 	    }
 	    else
-	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
+	        report.report("Couldnt find : " + res + " in : " +res ,Reporter.FAIL);
 	}
 	
 	
@@ -829,14 +825,14 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
 	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
-	        		report.report("The value is smaller than : "+expectedLine);
+	        		report.report("The value is smaller than : "+res);
 	        	}
 	        	else {
-	        		report.report("The value isn't smaller than : "+expectedLine, Reporter.FAIL);
+	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
 	        	}
 	    }
 	    else
-	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
+	        report.report("Couldnt find : " + res + " in : " +res ,Reporter.FAIL);
 	}
 	
 	/**
@@ -867,10 +863,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
 	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
-	        		report.report("The value is smaller than : "+expectedLine);
+	        		report.report("The value is smaller than : "+res);
 	        	}
 	        	else {
-	        		report.report("The value isn't smaller than : "+expectedLine, Reporter.FAIL);
+	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
 	        	}
 	    }
 	    else
@@ -1309,38 +1305,88 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 
 	private void validateDeviceStatus() throws Exception {
-		boolean isOnline = devicesMannager.getDevice(currentDevice).isOnline();
-		boolean personasUp = devicesMannager.getDevice(currentDevice).isPersonasAreOnline(Persona.PRIV, Persona.CORP);
-		// validate the device is online and ready
-		if (!isOnline) {
-			try {
-				// this function has a timeout in case the device cannot be
-				// restarted
-				devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
-				// TODO add crush report
-				report.report("Getting online after Crush", ReportAttribute.BOLD);
-			} catch (Exception e) {
-				report.report("Could not restart after reboot ", Reporter.FAIL);
-			}
-		} else {
-			// validate both personas are up, if not, wait get the run logs and
-			// reboot the device (from host)
-			if (!personasUp) {
-				// TODO add expressions
-				// devicesMannager.getDevice(currentDevice).rebootDevice(Persona.PRIV, Persona.CORP);
-				// LogParserExpression ex = new LogParserExpression();
-				// ex.setColor(Color.RED);
-				// ex.setExpression("CRUSH");
-				// ex.setNiceName("CRUSH");
-				// expression = new LogParserExpression[] { ex };
-				// LogParser logParser = new LogParser(expression);
-				// devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
-				report.report("Perona Crush was detected!", ReportAttribute.BOLD);
 
+		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
+
+			long knownUpTime = device.getUpTime();
+			if (!device.isOnline()) {
+				long startTime = System.currentTimeMillis();
+				while(!device.isOnline()) {
+					Thread.sleep(1000);
+					if((System.currentTimeMillis() - startTime) >(5* 60 * 1000)) {
+						report.report("Failed to get device after a fail.",Reporter.FAIL);
+					}
+				}
 			}
+			long deviceUpTime = device.getCurrentUpTime();
+			if(knownUpTime > deviceUpTime) {
+				//this is an indication that crash happaned
+				report.report("There is an error, the device is offline, i'm going to do reboot.", Reporter.FAIL);
+				// sleep
+				sleep(20 * 1000);
+				// last_kmsg
+				report.report("Device : " + device.getDeviceSerial());
+				device.printLastKmsg();
+//				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
+				// configure
+				device.configureDeviceForAutomation(true);
+				// connect
+				device.connectToServers();
+				// to wake up and type password
+				device.getPersona(Persona.CORP).wakeUp();
+				device.switchPersona(Persona.CORP);
+				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
+				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
+				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
+				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
+				device.getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
+				device.getPersona(Persona.PRIV).wakeUp();
+				device.switchPersona(Persona.PRIV);
+				device.unlockBySwipe(Persona.PRIV);
+				
+			}
+			
+			
+			//TODO to add a check that the persona crashed
+			
+//			boolean isOnline = device.isOnline();
+//			boolean personasUp = device.isPersonasAreOnline(Persona.PRIV, Persona.CORP);
+			// validate the device is online and ready
+			
+			
+
 		}
-		
 	}
+				
+				
+//				// this function has a timeout in case the device cannot be
+//				// restarted
+//				devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
+//				// TODO add crush report
+//				report.report("Getting online after Crush", ReportAttribute.BOLD);
+//			} catch (Exception e) {
+//				report.report("Could not restart after reboot ", Reporter.FAIL);
+//			}
+//		} else {
+//			// validate both personas are up, if not, wait get the run logs and
+//			// reboot the device (from host)
+//			if (!personasUp) {
+//				// TODO add expressions
+//				// devicesMannager.getDevice(currentDevice).rebootDevice(Persona.PRIV, Persona.CORP);
+//				// LogParserExpression ex = new LogParserExpression();
+//				// ex.setColor(Color.RED);
+//				// ex.setExpression("CRUSH");
+//				// ex.setNiceName("CRUSH");
+//				// expression = new LogParserExpression[] { ex };
+//				// LogParser logParser = new LogParser(expression);
+//				// devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
+//				report.report("Perona Crush was detected!", ReportAttribute.BOLD);
+//
+//			}
+//		}
+		
+	
 
 	@After
 	public void tearDown() throws Exception {
@@ -1827,6 +1873,20 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	public void setCurrentDevice(DeviceNumber currentDevice) {
 		this.currentDevice = currentDevice;
+	}
+
+	/**
+	 * @return the size
+	 */
+	public Size getSize() {
+		return size;
+	}
+
+	/**
+	 * @param size the size to set
+	 */
+	public void setSize(Size size) {
+		this.size = size;
 	}
 
 }
