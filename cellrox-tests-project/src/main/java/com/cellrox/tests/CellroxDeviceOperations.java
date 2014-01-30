@@ -842,7 +842,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine} from the father", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,fatherClass,fatherIndex" })
+	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine} from the father", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,fatherClass,fatherIndex,size" })
 	public void validateExpressionIsBiggerByClassAndFather() throws Exception {
 		
 		
@@ -862,7 +862,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	    if(matcher.find()) {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
-	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
+	        	boolean isBigger;
+	        	if(size == Size.Bigger) {
+	        		isBigger = Double.valueOf(number) > Double.valueOf(expectedNumber);
+	        	}
+	        	else {
+	        		isBigger = Double.valueOf(number) < Double.valueOf(expectedNumber);
+	        	}
+	        	
+	        	if(isBigger) {
 	        		report.report("The value is smaller than : "+res);
 	        	}
 	        	else {
