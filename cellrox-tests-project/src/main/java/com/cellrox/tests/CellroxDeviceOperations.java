@@ -1,6 +1,7 @@
 package com.cellrox.tests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,9 @@ import jsystem.framework.scenario.UseProvider;
 import junit.framework.SystemTestCase4;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -31,7 +34,7 @@ import com.cellrox.infra.object.LogParserExpression;
 
 public class CellroxDeviceOperations extends SystemTestCase4 {
 
-	CellRoxDeviceManager devicesMannager;
+	static CellRoxDeviceManager devicesMannager;
 //	CellRoxDevice device;
 	private File localLocation;
 	private String remotefileLocation;
@@ -78,10 +81,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private DeviceNumber currentDevice = DeviceNumber.PRIMARY;
 	
 	
+	
 	@Before
 	public void init() throws Exception {
 		devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-		devicesMannager.getDevice(DeviceNumber.PRIMARY).printKmsg();
+		
 		
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		// devicesMannager.getDevice(currentDevice).connectToServers();
@@ -1335,16 +1339,18 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 			}
 		}
-
+		
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		devicesMannager.getDevice(DeviceNumber.PRIMARY).printKmsg();
+		
 		if (!isPass()) {
 			validateDeviceStatus();
 		}
 	}
+	
+
 
 	public File getLocalLocation() {
 		return localLocation;

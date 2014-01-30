@@ -1,5 +1,7 @@
 package com.cellrox.infra;
 
+import java.io.IOException;
+
 import jsystem.framework.system.SystemObjectImpl;
 
 import org.jsystemtest.mobile.core.AdbController;
@@ -33,6 +35,8 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     	
     	getDevice(DeviceNumber.PRIMARY).addToTheSummarySystemProp();
     	
+    	getDevice(DeviceNumber.PRIMARY).printKmsg();
+    	
     	
     }
     
@@ -43,8 +47,11 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     }
     
     
-    
-    
+    public void close(){
+			try {
+				getDevice(DeviceNumber.PRIMARY).printKmsg();
+			} catch (IOException e) { }
+    }
     
     
     
