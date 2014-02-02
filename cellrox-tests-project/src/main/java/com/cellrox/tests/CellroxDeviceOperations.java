@@ -82,11 +82,22 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 	@Before
 	public void init() throws Exception {
-		devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-			device.setUpTime(device.getCurrentUpTime());
+		try {
+			report.startLevel("Before");
+			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
+			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
+				long appTime = device.getCurrentUpTime();
+				if(device.getUpTime() > appTime) {
+					report.report("The uptime is smaller from what it should be.", Reporter.FAIL);
+					throw new Exception("Unwanted reboot happened to device : " + device.getDeviceSerial());
+				}
+				device.setUpTime(device.getCurrentUpTime());
+			}
+			report.report("Finish the initing of the test.");
 		}
-		
+		finally {
+			report.stopLevel();
+		}
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		// devicesMannager.getDevice(currentDevice).connectToServers();
 	}
@@ -539,7 +550,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
 			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /cache/recovery/command");
 		}
-		devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted,Persona.PRIV, Persona.CORP);
+		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted,Persona.PRIV, Persona.CORP);
+		//here i check if the p
+		if(!isUp) {
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		}
 		Thread.sleep(2000);
 	}
 
@@ -797,7 +812,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	        		report.report("The value is smaller than : "+res);
 	        	}
 	        	else {
-	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
+	        		report.report("The value isn't "+ size.toString() +" than : "+res, Reporter.FAIL);
 	        	}
 	    }
 	    else
@@ -805,35 +820,35 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 	
-	/**
-	 * This test :
-	 * 1. get the return result from a class
-	 * 2. validate that the expectedLine is exist in regex pattern
-	 * 3. validate that the number is smaller that the first group of the pattern
-	 * */
-	@Test
-	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber" })
-	public void validateExpressionIsBiggerByClass() throws Exception {
-		
-		report.report("about to validate expression is smaller than : " +expectedNumber);
-		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
-		report.report("The return result : "+res);
-		Pattern pattern = Pattern.compile(expectedLine);
-	    Matcher matcher = pattern.matcher(res);
-
-	    if(matcher.find()) {
-	        	report.report("Find : " + expectedLine + " in : " +res);
-	        	String number = matcher.group(1);
-	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
-	        		report.report("The value is smaller than : "+res);
-	        	}
-	        	else {
-	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
-	        	}
-	    }
-	    else
-	        report.report("Couldnt find : " + res + " in : " +res ,Reporter.FAIL);
-	}
+//	/**
+//	 * This test :
+//	 * 1. get the return result from a class
+//	 * 2. validate that the expectedLine is exist in regex pattern
+//	 * 3. validate that the number is smaller that the first group of the pattern
+//	 * */
+//	@Test
+//	@TestProperties(name = "Validate Expression is bigger with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber" })
+//	public void validateExpressionIsBiggerByClass() throws Exception {
+//		
+//		report.report("about to validate expression is smaller than : " +expectedNumber);
+//		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
+//		report.report("The return result : "+res);
+//		Pattern pattern = Pattern.compile(expectedLine);
+//	    Matcher matcher = pattern.matcher(res);
+//
+//	    if(matcher.find()) {
+//	        	report.report("Find : " + expectedLine + " in : " +res);
+//	        	String number = matcher.group(1);
+//	        	if(Double.valueOf(number) > Double.valueOf(expectedNumber)) {
+//	        		report.report("The value is smaller than : "+res);
+//	        	}
+//	        	else {
+//	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
+//	        	}
+//	    }
+//	    else
+//	        report.report("Couldnt find : " + res + " in : " +res ,Reporter.FAIL);
+//	}
 	
 	/**
 	 * This test :
@@ -1001,6 +1016,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	/**
+	 * This test is validating the data after bringing the data itself
 	 * For Example: <br>
 	 * - oops\\|kernel panic\\|soft lockup<br>
 	 * - out_of_memory<br>
@@ -1311,7 +1327,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 	
-
+	/**
+	 * This function runs only in case of fails in the tests and check if
+	 * unexpected reboot happened or persona crash or DOA
+	 * */
 	private void validateDeviceStatus() throws Exception {
 
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
@@ -1326,6 +1345,16 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 					}
 				}
 			}
+			//check for DOA
+			try {
+				device.checkForDoa();
+			}
+			catch (Exception e) {
+				report.report("DOA", Reporter.FAIL);
+				knownUpTime = 0;
+			}
+			
+			
 			long deviceUpTime = device.getCurrentUpTime();
 			if(knownUpTime > deviceUpTime) {
 				//this is an indication that crash happaned
@@ -1398,9 +1427,14 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	@After
 	public void tearDown() throws Exception {
-		
-		if (!isPass()) {
-			validateDeviceStatus();
+		try {
+			report.startLevel("After");
+			if (!isPass()) {
+				validateDeviceStatus();
+			}
+		}
+		finally {
+			report.stopLevel();
 		}
 	}
 	
