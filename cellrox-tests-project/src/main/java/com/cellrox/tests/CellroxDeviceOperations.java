@@ -22,6 +22,7 @@ import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.CellRoxDeviceManager;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
+import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
@@ -78,6 +79,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String messageContent = "Hello from automation.";
 	private DeviceNumber currentDevice = DeviceNumber.PRIMARY;
 	private Size size = Size.Smaller; 
+	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
+	private LogcatHandler logType = LogcatHandler.PRIV;
 	
 	
 	@Before
@@ -101,6 +104,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		// devicesMannager.getDevice(currentDevice).connectToServers();
 	}
+	
+
 
 	@Test
 	public void orConnectivityTest() throws Exception {
@@ -126,6 +131,16 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	}
 
+	/**
+	 * The function do the same action as the script get_logs_adb
+	 * return .zip file of the logs 
+	 * */
+	@Test
+	@TestProperties(name = "Get the logs" , paramsInclude = {"logsLocation,logType,currentDevice"})
+	public void getTheLogs() throws Exception {
+		devicesMannager.getDevice(currentDevice).getTheLogs(logType, logsLocation);
+	}
+	
 	@Test
 	@TestProperties(name = "Kill All Automation Processes on ${currentDevice}", paramsInclude = { "currentDevice" })
 	public void killAllAutomationProcesses() throws Exception {
@@ -1929,6 +1944,22 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 */
 	public void setSize(Size size) {
 		this.size = size;
+	}
+
+	public String getLogsLocation() {
+		return logsLocation;
+	}
+
+	public void setLogsLocation(String logsLocation) {
+		this.logsLocation = logsLocation;
+	}
+
+	public LogcatHandler getLogType() {
+		return logType;
+	}
+
+	public void setLogType(LogcatHandler logType) {
+		this.logType = logType;
 	}
 
 }
