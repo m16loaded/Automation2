@@ -118,14 +118,26 @@ public class CellRoxDevice extends SystemObjectImpl {
 //    	        	report.report("Find : " + expectedLine + " in : " +res);
 //    	        	String number = matcher.group(1);
         	
-        	
-        	
-        	
-        	
         	cli.disconnect();
         	
         	return Long.parseLong(upTime);
         }
+        
+        /**
+         * This function perform : "adb devices" and "cell list stsate"
+         * if the sell list state isn't returned it will include this as error and throw exception.
+         * */
+        public void checkForDoa() throws Exception {
+        	cli.connect();
+        	executeCliCommand("adb devices");
+        	if(!cli.getTestAgainstObject().toString().contains(getDeviceSerial())) {
+        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
+        	}
+        	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
+        	executeCliCommand("cell list stsate");
+        	cli.disconnect();
+        }
+        
         /**
          * @throws Exception 
          * 
@@ -396,14 +408,15 @@ public class CellRoxDevice extends SystemObjectImpl {
          * if adb rejects the command
          * @throws IOException
          */
-        public void rebootRecoveryDevice(boolean isEncrypted, Persona... personas) throws Exception {
+        public boolean rebootRecoveryDevice(boolean isEncrypted, Persona... personas) throws Exception {
                 sync();
                 device.executeShellCommand("reboot recovery");
                 report.report("reboot recovery command was sent");
                 Thread.sleep(1000);
-                validateDeviceIsOnline(isEncrypted, personas);
+                boolean isUp = validateDeviceIsOnline(isEncrypted, personas);
 //              device = adbController.waitForDeviceToConnect(getDeviceSerial());
                 upTime = getCurrentUpTime();
+                return isUp;
         }
 
         /**
@@ -416,11 +429,11 @@ public class CellRoxDevice extends SystemObjectImpl {
                 device.executeShellCommand(shellCommand);
         }
 
-        public void validateDeviceIsOnline(boolean isEncrypted, Persona... personas) throws Exception {
-                validateDeviceIsOnline(System.currentTimeMillis(), 10 * 60 * 1000, isEncrypted, personas);
+        public boolean validateDeviceIsOnline(boolean isEncrypted, Persona... personas) throws Exception {
+                return validateDeviceIsOnline(System.currentTimeMillis(), 10 * 60 * 1000, isEncrypted, personas);
         }
 
-        public void validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, Persona... personas) throws Exception {
+        public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, Persona... personas) throws Exception {
                 vlidateDeviceIsOffline(personas);
                 Thread.sleep(2000);
                 device = adbController.waitForDeviceToConnect(getDeviceSerial());
@@ -429,10 +442,10 @@ public class CellRoxDevice extends SystemObjectImpl {
                         validateEncryptedPersonasAreOnline(beginTime, timeout, personas);
                         Thread.sleep(3000);
                         clickOnEncryptedDeviceAfterReboot();
-                        validatePersonasAreOnline(beginTime, timeout, personas);
+                        return validatePersonasAreOnline(beginTime, timeout, personas);
                 }
                 else {
-                        validatePersonasAreOnline(beginTime, timeout, personas);
+                	return validatePersonasAreOnline(beginTime, timeout, personas);
                 }
         }
         
@@ -513,14 +526,14 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @throws Exception
          */
                 boolean online = false;
-                public void validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+                public boolean validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
                 String result = null;
                 int found = 0;
                 while (online != true) {
 
                         if (timeout < System.currentTimeMillis() - beginTime) {
                                 report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
-                                return;
+                                return false;
                         }
 
                         try {
@@ -545,6 +558,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
                                 + " seconds.");
                 Thread.sleep(7000);
+                return true;
         }
         
         
