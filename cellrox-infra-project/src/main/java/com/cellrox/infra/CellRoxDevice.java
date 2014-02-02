@@ -2,6 +2,7 @@ package com.cellrox.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.aqua.sysobj.conn.CliCommand;
+import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.log.LogParser;
 
@@ -93,6 +95,20 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
         }
         
+        /**
+         * This function use the get logs to returns the logs to the wanted location
+         * */
+        public void getTheLogs(LogcatHandler loggerType, String logLocation) throws Exception {
+//        	String userHome = System.getProperty("user.home");
+        	
+        	cli.connect();
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell rm -R /data/agent/logs/adb");
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell mkdir -p /data/agent/logs/adb/ 2>&1 >/dev/null");
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell bash /system/etc/logcollector.sh "+ loggerType.toString()+" \"adb/\" 2>&1 >/dev/null");
+        	executeCliCommand("adb -s "+getDeviceSerial()+" pull /data/agent/logs/adb "+ logLocation);
+        	report.report("Logs in : " + logLocation);
+        	
+        }
         
         
         public long getCurrentUpTime() throws Exception {
