@@ -651,7 +651,7 @@ public abstract class NanoHTTPD {
             this.outputStream = outputStream;
         }
 
-        public void execute() throws IOException {
+        public void execute() throws Exception {
             try {
                 // Read the first 8192 bytes.
                 // The full header should fit in here.
@@ -715,16 +715,22 @@ public abstract class NanoHTTPD {
 		            	r.setRequestMethod(method);
 		                r.send(outputStream);
 				} catch (InterruptedException e1) {
-					throw e;
+					throw new Exception("Error in the seconed send SocketException : " +e1.getMessage());
 				}
             } catch (IOException ioe) {
-                Response r = new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
-                r.send(outputStream);
-                safeClose(outputStream);
+            	try {
+	                Response r = new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+	                r.send(outputStream);
+	                safeClose(outputStream);
+				} catch (Exception ioe1) {
+					throw new Exception("Error in the seconed send IOException : " +ioe1.getMessage());
+				}
             } catch (ResponseException re) {
                 Response r = new Response(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
                 r.send(outputStream);
                 safeClose(outputStream);
+            } catch (Exception re1) {
+				throw new Exception("Error in the seconed send ResponseException : " +re1.getMessage());
             } finally {
                 tempFileManager.clear();
             }

@@ -47,13 +47,45 @@
     </target>
     <target name="t2">
         <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="38ff0bcc-1fa2-4100-8d5b-745ad9b89b98"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.pushApplicationToCorp"/>
+        </jsystem>
+    </target>
+    <target name="t3">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="7d97ec15-b988-440f-998b-a7b0811efeef"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
+        </jsystem>
+    </target>
+    <target name="t4">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="7ef56527-28a3-4efb-bbaf-38f4b96dec69"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.openApp"/>
+        </jsystem>
+    </target>
+    <target name="t5">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="9c0b1570-25ce-4f4c-a37f-9c8f53d057ef"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByCordinate"/>
+        </jsystem>
+    </target>
+    <target name="t6">
+        <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="95347417-7793-41f7-9b00-38a5dffabf97"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.clickByCordinate"/>
         </jsystem>
     </target>
-    <target name="t3">
+    <target name="t7">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="12260a3e-03ab-4e2e-bd81-281eba3d87f0"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -61,7 +93,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.waitByText"/>
         </jsystem>
     </target>
-    <target name="t4">
+    <target name="t8">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="3332e907-c922-4aed-ae0d-0ee22083e0e7"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -69,55 +101,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.validateExpressionIsSmallerByClass"/>
         </jsystem>
     </target>
-    <target name="t5">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="a0f35fa3-b9f0-4181-816d-fa0fb8749efb"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
-        </jsystem>
-    </target>
-    <target name="t6">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="ad7f3f53-6bfa-4f0c-8678-14fffabe8072"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.uninstallApplication"/>
-        </jsystem>
-    </target>
-    <target name="t7">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="be7832df-ec3c-4bef-a436-80573f2ecc00"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
-        </jsystem>
-    </target>
-    <target name="t8">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="1ef44091-7c3c-4280-820d-fc35527ec38b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.pushApplicationToCorp"/>
-        </jsystem>
-    </target>
     <target name="t9">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="2d1d55a1-c3f0-4c3a-9e10-10c7dbdc0658"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.openApp"/>
-        </jsystem>
-    </target>
-    <target name="t10">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="190e5e4d-6aef-40be-8c4e-2325c410bead"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByCordinate"/>
-        </jsystem>
-    </target>
-    <target name="t11">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="ccea3846-6823-4807-9b4f-a0a2c0586185"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -125,12 +109,28 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.waitByText"/>
         </jsystem>
     </target>
-    <target name="t12">
+    <target name="t10">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="d1219600-2621-47cc-92e3-cd2a6e1d546b"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.validateExpressionIsSmallerByClass"/>
+        </jsystem>
+    </target>
+    <target name="t11">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="a0f35fa3-b9f0-4181-816d-fa0fb8749efb"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
+        </jsystem>
+    </target>
+    <target name="t12">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="ad7f3f53-6bfa-4f0c-8678-14fffabe8072"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.uninstallApplication"/>
         </jsystem>
     </target>
     <target name="t13">
