@@ -24,6 +24,7 @@ public class JsystemReporter {
 	 * 	@param args- the first arg should be : 
 	 * arg[0] - currentLogLocation - the place of reports.0.xml
 	 * arg[1] - nameOfReport - the place to save the .html name
+	 * arg[2] - String to -the wanted email to send to
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -115,7 +116,20 @@ public class JsystemReporter {
 			}
 			inStream.close();
 			outStream.close();
-
+			
+			String to ;
+			if(args.length < 3) {
+				to = "or.garfunkel@top-q.co.il";
+			}
+			else {
+				to = args[2];
+			}
+			
+			final String from =  "cellrox99@gmail.com";
+			final String password = "cellrox2011";
+			
+			EmailSender.sendEmail(to, "orgarfunkel@gmail.com", "Automation summary report", "Here the report of the automation", nameOfReport, "or1983");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
