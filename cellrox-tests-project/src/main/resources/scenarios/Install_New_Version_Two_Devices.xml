@@ -32,7 +32,6 @@
         <antcallback target="t16"/>
         <antcallback target="t17"/>
         <antcallback target="t18"/>
-        <antcallback target="t19"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -185,12 +184,5 @@
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
         </jsystem>
-    </target>
-    <target name="t19">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
-            <property name="jsystem.uuid" value="5ab49ebd-3576-4c8c-a06d-6093a783853d"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
     </target>
 </project>
