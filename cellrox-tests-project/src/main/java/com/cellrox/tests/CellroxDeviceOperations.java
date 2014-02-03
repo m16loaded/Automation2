@@ -34,7 +34,6 @@ import com.cellrox.infra.object.LogParserExpression;
 public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	CellRoxDeviceManager devicesMannager;
-//	CellRoxDevice device;
 	private File localLocation;
 	private String remotefileLocation;
 	Persona persona;
@@ -601,7 +600,53 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Switch Persona to ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void switchPersona() throws Exception {
 		
-		devicesMannager.getDevice(currentDevice).switchPersona(persona);
+//		persona = Persona.CORP;
+////		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+//		devicesMannager.getDevice(currentDevice).connectToServers();
+//		
+//		System.out.println("********************11111111111111111111***************************");
+		
+		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+		
+//		System.out.println("********************222222222222222222222222***************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+//		
+//		System.out.println("**********************3333333333333333333333*************************");
+//		
+//		persona = Persona.CORP;
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+//		
+//		System.out.println("*******************444444444444444444444****************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+//		
+//		System.out.println("***********************5555555555555555555************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+//		
+//		System.out.println("*******************6666666666666666666****************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+//		
+//		System.out.println("***********************77777777777777777777777************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+//		
+//		System.out.println("*******************888888888888888888888888888****************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+//		
+//		System.out.println("***********************9999999999999999999999999999************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+//		
+//		System.out.println("*******************00000000000000000000000000000000000000000000****************************");
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+//		
+//		System.out.println("***********************1010101010101010************************");
 	}
 	
 	
