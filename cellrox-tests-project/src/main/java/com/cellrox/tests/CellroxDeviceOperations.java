@@ -947,7 +947,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	/**
 	 * wake up
 	 * switch persona
-	 * enter the password
+	 * enter the password and enter
 	 * */
 	@Test
 	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "currentDevice,persona,value" })
@@ -955,18 +955,24 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		
 		//wake up
 		try {
-			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
+			Persona p = devicesMannager.getDevice(currentDevice).getForegroundPersona();
+			devicesMannager.getDevice(currentDevice).getPersona(p).wakeUp();
 		}
-		catch(Exception e) {/*do nothing*/}
+		catch(Exception e) {
+			report.report("Couldn't waking up." , Reporter.WARNING);
+		}
 		//switch persona
 		try {
 			devicesMannager.getDevice(currentDevice).switchPersona(persona);
 		}
-		catch(Exception e) {}
+		catch(Exception e) {/*do nothing*/}
+
 		//1111 and Enter
 		for (char c : value.toCharArray()) {
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText(String.valueOf(c)));
 		}
+		devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
 	}
 	
