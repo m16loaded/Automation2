@@ -24,8 +24,6 @@ public class JsystemReporter {
 	 * 	@param args- the first arg should be : 
 	 * arg[0] - currentLogLocation - the place of reports.0.xml
 	 * arg[1] - nameOfReport - the place to save the .html name
-	 *	
-	 *	
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -37,12 +35,16 @@ public class JsystemReporter {
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
 
 		//get the args[] parm, if they not inserted use the default 
-		currentLogLocation = args[0];
-		if(currentLogLocation == null) 
+		
+		if(args.length < 2 ) {
 			currentLogLocation = "/home/topq/dev/runner6003/log/current/reports.0.xml";
-		nameOfReport = args[1];
-		if(nameOfReport == null) 
 			nameOfReport = "/home/topq/dev/managerReport.html";
+		}
+		else {
+			currentLogLocation = args[0];
+			nameOfReport = args[1];
+		}
+			
 		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate).concat(".html");
 		
 		try {
@@ -65,7 +67,7 @@ public class JsystemReporter {
 			nList = doc.getElementsByTagName("test");
 			pw.println("<!DOCTYPE html><html><head><title>Manager Report for " + sdf.format(cal.getTime())+"</title></head><body>");
 			pw.println("<h1><em>Manager Report for " + sdf.format(cal.getTime()) + "<em></h1>");
-			pw.println("<p><b>Build_date : " + date + " Build_sdk_version : " + version + "Build_display_id : " + id+ " </b></p>");
+			pw.println("<p><b>Build_date : " + date + ", Build_sdk_version : " + version + ", Build_display_id : " + id+ " </b></p>");
 			pw.println("<p><b>Tests report : </b></p>");
 			pw.println("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Name of test<TH>Status<TH>Time<b></TR>");
 
