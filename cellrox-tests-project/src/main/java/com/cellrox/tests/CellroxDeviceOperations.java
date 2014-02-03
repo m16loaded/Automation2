@@ -971,7 +971,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		//1111 and Enter
 		for (char c : value.toCharArray()) {
 			report.report("***************5555555555555555555555***************");
-			devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			}catch(Exception e) {report.report("*****************5.5.5.5.5.5.5.5.5.5*************"); }
 			report.report("*****************6666666666666666666*************");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText(String.valueOf(c)));
 			report.report("***************777777777777777***************");
