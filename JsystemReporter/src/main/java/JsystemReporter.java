@@ -128,7 +128,7 @@ public class JsystemReporter {
 			final String from =  "cellrox99@gmail.com";
 			final String password = "cellrox2011";
 			
-			EmailSender.sendEmail(to, "orgarfunkel@gmail.com", "Automation summary report", "Here the report of the automation", nameOfReport, "or1983");
+			EmailSender.sendEmail(to, from, "Automation summary report", "Here the report of the automation", nameOfReport, password);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
