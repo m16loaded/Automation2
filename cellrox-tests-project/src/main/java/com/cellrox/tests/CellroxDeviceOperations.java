@@ -951,54 +951,19 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "currentDevice,persona,value" })
 	public void enterPassword() throws Exception {
 				
-		report.report("****************000000000000000000000**************");
+//		report.report("****************000000000000000000000**************");
 		devicesMannager.getDevice(currentDevice).switchPersona(persona);
-		report.report("****************111111111111111111111**************");
+//		report.report("****************111111111111111111111**************");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-		report.report("****************222222222222222222222**************");
+//		report.report("****************222222222222222222222**************");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-		report.report("****************333333333333333333333**************");
+//		report.report("****************333333333333333333333**************");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-		report.report("****************444444444444444444444**************");
+//		report.report("****************444444444444444444444**************");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-		report.report("****************555555555555555555555**************");
-		//wake up
-		/*try {
-			report.report("***************1111111111111111***************");
-			Persona p = devicesMannager.getDevice(currentDevice).getForegroundPersona();
-			devicesMannager.getDevice(currentDevice).getPersona(p).wakeUp();
-		}
-		catch(Exception e) {
-			report.report("***************222222222222222222***************");
-			report.report("Couldn't waking up." , Reporter.WARNING);
-		}
-		//switch persona
-		try {
-			report.report("******************33333333333333333333************");
-			devicesMannager.getDevice(currentDevice).switchPersona(persona);
-		}
-		catch(Exception e) {do nothingreport.report("**********444444444444444444444444********************");}
-
-		//1111 and Enter
-//		for (char c : value.toCharArray()) {
-			report.report("***************5555555555555555555555***************");
-			try {
-				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
-			}catch(Exception e) {report.report("*****************5.5.5.5.5.5.5.5.5.5*************"); }
-			report.report("*****************6666666666666666666*************");
-//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText(String.valueOf(c)));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
-			
-			report.report("***************777777777777777***************");
-		
-		report.report("************888888888888888888******************");
-		devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
-		report.report("************999999999999999999******************");
+//		report.report("****************555555555555555555555**************");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
-		report.report("****************000000000000000000000**************");*/
+//		report.report("****************66666666666666666666**************");
 	}
 	
 	/**
