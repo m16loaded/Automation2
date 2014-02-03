@@ -89,12 +89,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			report.startLevel("Before");
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
 			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-				long appTime = device.getCurrentUpTime();
-				if(device.getUpTime() > appTime) {
+				long uptime = device.getCurrentUpTime();
+				if(device.getUpTime() > uptime) {
 					report.report("The uptime is smaller from what it should be.", Reporter.FAIL);
 					throw new Exception("Unwanted reboot happened to device : " + device.getDeviceSerial());
 				}
-				device.setUpTime(device.getCurrentUpTime());
+				device.setUpTime(uptime);
 			}
 			report.report("Finish the initing of the test.");
 		}
@@ -106,7 +106,21 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 
-
+//	@Test
+//	public void pass() {
+//		report.report("pass");
+//	}
+//	@Test
+//	public void warnning() {
+//		report.report("warnning",Reporter.WARNING);
+//	}
+//	@Test
+//	public void fail() {
+//		report.report("fail",Reporter.FAIL);
+//	}
+	
+	
+	
 	@Test
 	public void orConnectivityTest() throws Exception {
 		
@@ -930,23 +944,50 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		devicesMannager.getDevice(currentDevice).setDeviceAsRoot();
 	}
 
+	/**
+	 * wake up
+	 * switch persona
+	 * enter the password
+	 * */
 	@Test
 	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "currentDevice,persona,value" })
 	public void enterPassword() throws Exception {
+		
+		//wake up
 		try {
 			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
 		}
 		catch(Exception e) {/*do nothing*/}
+		//switch persona
 		try {
-			for (char c : value.toCharArray()) {
-				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
-			}
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
+			devicesMannager.getDevice(currentDevice).switchPersona(persona);
 		}
-		catch(Exception e) {
-			report.report("There was an error in entering the password.");
+		catch(Exception e) {}
+		//1111 and Enter
+		for (char c : value.toCharArray()) {
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(String.valueOf(c)));
 		}
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
 	}
+	
+	/**
+	 * 
+	 * */
+	@Test
+	@TestProperties(name = "Swipe And Login for ${persona}", paramsInclude = { "currentDevice,persona" })
+	public void swipeAndLogin() throws Exception {
+		//wake up
+		try {
+			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
+		}
+		catch(Exception e) {/*do nothing*/}
+		//switch persona
+		devicesMannager.getDevice(currentDevice).switchPersona(persona);
+		//unlock by swipe
+		devicesMannager.getDevice(currentDevice).unlockBySwipe(persona);
+		
+	}
+	
 
 	@Test
 	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
