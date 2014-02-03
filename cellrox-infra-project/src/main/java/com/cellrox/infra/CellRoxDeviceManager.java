@@ -14,26 +14,29 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     private String otaFileLocation;
     private CellRoxDevice[] cellroxDevicesList;
     private int numberOfDevices = 2;
+    private static boolean isInit = false;
     
     private AdbController adbController;
     
     public void init() throws Exception {
     	super.init();
-    	cellroxDevicesList = new CellRoxDevice[numberOfDevices];
-
-    	adbController = AdbController.getInstance();
-    	USBDevice[] devices = adbController.waitForDevicesToConnect(numberOfDevices);
-    	
-    	//initing each one of the devices
-    	for(int index =0 ; index < devices.length ;index++){
-    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber());
+    	report.report("Initing CellRoxDeviceManager");
+    	if(!isInit) {
+	    	cellroxDevicesList = new CellRoxDevice[numberOfDevices];
+	
+	    	adbController = AdbController.getInstance();
+	    	USBDevice[] devices = adbController.waitForDevicesToConnect(numberOfDevices);
+	    	
+	    	//initing each one of the devices
+	    	
+	    	for(int index =0 ; index < devices.length ;index++){
+	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber());
+	    	}
+	    	
+	    	//to add to the summary properties
+		    getDevice(DeviceNumber.PRIMARY).addToTheSummarySystemProp();
+		    isInit = true;
     	}
-    	
-    	//to add to the summary properties
-    	
-    	getDevice(DeviceNumber.PRIMARY).addToTheSummarySystemProp();
-//    	getDevice(DeviceNumber.PRIMARY).printKmsg();
-    	
     	
     }
     
