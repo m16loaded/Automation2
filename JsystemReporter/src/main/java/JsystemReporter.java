@@ -142,7 +142,12 @@ public class JsystemReporter {
 			final String from =  "cellrox99@gmail.com";
 			final String password = "cellrox2011";
 			
-			sendEmail(to, from, "Automation summary report", "Here the report of the automation", nameOfReport, password);
+			String status = "passed";
+			if(fail>0) {
+				status = "fail";
+			}
+			
+			sendEmail(to, from, "Automation summary report"+status, "Here the report of the automation", nameOfReport, password);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -153,7 +158,6 @@ public class JsystemReporter {
 	
 	
 	public static void sendEmail(String to, final String username, String subject, String body, String fileName , final String password) {
-		  
 
 	    Properties props = new Properties();
 	    props.put("mail.smtp.auth", true);
@@ -167,18 +171,15 @@ public class JsystemReporter {
 	                    return new PasswordAuthentication(username, password);
 	                }
 	            });
-
 	    try {
 
 	        Message message = new MimeMessage(session);
 	        message.setFrom(new InternetAddress(username));
-	        message.setRecipients(Message.RecipientType.TO,
-	                InternetAddress.parse(to));
+	        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
 	        message.setSubject(subject);
 	        message.setText(body);
 
 	        MimeBodyPart messageBodyPart = new MimeBodyPart();
-
 	        Multipart multipart = new MimeMultipart();
 
 	        messageBodyPart = new MimeBodyPart();
@@ -188,11 +189,8 @@ public class JsystemReporter {
 	        multipart.addBodyPart(messageBodyPart);
 
 	        message.setContent(multipart);
-
 	        System.out.println("Sending");
-
 	        Transport.send(message);
-
 	        System.out.println("Done");
 
 	    } catch (MessagingException e) {
