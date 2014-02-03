@@ -150,7 +150,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
         	}
         	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
-        	executeCliCommand("cell list stsate");
+        	executeCliCommand("cell list state");
         	cli.disconnect();
         }
         
@@ -168,19 +168,19 @@ public class CellRoxDevice extends SystemObjectImpl {
         	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
         	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
         	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build sdk version", propToParse.split(":")[1]);
+        	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1]);
         	executeCliCommand("getprop | fgrep ro.build.display.id");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
         	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
         	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build display id", propToParse.split(":")[1]);
+        	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1]);
         	executeCliCommand("getprop | fgrep ro.build.date]");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
         	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
         	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build date", propToParse.split(":")[1]);
+        	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1]);
         	
         	cli.disconnect();
         }
@@ -770,7 +770,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 findText.setTestAgainst(output);
                 findText.analyze();
                 String perona = findText.getCounter();
-                return Persona.valueOf(perona.toUpperCase());
+                return Persona.valueOf(perona.toUpperCase().trim());
         }
 
         // public void openNotificationBar(Persona persona) throws Exception{
