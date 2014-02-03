@@ -90,7 +90,7 @@ public class CellRoxDevice extends SystemObjectImpl {
             } else if (status.equals("0")) {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
-            upTime = getCurrentUpTime();
+//            upTime = getCurrentUpTime();
         	
         	
         }
