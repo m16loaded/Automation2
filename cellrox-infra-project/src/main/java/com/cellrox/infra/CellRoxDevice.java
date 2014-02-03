@@ -113,10 +113,11 @@ public class CellRoxDevice extends SystemObjectImpl {
         
         public long getCurrentUpTime() throws Exception {
         	String upTime = "";
-        	cli.connect();
-        	executeCliCommand("adb -s "+ deviceSerial +" shell");
-        	executeCliCommand("uptime");
-        	upTime = cli.getTestAgainstObject().toString().replace("uptime", "").replace("shell@mako:/ $", "").replace("root@mako:/ #", "").trim();
+//        	cli.connect();
+//        	executeCliCommand("adb -s "+ deviceSerial +" shell");
+//        	executeCliCommand("uptime");
+        	String retAns = executeHostShellCommand("uptime");
+        	upTime = retAns.toString().replace("uptime", "").replace("shell@mako:/ $", "").replace("root@mako:/ #", "").trim();
         	
         	
         	String upTimeTry = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
@@ -126,16 +127,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	else {
         		upTime = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
         	}
-        	
-//        	Pattern pattern = Pattern.compile(expectedLine);
-//    	    Matcher matcher = pattern.matcher(cli.getTestAgainstObject().toString());
-//
-//    	    if(matcher.find()) {
-//    	        	report.report("Find : " + expectedLine + " in : " +res);
-//    	        	String number = matcher.group(1);
-        	
-        	cli.disconnect();
-        	
+//        	cli.disconnect();
         	return Long.parseLong(upTime);
         }
         
@@ -151,6 +143,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         	}
         	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
         	executeCliCommand("cell list state");
+        	if(!((cli.getTestAgainstObject().toString().contains("priv (3)"))&&(cli.getTestAgainstObject().toString().contains("corp (3)")))) {
+        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
+        	}
         	cli.disconnect();
         }
         
@@ -441,8 +436,8 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param command
          * @throws Exception
          */
-        public void executeHostShellCommand(String shellCommand) throws Exception {
-                device.executeShellCommand(shellCommand);
+        public String executeHostShellCommand(String shellCommand) throws Exception {
+               return device.executeShellCommand(shellCommand);
         }
 
         public boolean validateDeviceIsOnline(boolean isEncrypted, Persona... personas) throws Exception {
@@ -1199,7 +1194,7 @@ public class CellRoxDevice extends SystemObjectImpl {
     		if (current == persona) {
     			report.report("Persona " + persona + " is Already in the Foreground");
     		} else {
-    			getPersona(current).click(5, 5);
+    			getPersona(current).click(10, 10);//(5, 5);
     			current = getForegroundPersona();
     			if (current == persona) {
     				report.report("Switch to " + persona);
