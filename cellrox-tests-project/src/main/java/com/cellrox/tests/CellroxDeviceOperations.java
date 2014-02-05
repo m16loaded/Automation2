@@ -1,6 +1,7 @@
 package com.cellrox.tests;
 
 import java.io.File;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,15 +88,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		try {
 			report.startLevel("Before");
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-				long uptime = device.getCurrentUpTime();
-				if(device.getUpTime() > uptime) {
-					report.report("The uptime is smaller from what it should be.", Reporter.FAIL);
-					throw new Exception("Unwanted reboot happened to device : " + device.getDeviceSerial());
-				}
-				device.setUpTime(uptime);
-			}
-			report.report("Finish the initing of the test.");
+//			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
+//				long uptime = device.getCurrentUpTime();
+//				if(device.getUpTime() > uptime) {
+//					report.report("The uptime is smaller from what it should be.", Reporter.FAIL);
+//					throw new Exception("Unwanted reboot happened to device : " + device.getDeviceSerial());
+//				}
+//				device.setUpTime(uptime);
+//			}
+//			report.report("Finish the initing of the test.");
 		}
 		finally {
 			report.stopLevel();
@@ -105,19 +106,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 
-//	@Test
-//	public void pass() {
-//		report.report("pass");
-//	}
-//	@Test
-//	public void warnning() {
-//		report.report("warnning",Reporter.WARNING);
-//	}
-//	@Test
-//	public void fail() {
-//		report.report("fail",Reporter.FAIL);
-//	}
-	
 	
 	
 	@Test
@@ -126,20 +114,32 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).configureDeviceForAutomation(true);
 		System.out.println(devicesMannager.getDevice(currentDevice).getDeviceSerial());
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).connectToServers();
-		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
 		
-		report.report("##########################");
+//		report.report("##########################");
 		
 		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
-		Thread.sleep(10000);
-		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
-		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
-		
-		
-//		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
-//		devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(Persona.PRIV).pressKey("home");
-//		devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
+		devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).openApp("Settings");
+		for(int i=0 ; i < 500 ; i++) {
+			System.out.println("home "+  + System.currentTimeMillis());
+			try {
+				devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).pressKey("home");
+				System.out.println("settings " + System.currentTimeMillis());
+				devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(Persona.PRIV).openApp("Settings");
+				Random randomGenerator = new Random();
+				int rnd = randomGenerator.nextInt(10);
+				sleep(rnd * 1000);
+			}
+			catch (Exception e) {
+				System.out.println("NULL - error caught###################################################################");
+				System.out.println(e.getMessage());
+				System.out.println(e.getStackTrace().toString());
+				System.out.println(System.currentTimeMillis()+"##########################################################");
+				
+				continue;
+			}
+		}
 		
 
 	}
@@ -235,10 +235,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "push ${localLocation} to ${remotefileLocation}", paramsInclude = { "currentDevice,localLocation,remotefileLocation" })
 	public void pushToDevice() throws Exception {
-		
-//		currentDevice = DeviceNumber.PRIMARY;
-//		localLocation = new File("/home/topq/git/automation/uiautomatorServer-19/bin/bundle.jar");
-//		remotefileLocation = "/data/containers/corp/data/local/tmp/bundle.jar";
 		
 		report.report("About to push file to device");
 		report.report(localLocation.getAbsolutePath());
@@ -620,6 +616,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Switch network \"${wifiNetwork}\" connection ${onOff} on ${persona}", paramsInclude = { "currentDevice,persona,onOff,wifiNetwork,wifiPassword" })
 	public void switchTheNetworkConnection() throws Exception {
 		
+//		onOff = State.ON;
+//		persona = Persona.PRIV;
+//		wifiPassword = "cellrocks?";
+//		wifiNetwork= "cellrox-tplink";
+//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+//		devicesMannager.getDevice(currentDevice).connectToServers();
+		
 		report.report("About to switch the the net work connectivity to : " + onOff + " on : "+ wifiNetwork);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		
@@ -818,7 +821,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size" })
 	public void validateExpressionIsSmallerByClass() throws Exception {
 		
-		report.report("bout to validate expression is smaller than : " +expectedNumber);
+		report.report("About to validate expression is "+size.toString()+" than : " +expectedNumber);
 		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
 		report.report("The return result : "+res);
 		Pattern pattern = Pattern.compile(expectedLine);
@@ -836,10 +839,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	        	}
 	        	
 	        	if(isTrue) {
-	        		report.report("The value is smaller than : "+res);
+	        		report.report("The value is "+size.toString()+" than : "+res);
 	        	}
 	        	else {
-	        		report.report("The value isn't "+ size.toString() +" than : "+res, Reporter.FAIL);
+	        		report.report("The value isn't "+ size.toString() +" than the value in : "+res, Reporter.FAIL);
 	        	}
 	    }
 	    else
@@ -942,6 +945,24 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		devicesMannager.getDevice(currentDevice).setDeviceAsRoot();
 	}
 
+	
+	
+	@Test
+	public void testTheDevicePs() throws Exception{
+		currentDevice = DeviceNumber.SECONDARY;
+		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+		devicesMannager.getDevice(currentDevice).connectToServers();
+		String str = devicesMannager.getDevice(currentDevice).getPs();
+		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+		String str2 = devicesMannager.getDevice(currentDevice).getPs();
+		if(!devicesMannager.getDevice(currentDevice).isPsDiff(str, str2)) {
+			System.out.println("#################################################Reboot found");
+		}
+		
+		
+	}
+	
 	/**
 	 * wake up
 	 * switch persona
@@ -1387,30 +1408,35 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 
-			long knownUpTime = device.getUpTime();
-			if (!device.isOnline()) {
-				long startTime = System.currentTimeMillis();
-				while(!device.isOnline()) {
-					Thread.sleep(1000);
-					if((System.currentTimeMillis() - startTime) >(5* 60 * 1000)) {
-						report.report("Failed to get device after a fail.",Reporter.FAIL);
-					}
-				}
-			}
+//			long knownUpTime = device.getUpTime();
+//			if (!device.isOnline()) {
+//				long startTime = System.currentTimeMillis();
+//				while(!device.isOnline()) {
+//					Thread.sleep(1000);
+//					if((System.currentTimeMillis() - startTime) >(5* 60 * 1000)) {
+//						report.report("Failed to get device after a fail.",Reporter.FAIL);
+//					}
+//				}
+//			}
 			//check for DOA
 			try {
 				device.checkForDoa();
 			}
 			catch (Exception e) {
 				report.report("DOA", Reporter.FAIL);
-				knownUpTime = 0;
+//				knownUpTime = 0;
 			}
 			
+			String str2 = device.getPs();
 			
-			long deviceUpTime = device.getCurrentUpTime();
-			if(knownUpTime > deviceUpTime) {
+			if(!device.isPsDiff(device.getPsString(), str2)) {
+			
+				device.getTheLogs(logType, logsLocation);
+//			if(!device.isPsDiff(device.getPsString(), str2)) {
+//			long deviceUpTime = device.getCurrentUpTime();
+//			if(knownUpTime > deviceUpTime) {
 				//this is an indication that crash happaned
-				report.report("There is an error, the device is offline, i'm going to do reboot.", Reporter.FAIL);
+				report.report("There is an error, the device is offline or had unwanted reboot, i'm going to do reboot.", Reporter.FAIL);
 				// sleep
 				sleep(20 * 1000);
 				// last_kmsg
@@ -1482,7 +1508,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		try {
 			report.startLevel("After");
 			if (!isPass()) {
-				validateDeviceStatus();
+//				validateDeviceStatus();
 			}
 		}
 		finally {
