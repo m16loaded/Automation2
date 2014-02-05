@@ -2,10 +2,14 @@ package com.cellrox.infra;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,15 +60,16 @@ public class CellRoxDevice extends SystemObjectImpl {
         // public AutomatorService[] uiClient = new AutomatorService[2];
 
         List<AutomatorService> uiClient = Collections.synchronizedList(new ArrayList<AutomatorService>());
-        private ArrayList<String> pidArray = new ArrayList<String>();
+//        private ArrayList<String> pidArray = new ArrayList<String>();
         private boolean afterCrush = false;
         private ExecutorService executor;
-        private boolean isrun = true;
+//        private boolean isrun = true;
         //the otaFileLocation is for the jenkins/the local run to know where is the ota file located and what is it name
         private String otaFileLocation;
         private long defaultCliTimeout = 90000;
-        private long upTime;
-
+//        private long upTime;//TODO to remove this uptime
+        private String psString;
+        private Set<String> processForCheck = new HashSet<String>();
         
         public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber) throws Exception {
         	
@@ -91,8 +96,50 @@ public class CellRoxDevice extends SystemObjectImpl {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
 //            upTime = getCurrentUpTime();
+            initProcessesForCheck() ;
+        	setPsString(getPs());
         	
-        	
+        }
+        
+        public void initProcessesForCheck() {
+        	processForCheck.add("/init");
+        	processForCheck.add("/sbin/ueventd");
+        	processForCheck.add("/system/bin/servicemanager");
+        	processForCheck.add("/system/bin/vold");
+        	processForCheck.add("/system/bin/netd");
+        	processForCheck.add("/system/bin/debuggerd");
+        	processForCheck.add("/system/bin/surfaceflinger");
+        	processForCheck.add("zygote");
+        	processForCheck.add("/system/bin/drmserver");
+        	processForCheck.add("/system/bin/mediaserver.cellrox");
+        	processForCheck.add("/system/bin/installd");
+        	processForCheck.add("/system/bin/keystore");
+        	processForCheck.add("/system/bin/surface_monitor");
+        	processForCheck.add("/system/bin/sdcard");
+        	processForCheck.add("/sbin/adbd");
+        	processForCheck.add("system_server");
+        	processForCheck.add("com.android.systemui");
+        	processForCheck.add("android.process.media");
+        	processForCheck.add("com.android.phasebeam");
+        	processForCheck.add("com.android.inputmethod.latin");
+        	processForCheck.add("com.android.phone");
+        	processForCheck.add("com.cellrox.cellroxservice");
+        	processForCheck.add("com.android.launcher");
+        	processForCheck.add("android.process.acore");
+        	processForCheck.add("com.android.settings");
+        	processForCheck.add("com.android.printspooler");
+        	processForCheck.add("com.android.smspush");
+        	processForCheck.add("com.android.music");
+        	processForCheck.add("com.android.dialer");
+        	processForCheck.add("com.android.bluetooth");
+        	processForCheck.add("com.android.providers.calendar");
+        	processForCheck.add("com.android.mms");
+        	processForCheck.add("com.android.onetimeinitializer");
+        	processForCheck.add("com.android.voicedialer");
+        	processForCheck.add("com.android.calendar");
+        	processForCheck.add("com.android.deskclock");
+        	processForCheck.add("com.android.email");
+        	processForCheck.add("com.android.exchange");
         }
         
         /**
@@ -106,7 +153,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell mkdir -p /data/agent/logs/adb/ 2>&1 >/dev/null");
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell bash /system/etc/logcollector.sh "+ loggerType.toString()+" \"adb/\" 2>&1 >/dev/null");
         	executeCliCommand("adb -s "+getDeviceSerial()+" pull /data/agent/logs/adb "+ logLocation);
-        	report.report("Logs in : " + logLocation);
+        	executeCliCommand("date");
+        	report.report("Logs saved in : " + logLocation);
         	
         }
         
@@ -127,6 +175,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	else {
         		upTime = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
         	}
+        	upTime = upTime.replace("time", "").trim();
 //        	cli.disconnect();
         	return Long.parseLong(upTime);
         }
@@ -406,7 +455,8 @@ public class CellRoxDevice extends SystemObjectImpl {
                 
                 validateDeviceIsOnline(currentTime, timeout, isEncrypted, personas);
                 setDeviceAsRoot();
-                upTime = getCurrentUpTime();
+//                upTime = getCurrentUpTime();
+                setPsString(getPs());
         }
         
 
@@ -426,7 +476,8 @@ public class CellRoxDevice extends SystemObjectImpl {
                 Thread.sleep(1000);
                 boolean isUp = validateDeviceIsOnline(isEncrypted, personas);
 //              device = adbController.waitForDeviceToConnect(getDeviceSerial());
-                upTime = getCurrentUpTime();
+//                upTime = getCurrentUpTime();
+                setPsString(getPs());
                 return isUp;
         }
 
@@ -708,6 +759,89 @@ public class CellRoxDevice extends SystemObjectImpl {
                 device.setPortForwarding(localPort, remotePort);
         }
 
+
+        /**
+         * this function just do ps and split it 
+         * */
+        public String getPs() throws Exception {
+        	
+        	cli.connect();
+        	executeCliCommand("adb -s " + deviceSerial + " shell");
+        	executeCliCommand("ps", true , 2*60*1000);
+        	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
+        }
+        
+        /**
+         * This function checks for known differences unless it have a known diffrences.
+         * */
+        public boolean isPsDiff(String ps1, String ps2) {
+        	
+        	String pid1 = null,pid2 = null,pname1 = null,pname2 = null;
+        	Map<String,String> map1 = new HashMap<String, String>();
+        	Map<String,String> map2 = new HashMap<String, String>(0);
+        	String []strArr = ps1.split("\n");
+    		String []strArr2 = ps2.split("\n");
+    		System.out.println(strArr.length);
+    		System.out.println(strArr2.length);
+    		String expression = "\\S*\\s*(\\d*)\\s*\\S*\\s*\\S*\\s*\\S*\\s*\\S*\\s*\\S*\\s*\\S*\\s*(\\S*)\\s*";
+    		
+    		for (int index = 0 ; index<strArr.length ; index++) {
+    			
+    			Pattern pattern = Pattern.compile(expression);
+        	    Matcher matcher = pattern.matcher(strArr[index]);
+        	    if(matcher.find()) {
+        	    	pid1 = matcher.group(1);
+        	    	pname1 = matcher.group(2);
+        	    	if(processForCheck.contains(pname1)) {
+        	    		map1.put(pid1, pname1);
+        	    	}
+       
+        	    }
+        	    if (index<strArr2.length) {
+	        	    matcher = pattern.matcher(strArr2[index]);
+	        	    if(matcher.find()) {
+	        	    	pid2 = matcher.group(1);
+	        	    	pname2 = matcher.group(2);
+	        	    	if(processForCheck.contains(pname2)) {
+	        	    		map2.put(pid2, pname2);
+	        	    	}
+	        	    }
+        	    }
+    		}
+    		
+    		if(map1.equals(map2)) {
+    			return true;
+    		}
+    		else {
+    			report.report("Maps aren't equal :");
+    			
+    			for (Entry<String, String> entery : map1.entrySet()) {
+    				
+    				if(!map2.containsKey(entery.getKey())) {
+    					report.report(entery.getKey() +","+entery.getValue()+" wasn't found equaly in both of the maps.");
+    				}
+					
+				}
+					
+				
+    			
+    			
+    			report.report("Map 1 : "+map1.toString());
+    			report.report("Map 2 : "+map2.toString());
+    			return false;
+    		}
+    		
+//    		return true;
+        }     
+        
+        /**
+         * Open logcat termianl that print it all the logcat
+         * */
+        public void openLogcatTerminal() throws IOException {
+	        String[] cmdss1= {"gnome-terminal","-x","adb", "-s", deviceSerial ,"logcat","-v","pidns"};
+	        Process proc = Runtime.getRuntime().exec(cmdss1, null);
+        }
+        
         /**
          * - ADB forword to priv and corp port as configured in the SUT<br>
          * - Connect to UIAutomator servers on the two personas<br>
@@ -1194,7 +1328,7 @@ public class CellRoxDevice extends SystemObjectImpl {
     		if (current == persona) {
     			report.report("Persona " + persona + " is Already in the Foreground");
     		} else {
-    			getPersona(current).click(10, 10);//(5, 5);
+    			getPersona(current).click(5, 5);//(5, 5);
     			current = getForegroundPersona();
     			if (current == persona) {
     				report.report("Switch to " + persona);
@@ -1260,7 +1394,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 // TODO : need to think if we want to stop by PID (means we will need to
                 // access each persona) or by process name
                 // cli.disconnect();
-                isrun = false;
+//                isrun = false;
                 if (executor != null) {
                         while (!executor.isTerminated()) {
                         }
@@ -1373,17 +1507,17 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
 
 		/**
-		 * @return the upTime
+		 * @return the psString
 		 */
-		public long getUpTime() {
-			return upTime;
+		public String getPsString() {
+			return psString;
 		}
 
 		/**
-		 * @param upTime the upTime to set
+		 * @param psString the psString to set
 		 */
-		public void setUpTime(long upTime) {
-			this.upTime = upTime;
+		public void setPsString(String psString) {
+			this.psString = psString;
 		}
 
 }
