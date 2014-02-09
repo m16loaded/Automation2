@@ -40,7 +40,14 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setPrompt("# ");
 		prompts.add(p);
 		
-
+		
+		
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("#\\s*");
+		p.setStringToSend(String.valueOf((char) 13));
+		prompts.add(p);
+		
 		p = new Prompt();
 		p.setAddEnter(true);
 		p.setPrompt("Console opened. Press enter if you don't see a prompt.");
@@ -53,6 +60,14 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setRegularExpression(true);
 		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
 		prompts.add(p);
+
+		 
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("and height \\d*\\s*");
+		p.setRegularExpression(true);
+		p.setStringToSend(String.valueOf((char) 13));
+		prompts.add(p);
 		
 		p = new Prompt();
 		p.setAddEnter(true);
@@ -65,6 +80,13 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p = new Prompt();
 		p.setAddEnter(true);
 		p.setPrompt("Console opened. Press enter if you don't see a prompt.\\s*");
+		p.setRegularExpression(true);
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
+		prompts.add(p);
+		
+		
+		p.setAddEnter(true);
+		p.setPrompt("nc: short write\\s*");
 		p.setRegularExpression(true);
 		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
 		prompts.add(p);
@@ -75,6 +97,7 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setPrompt("nc: can't connect to remote host (127.0.0.1): Connection refused");
 		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));		
 		prompts.add(p);
+		
 		
 		p = new Prompt();
 		p.setAddEnter(true);
@@ -92,6 +115,9 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setCommandEnd(true);
 		p.setPrompt("> ");
 		prompts.add(p);
+		
+		
+
 		
 	/*	p = new Prompt();
 		p.setCommandEnd(true);
