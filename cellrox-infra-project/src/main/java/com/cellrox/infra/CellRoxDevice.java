@@ -70,6 +70,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 //        private long upTime;//TODO to remove this uptime
         private String psString;
         private Set<String> processForCheck = new HashSet<String>();
+        private long upTime;
         
         public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber) throws Exception {
         	
@@ -95,7 +96,8 @@ public class CellRoxDevice extends SystemObjectImpl {
             } else if (status.equals("0")) {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
-//            upTime = getCurrentUpTime();
+            //here is our checks uptime and the processes, by this we can check the crashes
+            setUpTime(getCurrentUpTime());
             initProcessesForCheck() ;
         	setPsString(getPs());
         	
@@ -142,12 +144,22 @@ public class CellRoxDevice extends SystemObjectImpl {
         	processForCheck.add("com.android.exchange");
         }
         
+        public void executeCommandAdbShell(String cmd) throws Exception {
+        	cli.connect();
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
+        	executeCliCommand(cmd);
+        }
+        
+        public void executeCommandAdb(String cmd) throws Exception {
+        	cli.connect();
+        	executeCliCommand("adb -s "+getDeviceSerial()+" "+cmd);
+        }
+        
         /**
          * This function use the get logs to returns the logs to the wanted location
          * */
         public void getTheLogs(LogcatHandler loggerType, String logLocation) throws Exception {
 //        	String userHome = System.getProperty("user.home");
-        	
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell rm -R /data/agent/logs/adb");
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell mkdir -p /data/agent/logs/adb/ 2>&1 >/dev/null");
@@ -270,7 +282,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	//kill uiautomator
             executeCliCommand("pkill uiautomator");
           //kill the sh script, of the while
-            executeCliCommand("ps | grep busybox");
+/*            executeCliCommand("ps | grep busybox");
             String retData = cli.getTestAgainstObject().toString();
             retData = retData.replace("\n", "");
             retData = retData.replace("\r", "");
@@ -282,9 +294,10 @@ public class CellRoxDevice extends SystemObjectImpl {
         	        	String fatherProcessNumber = matcher.group(2);
         	        	executeCliCommand("kill "+fatherProcessNumber);
         	    }
-            }
+            }*/
         	  //kill the busybox
-        	executeCliCommand("pkill busybox");
+//        	executeCliCommand("pkill busybox");
+            executeCliCommand("pkill nc");
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
@@ -356,7 +369,8 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param corpPort
          * @throws Exception
          */
-        public void configureDeviceForAutomation(boolean runServer) throws Exception {
+        @Deprecated
+        public void configureDeviceForAutomationOld(boolean runServer) throws Exception {
                 
         		killAllAutomaionProcesses();
         	
@@ -412,6 +426,64 @@ public class CellRoxDevice extends SystemObjectImpl {
                 report.stopLevel();
                 cli.disconnect();
         }
+        
+        
+        public void configureDeviceForAutomation(boolean runServer) throws Exception {
+            
+    		killAllAutomaionProcesses();
+    	
+            report.startLevel("Configure Device For Automation");
+            
+            cli.connect();
+            executeCliCommand("adb -s " + getDeviceSerial() + " root");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+            
+            Thread.sleep(200);
+            cli.switchToPersona(Persona.PRIV);
+            /**
+             * For QA mode this line will open a mock server
+             * executeShellCommand(String
+             * .format("busybox nc -l -p %d -e /system/bin/sh&",privPort));
+             */
+            Thread.sleep(200);
+            if (runServer) {
+            	executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
+            	executeCliCommand("rm /tmp/local_pipe");
+            	executeCliCommand("mkfifo /tmp/local_pipe");
+            	executeCliCommand("rm /data/unix_soc");
+            	executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/tmp/local_pipe) &"); 
+            }
+            
+            cli.switchToHost();
+            executeCliCommand("adb -s " + getDeviceSerial() + " root");
+            executeCliCommand("rm /tmp/local_pipe");
+            executeCliCommand("mkfifo /tmp/local_pipe");
+            executeCliCommand("nc -lk "+privePort+" < /tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/tmp/local_pipe &");
+            
+            cli.switchToPersona(Persona.CORP);
+            /**
+             * For QA mode this line will open a mock server
+             * executeShellCommand(String
+             * .format("busybox nc -l -p %d -e /system/bin/sh&",corpPort));
+             */
+            Thread.sleep(200);
+            if (runServer) {
+            	executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
+            	executeCliCommand("rm /tmp/local_pipe");
+            	executeCliCommand("mkfifo /tmp/local_pipe");
+            	executeCliCommand("rm /data/unix_soc");
+            	executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/tmp/local_pipe) &"); 
+            }
+            
+            cli.switchToHost();
+            executeCliCommand("adb -s " + getDeviceSerial() + " root");
+            executeCliCommand("rm /tmp/local_pipe");
+            executeCliCommand("mkfifo /tmp/local_pipe");
+            executeCliCommand("nc -lk "+corpPort+" < /tmp/local_pipe  | nc -U /data/containers/corp/data/unix_soc >/tmp/local_pipe &");
+            
+            report.stopLevel();
+            cli.disconnect();
+    }
 
 
         /**
@@ -449,13 +521,11 @@ public class CellRoxDevice extends SystemObjectImpl {
                         device.reboot();
                         report.report("reboot command was sent");
                         Thread.sleep(5000);
-                } catch (Exception e) {
-                        // igonore
-                }
+                } catch (Exception e) { }
                 
                 validateDeviceIsOnline(currentTime, timeout, isEncrypted, personas);
                 setDeviceAsRoot();
-//                upTime = getCurrentUpTime();
+                upTime = getCurrentUpTime();
                 setPsString(getPs());
         }
         
@@ -476,14 +546,13 @@ public class CellRoxDevice extends SystemObjectImpl {
                 Thread.sleep(1000);
                 boolean isUp = validateDeviceIsOnline(isEncrypted, personas);
 //              device = adbController.waitForDeviceToConnect(getDeviceSerial());
-//                upTime = getCurrentUpTime();
+                upTime = getCurrentUpTime();
                 setPsString(getPs());
                 return isUp;
         }
 
         /**
          * Executes shell command on host
-         *
          * @param command
          * @throws Exception
          */
@@ -587,7 +656,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param personas
          * @throws Exception
          */
-                boolean online = false;
+              	boolean online = false;
                 public boolean validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
                 String result = null;
                 int found = 0;
@@ -597,7 +666,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                                 report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
                                 return false;
                         }
-
                         try {
                                 result = device.executeShellCommand("cell list state");
                         } catch (AdbControllerException e) {
@@ -626,7 +694,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         
         /**
          * validate the requested persona(s) are online with cell list command
-         *
          * @param personas
          * @throws Exception
          */
@@ -697,11 +764,10 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @throws Exception
          */
         public boolean isOnline() throws Exception {
-                if (device.isOnline() && !device.isOffline()) {
+                if (device.isOnline() && !device.isOffline()) 
                         return true;
-                } else {
+                 else 
                         return false;
-                }
         }
 
         /**
@@ -734,7 +800,6 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @throws SyncException
          * @throws IOException
          * @throws TimeoutException
-         *
          * @see FileListingService.FileEntry
          * @see #getNullProgressMonitor()
          */
@@ -749,7 +814,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         /**
          * Set port forwarding for the requested device
-         *
          * @param deviceSerial
          * @param localPort
          * @param remotePort
@@ -758,7 +822,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         public void setPortForwarding(int localPort, int remotePort) throws Exception {
                 device.setPortForwarding(localPort, remotePort);
         }
-
 
         /**
          * this function just do ps and split it 
@@ -786,7 +849,6 @@ public class CellRoxDevice extends SystemObjectImpl {
     		String expression = "\\S*\\s*(\\d*)\\s*\\S*\\s*\\S*\\s*\\S*\\s*\\S*\\s*\\S*\\s*\\S*\\s*(\\S*)\\s*";
     		
     		for (int index = 0 ; index<strArr.length ; index++) {
-    			
     			Pattern pattern = Pattern.compile(expression);
         	    Matcher matcher = pattern.matcher(strArr[index]);
         	    if(matcher.find()) {
@@ -795,7 +857,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         	    	if(processForCheck.contains(pname1)) {
         	    		map1.put(pid1, pname1);
         	    	}
-       
         	    }
         	    if (index<strArr2.length) {
 	        	    matcher = pattern.matcher(strArr2[index]);
@@ -814,24 +875,16 @@ public class CellRoxDevice extends SystemObjectImpl {
     		}
     		else {
     			report.report("Maps aren't equal :");
-    			
     			for (Entry<String, String> entery : map1.entrySet()) {
-    				
     				if(!map2.containsKey(entery.getKey())) {
     					report.report(entery.getKey() +","+entery.getValue()+" wasn't found equaly in both of the maps.");
     				}
-					
 				}
-					
-				
-    			
-    			
     			report.report("Map 1 : "+map1.toString());
     			report.report("Map 2 : "+map2.toString());
     			return false;
     		}
     		
-//    		return true;
         }     
         
         /**
@@ -844,22 +897,16 @@ public class CellRoxDevice extends SystemObjectImpl {
         
         /**
          * - ADB forword to priv and corp port as configured in the SUT<br>
-         * - Connect to UIAutomator servers on the two personas<br>
-         * <br>
+         * - Connect to UIAutomator servers on the two personas<br><br>
          * This function assumes that the servers are already running
-         *
          * @throws Exception
          */
         public void connectToServers() throws Exception {
                 
         		device = adbController.waitForDeviceToConnect(getDeviceSerial());
-                // port forward
-//                while (!device.isOnline()) {
-//                }
                 report.report("Device is online");
                 setPortForwarding(privePort, privePort);
                 setPortForwarding(corpPort, corpPort);
-
                 // connect client to server
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
                 uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
@@ -902,10 +949,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                 return Persona.valueOf(perona.toUpperCase().trim());
         }
 
-        // public void openNotificationBar(Persona persona) throws Exception{
-        // uiClient[persona.ordinal()].
-        // }
-
         /**
          * init logs (logcat, radio, kmsg)
          */
@@ -938,7 +981,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         /**
          * The function get logs of the entire run from /data/agent/syslogs
-         *
          * @throws Exception
          */
         public void getLogsOfRun(LogParser parser) throws Exception {
@@ -983,7 +1025,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 
                 String retString = "";
                 final int numberOfRootAttempts = 3;
-
                 cli.connect();
                 for (int i = 0; i < numberOfRootAttempts; i++) {
                         executeCliCommand("adb -s " + getDeviceSerial() + " root", true);
@@ -1007,8 +1048,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 cli.disconnect();
         }
 
-        public String uploadRomOldServer(String serverHost, String imgFile, String version, String adminToken, String md5sum)
-                        throws Exception {
+        public String uploadRomOldServer(String serverHost, String imgFile, String version, String adminToken, String md5sum)throws Exception {
                 cli.connect();
                 CliCommand cmd = new CliCommand();
                 cmd.setCommand(String
@@ -1073,7 +1113,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         /**
          * Wait for a specific line in Logcat<br>
          * This function is limited by timeout
-         *
          * @param line
          * @param timeout
          * (millis)
@@ -1084,7 +1123,6 @@ public class CellRoxDevice extends SystemObjectImpl {
          */
         public boolean waitForLineInTomcat(String line, long timeout, long interval) throws Exception {
                 final long start = System.currentTimeMillis();
-                // TODO add RegEx support
                 while (!getLogcatLastLines(100).contains(line)) {
                         if (System.currentTimeMillis() - start > timeout) {
                                 report.report("Could not find the line " + line, Reporter.FAIL);
@@ -1112,7 +1150,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                 executeCliCommand(sqlQuery);
                 executeCliCommand(".exit");
                 cli.disconnect();
-
         }
 
         /**
@@ -1172,16 +1209,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression,
                         Persona persona) throws Exception {
 
-                
-//                cli.connect();
-//                executeCliCommand("adb shell");
-//                if (persona == Persona.PRIV) {
-//                        executeCliCommand("cell console priv");
-//                } else {
-//                        executeCliCommand("cell console corp");
-//                }
-                //executeCliCommand("");
-                //executeCliCommand(cliCommand);
                 try {
                         report.report(cliCommand);
                         String responce = getPersona(persona).excuteCommand(cliCommand);
@@ -1207,16 +1234,11 @@ public class CellRoxDevice extends SystemObjectImpl {
                         report.report("Error : " +e.getMessage(),Reporter.FAIL);
                 }
                 
-//                FindText findText = new FindText(expression, isRegularExpression);
-//                cli.analyze(findText);
-//                cli.switchToHost();
-//                cli.disconnect();
 
         }
         
         public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
                         Persona persona) throws Exception {
-
                 
                 cli.connect();
                 executeCliCommand("adb -s " + getDeviceSerial() + " shell");
@@ -1226,10 +1248,8 @@ public class CellRoxDevice extends SystemObjectImpl {
                         executeCliCommand(" ");
                         executeCliCommand(" ");
                         executeCliCommand(" ");
-                        executeCliCommand(" ");
                 } else {
                         executeCliCommand("cell console corp");
-                        executeCliCommand(" ");
                         executeCliCommand(" ");
                         executeCliCommand(" ");
                         executeCliCommand(" ");
@@ -1244,41 +1264,27 @@ public class CellRoxDevice extends SystemObjectImpl {
                 cli.disconnect();
 
         }
-
-        /**
-         * get the path of the application and push it to the priv and the corp
-         *
-         * @param appFullPath
-         * - the application full path on the local cpu
-         * */
-        public void pushApplicationToDevice(String appFullPath) throws Exception {
-
-                cli.connect();
-                report.report("about to do : " + "adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
-                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
-                report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
-                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
-                cli.disconnect();
-
-        }
-
-        public void pushApplicationToPriv(String appFullPath) throws Exception {
-
-                cli.connect();
-                report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
-                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
-                cli.disconnect();
-
+//        /**
+//         * get the path of the application and push it to the priv and the corp
+//         * - the application full path on the local cpu
+//         * */
+//        public void pushApplicationToDevice(String appFullPath) throws Exception {
+//                cli.connect();
+//                report.report("about to do : " + "adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
+//                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
+//                report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
+//                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
+//                cli.disconnect();
+//        }
+        
+        public void pushApplication(String appFullPath , String locationForPushing) throws Exception {
+            cli.connect();
+            report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " " +locationForPushing);
+            executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " " +locationForPushing);
+            cli.disconnect();
         }
         
-        public void pushApplicationToCorp(String appFullPath) throws Exception {
-
-                cli.connect();
-                report.report("about to do : " + "adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
-                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
-                cli.disconnect();
-
-        }
+       
         private void executeCliCommand(String Command) throws Exception {
                 executeCliCommand(Command, false);
                 Thread.sleep(500);
@@ -1292,21 +1298,18 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         private void executeCliCommand(String Command, boolean silent, long timeout, boolean ignoreErrors) throws Exception {
-
                 CliCommand cmd = new CliCommand(Command);
                 cmd.setSilent(silent);
                 cmd.setAddEnter(true);
                 cmd.setTimeout(timeout);
                 cmd.setIgnoreErrors(ignoreErrors);
                 cli.handleCliCommand(Command, cmd);
-                // savePID();
         }
 
         /**
          * The following functions click on the button by the x y cordinate
          * */
         public void clickOnSelectorByUi(ObjInfo info, Persona persona) throws UiObjectNotFoundException {
-
                 int horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
                 int vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
                 report.report("About to click point at : " + horizon + "," + vertical);
@@ -1358,61 +1361,35 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This function runs apply update script
          * */
         public void runApplayUpdateScript(String applyUpdateLocation, String otaFileLocation) throws Exception {
-                
                 cli.connect();
                 cli.setExitTimeout(10*60*1000);
                 executeCliCommand("adb -s " + getDeviceSerial() + " root");
                 executeCliCommand("su -" , false);
                 executeCliCommand("");
                 Thread.sleep(1500);
-//                try {
-                        executeCliCommand(applyUpdateLocation + " " + otaFileLocation);
-//                }
-//                catch(Exception e) {
-//                }
+                executeCliCommand(applyUpdateLocation + " " + otaFileLocation);
                 Thread.sleep(100*1000);
                 cli.disconnect();
         }
         
-        
-        @Deprecated
-        public void reportToLogcat(String TAG, String msg) {
-                device.reportToLogcat(TAG, msg);
-        }
 
         /**
          * This is the System Object "destructor"<br>
          * The close function will close all the process that are open for the
          * automation use.<br>
-         *
          * <b>please note: </b>this function only invokes on the end of the
          * automation run and not between tests or building blocks
-         *
          */
         @Override
         public void close() {
-                // TODO : need to think if we want to stop by PID (means we will need to
-                // access each persona) or by process name
-                // cli.disconnect();
-//                isrun = false;
                 if (executor != null) {
                         while (!executor.isTerminated()) {
                         }
                 }
-                stopAllActiveAutomationProecess();
-
+//                killAllAutomaionProcesses();
                 super.close();
         }
 
-        private void stopAllActiveAutomationProecess() {
-                try {
-//                        String a = device.executeShellCommand("killall busybox");
-//                        device.executeShellCommand("killall uiautomator");
-                } catch (Exception e) {
-                        report.report("Error in closing automation processes", Reporter.FAIL);
-                }
-        }
-        
         
         public void sync() throws Exception {
                 cli.connect();
@@ -1492,32 +1469,28 @@ public class CellRoxDevice extends SystemObjectImpl {
                 this.encryptPasseord = encryptPasseord;
         }
 
-        /**
-         * @return the otaFileLocation
-         */
         public String getOtaFileLocation() {
                 return otaFileLocation;
         }
 
-        /**
-         * @param otaFileLocation the otaFileLocation to set
-         */
         public void setOtaFileLocation(String otaFileLocation) {
                 this.otaFileLocation = otaFileLocation;
         }
 
-		/**
-		 * @return the psString
-		 */
 		public String getPsString() {
 			return psString;
 		}
 
-		/**
-		 * @param psString the psString to set
-		 */
 		public void setPsString(String psString) {
 			this.psString = psString;
+		}
+		
+		public long getUpTime() {
+			return upTime;
+		}
+
+		public void setUpTime(long upTime) {
+			this.upTime = upTime;
 		}
 
 }

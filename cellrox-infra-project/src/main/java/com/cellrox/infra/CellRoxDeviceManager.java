@@ -50,11 +50,6 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     }
     
     
-//    public void close(){
-//			try {
-//				getDevice(DeviceNumber.PRIMARY).printKmsg();
-//			} catch (IOException e) { }
-//    }
     
     
     
