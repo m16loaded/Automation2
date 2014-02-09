@@ -35,6 +35,7 @@
         <antcallback target="t19"/>
         <antcallback target="t20"/>
         <antcallback target="t21"/>
+        <antcallback target="t22"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -210,6 +211,14 @@
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
+        </jsystem>
+    </target>
+    <target name="t22">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="95c09849-9b9b-43a3-8018-143660c8e00c"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.getUptime"/>
         </jsystem>
     </target>
 </project>

@@ -37,15 +37,15 @@
         </jsystem-ant>
     </target>
     <target name="t2">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/WIFI.xml">
-            <property name="jsystem.uuid" value="f430852a-4c31-4775-9dc3-f9ea980a6d3d"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2.xml">
+            <property name="jsystem.uuid" value="ecaafb2c-e8ea-44f9-a63b-1e27cd5121fa"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t3">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2.xml">
-            <property name="jsystem.uuid" value="ecaafb2c-e8ea-44f9-a63b-1e27cd5121fa"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/WIFI.xml">
+            <property name="jsystem.uuid" value="f430852a-4c31-4775-9dc3-f9ea980a6d3d"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
