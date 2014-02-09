@@ -55,10 +55,10 @@ public class JsystemReporter {
 	 */
 	public static void main(String[] args) {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
-//		Map<String, String> testsStatusMap = new HashMap<String, String>();
+		String doaCrash = "false",deviceCrash= "false", personaCrash = "false";
 		String compareStatus, seconedColor;
 		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
-		String date = null, version = null, id = null, nameOfReport = null, newNameOfReport = null, currentLogLocation = null, startTime = null;
+		String date = null, version = null, id = null, nameOfReport = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
@@ -91,6 +91,18 @@ public class JsystemReporter {
 				version = eElement.getAttribute("Build_display_id");
 				id = eElement.getAttribute("Build_sdk_version");
 				startTime = eElement.getAttribute("Date");
+				try {
+				doaCrash = eElement.getAttribute("Doa_Crash");
+				}catch (Exception e){}
+				try {
+				deviceCrash = eElement.getAttribute("Device_Crash");
+				}catch (Exception e){}
+				try {
+				personaCrash = eElement.getAttribute("Persona_Crash");
+				}catch (Exception e){}
+				try {
+					endTime = eElement.getAttribute("End_Time");
+				}catch (Exception e){}
 			}
 			//begin to create the html file
 			nList = doc.getElementsByTagName("test");
@@ -99,6 +111,14 @@ public class JsystemReporter {
 //			pw.println("<p><b>Build_date : " + date + ", Build_sdk_version : " + version + ", Build_display_id : " + id+ " </b></p>");
 			pw.println("<p><b>Tests report : </b></p>");
 			pw.println("<p>Start time : "+startTime+"</p>");
+			if(endTime!=null)
+				pw.println("<p>End time : "+endTime+"</p>");
+			if(!doaCrash.equals("false"))
+				pw.println("<p>Doa Crash : true</p>");
+			if(!deviceCrash.equals("false"))
+				pw.println("<p>Device Crash : true</p>");
+			if(!personaCrash.equals("false"))
+				pw.println("<p>Persona Crash : true</p>");
 			pw.println("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Time<TH>Result<TH>Last Run Result<b></TR>");
 
 			Map<String, String> testsStatusMapOld = getMapFromConfigFile(propName);
