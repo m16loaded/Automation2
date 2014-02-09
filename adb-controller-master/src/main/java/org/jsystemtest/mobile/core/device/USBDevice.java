@@ -95,18 +95,6 @@ public class USBDevice extends AbstractAndroidDevice {
 		}
 	}
 
-//	/**
-//	 * @return the deviceSerial
-//	 */
-//	public String getDeviceSerial() {
-//		return deviceSerial;
-//	}
-//
-//	/**
-//	 * @param deviceSerial the deviceSerial to set
-//	 */
-//	public void setDeviceSerial(String deviceSerial) {
-//		this.deviceSerial = deviceSerial;
-//	}
+
 
 }
