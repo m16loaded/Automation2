@@ -106,7 +106,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		
 		for(int i = 0 ; i < 5 ; i++) {
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassNameMatches("").setIndex("1").setDescription("Apps"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassNameMatches("").setIndex(1).setDescription("Apps"));
 			sleep(10000);
 		}
 		
@@ -950,6 +950,18 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(persona);
 	}
 	
+	
+	/**
+	 * This function scroll to the wanted text to find and click on it.
+	 * For example you can find allot of use inside of the settings
+	 * */
+	@Test
+	@TestProperties(name = "Click On Scrollable On : ${persona}", paramsInclude = { "currentDevice,persona,text" })
+	public void clickOnScrollable() throws Exception {
+		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
+				new Selector().setText(text), text, true);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(id);
+	}
 
 	@Test
 	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
