@@ -55,7 +55,7 @@ public class JsystemReporter {
 	 */
 	public static void main(String[] args) {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
-		String doaCrash = "false",deviceCrash= "false", personaCrash = "false";
+		String doaCrash = null, deviceCrash = null, personaCrash = null;
 		String compareStatus, seconedColor;
 		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
 		String date = null, version = null, id = null, nameOfReport = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null;
@@ -65,7 +65,7 @@ public class JsystemReporter {
 
 		//get the args[] parm, if they not inserted use the default 
 		if(args.length < 2 ) {
-			currentLogLocation = "/home/topq/dev/runner6003/log/current/reports.0.xml";
+			currentLogLocation = "/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current/reports.0.xml";//"/home/topq/dev/runner6003/log/current/reports.0.xml";
 			nameOfReport = "/home/topq/dev/managerReport.html";
 		}
 		else {
@@ -111,13 +111,13 @@ public class JsystemReporter {
 //			pw.println("<p><b>Build_date : " + date + ", Build_sdk_version : " + version + ", Build_display_id : " + id+ " </b></p>");
 			pw.println("<p><b>Tests report : </b></p>");
 			pw.println("<p>Start time : "+startTime+"</p>");
-			if(endTime!=null)
+			if(!endTime.isEmpty())
 				pw.println("<p>End time : "+endTime+"</p>");
-			if(!doaCrash.equals("false"))
+			if(!doaCrash.isEmpty())
 				pw.println("<p>Doa Crash : true</p>");
-			if(!deviceCrash.equals("false"))
+			if(!deviceCrash.isEmpty())
 				pw.println("<p>Device Crash : true</p>");
-			if(!personaCrash.equals("false"))
+			if(!personaCrash.isEmpty())
 				pw.println("<p>Persona Crash : true</p>");
 			pw.println("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Time<TH>Result<TH>Last Run Result<b></TR>");
 
