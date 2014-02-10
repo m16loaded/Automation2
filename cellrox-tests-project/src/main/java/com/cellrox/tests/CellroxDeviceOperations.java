@@ -103,10 +103,17 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).connectToServers();
 		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setDescription("Apps"));
-		sleep(10000);
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
+		
+		for(int i = 0 ; i < 5 ; i++) {
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassNameMatches("").setIndex("1").setDescription("Apps"));
+			sleep(10000);
+		}
+		
+//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
+//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setDescription("Apps"));
+//		sleep(10000);
+//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
 
 	}
 		
@@ -906,9 +913,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 //	}
 	
 	/**
-	 * wake up
 	 * switch persona
 	 * enter the password and enter
+	 * validate that the screen is on
 	 * */
 	@Test
 	@TestProperties(name = "Enter Password for ${persona}", paramsInclude = { "currentDevice,persona,value" })
@@ -920,6 +927,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		if(!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription("Apps"))) {
+			report.report("The screen is off.",Reporter.FAIL);
+		}
+		
+		
 	}
 	
 
