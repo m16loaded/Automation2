@@ -234,7 +234,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		// child
 		if (childClass != null) 
-			child.setClassName(childClassName);
+			child.setClassName(childClass);
 		if (childText != null) 
 			child.setText(childText);
 		if (childIndex != null) 
@@ -245,9 +245,32 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
 		report.report("The child id : " + objectId);
 
-		System.out.println(objectId);
-		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
+		try {
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
+		}
+		catch(Exception e) {
+			
+			//in this case the child is with only 2 locations that im not know about them
+			if(childIndex.equals("0")) 
+				childIndex = "1";
+			if(childIndex.equals("1")) 
+				childIndex = "0";
+			
+			child = new Selector();
+			if (childClass != null) 
+				child.setClassName(childClass);
+			if (childText != null) 
+				child.setText(childText);
+			if (childIndex != null) 
+				child.setIndex(Integer.valueOf(childIndex));
+			
+			objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
+			
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
+			
+		}
 
+		
 	}
 	
 	@Test
