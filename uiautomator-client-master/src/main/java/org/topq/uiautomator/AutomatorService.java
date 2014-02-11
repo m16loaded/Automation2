@@ -9,11 +9,14 @@ import com.googlecode.jsonrpc4j.JsonRpcErrors;
 public interface AutomatorService {
 	final static int ERROR_CODE_BASE = -32000;
 
+	
+	
 	/**
 	 * It's to test if the service is alive.
 	 * 
 	 * @return 'pong'
 	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
 	String ping();
 
 	/***************************************************************************
@@ -29,6 +32,7 @@ public interface AutomatorService {
 	 *            coordinate
 	 * @return true if the click succeeded else false
 	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 1) })
 	boolean click(int x, int y);
 	
 	/**
@@ -40,6 +44,7 @@ public interface AutomatorService {
 	 *            coordinate
 	 * @return true if the click succeeded else false
 	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
 	boolean doubleClick(int x, int y);
 
 	/**
@@ -84,6 +89,7 @@ public interface AutomatorService {
 	 *            is the number of move steps sent to the system
 	 * @return false if the operation fails or the coordinates are invalid
 	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
 	boolean swipe(int startX, int startY, int endX, int endY, int steps);
 
 	/**

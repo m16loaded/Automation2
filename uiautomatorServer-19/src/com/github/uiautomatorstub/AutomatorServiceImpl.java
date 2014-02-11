@@ -1622,6 +1622,7 @@ public class AutomatorServiceImpl implements AutomatorService {
 	public boolean click(String obj) throws UiObjectNotFoundException {
 		return getUiObject(obj).click();
 	}
+	
 
 	/**
 	 * Clicks the bottom and right corner or top and left corner of the UI
