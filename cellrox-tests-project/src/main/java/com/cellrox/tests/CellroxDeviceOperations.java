@@ -76,6 +76,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
+			
+			//adding the start time to summary
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			Summary.getInstance().setProperty("Start Time", sdf.format(cal.getTime()));
+			
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
 //			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 //				long uptime = device.getCurrentUpTime();
@@ -211,6 +217,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	}
 
+	
 	/**
 	 * This is a general function for finding the father and than find the child
 	 * and enter text to it. If you are not need some of the data, than do not enter
@@ -223,7 +230,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		Selector father = new Selector();
 		Selector child = new Selector();
-
+		
 		// father
 		if (fatherClass != null) 
 			father.setClassName(fatherClass);
@@ -245,32 +252,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
 		report.report("The child id : " + objectId);
 
-		try {
-			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
-		}
-		catch(Exception e) {
-			
-			//in this case the child is with only 2 locations that im not know about them
-			if(childIndex.equals("0")) 
-				childIndex = "1";
-			if(childIndex.equals("1")) 
-				childIndex = "0";
-			
-			child = new Selector();
-			if (childClass != null) 
-				child.setClassName(childClass);
-			if (childText != null) 
-				child.setText(childText);
-			if (childIndex != null) 
-				child.setIndex(Integer.valueOf(childIndex));
-			
-			objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
-			
-			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
-			
-		}
+		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
 
-		
 	}
 	
 	@Test
@@ -1554,8 +1537,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
-			String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
-			Summary.getInstance().setProperty("End_Time", currentDate);
+//			String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
+			Summary.getInstance().setProperty("End Time", sdf.format(cal.getTime()));
 			report.startLevel("After");
 			if (!isPass()) {
 //				validateDeviceStatus();
