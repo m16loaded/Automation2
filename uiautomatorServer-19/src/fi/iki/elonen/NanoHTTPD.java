@@ -701,7 +701,10 @@ public abstract class NanoHTTPD {
                 // Ok, now do the serve()
                 Response r = serve(this);
                 if (r == null) {
-                    throw new ResponseException(Response.Status.INTERNAL_ERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
+                	r = serve(this);
+                	r.setRequestMethod(method);
+                    r.send(outputStream);
+//                    throw new ResponseException(Response.Status.INTERNAL_ERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
                 } else {
                     r.setRequestMethod(method);
                     r.send(outputStream);
