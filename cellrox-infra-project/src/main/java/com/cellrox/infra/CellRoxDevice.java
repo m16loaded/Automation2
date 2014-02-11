@@ -156,6 +156,64 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         /**
+         * The function get a command and do it in priv and corp, after it the test
+         * will verify that there is the same regular expression in both of the
+         * personas and check the the wanted groups (etc (\s*),(\d+:\d+),(\S*),(\w*)
+         * and much more) inside of the expression is equal.
+         * */
+        public void compareResultsCorpAndPriv(String cmd, String regularExpression) throws Exception {
+        	
+        	String [] outputPrivGroupArr = null, outputCorpGroupArr = null;
+        	
+        	String outputPriv = getPersona(Persona.PRIV).excuteCommand(cmd).trim();
+        	report.report(outputPriv);
+        	report.report(outputPriv);
+        	String outputCorp = getPersona(Persona.CORP).excuteCommand(cmd).trim();
+        	report.report(outputCorp);
+        
+    		//check the priv 
+    		Pattern pattern = Pattern.compile(regularExpression);
+        	Matcher matcher = pattern.matcher(outputPriv);
+        	if(matcher.find()) {
+        		int numOfGroups = matcher.groupCount();
+        	    outputPrivGroupArr = new String[numOfGroups];
+        	    for (int i=0 ; i < numOfGroups ; i++) {
+        	    	outputPrivGroupArr[i] = matcher.group(i+1);
+				}
+        	}
+        	else {
+        	    report.report("Matcher isn't match : "+ regularExpression + " to " + outputPriv + " on priv persona." ,Reporter.FAIL);
+        	}
+        	
+    		//check the corp 
+    		pattern = Pattern.compile(regularExpression);
+        	matcher = pattern.matcher(outputCorp);
+        	if(matcher.find()) {
+        		int numOfGroups = matcher.groupCount();
+        	    outputCorpGroupArr = new String[numOfGroups];
+        	    for (int i=0 ; i < numOfGroups ; i++) {
+        	    	outputCorpGroupArr[i] = matcher.group(i+1);
+				}
+        	}
+        	else {
+        	    report.report("Matcher isn't match : "+ regularExpression + " to " + outputCorp + " on corp persona." ,Reporter.FAIL);
+        	}
+        	
+        	//compare the data from the two maches
+        	if(outputCorpGroupArr.length != outputPrivGroupArr.length) {
+        		report.report("Error the macher isn't equal in the personas", Reporter.FAIL);
+        	}
+        	for(int i=0 ; i < outputCorpGroupArr.length ;i++) {
+        		if(!outputCorpGroupArr[i].equals(outputPrivGroupArr[i])) {
+        			report.report("The data isn't equal : "+ outputCorpGroupArr[i] +" to "+ outputPrivGroupArr[i] ,Reporter.FAIL);
+        		}
+        	}
+        	
+        	report.report("The data from the persona and the corp is equal.");
+        	    	
+        }
+        
+        /**
          * This function use the get logs to returns the logs to the wanted location
          * */
         public void getTheLogs(LogcatHandler loggerType, String logLocation) throws Exception {
