@@ -928,6 +928,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("1"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Enter"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 		if(!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription("Apps"))) {
 			report.report("The screen is off.",Reporter.FAIL);
 		}
@@ -956,7 +957,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * For example you can find allot of use inside of the settings
 	 * */
 	@Test
-	@TestProperties(name = "Click On Scrollable On : ${persona}", paramsInclude = { "currentDevice,persona,text" })
+	@TestProperties(name = "Click On \"${text}\" On : ${persona}", paramsInclude = { "currentDevice,persona,text" })
 	public void clickOnScrollable() throws Exception {
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setText(text), text, true);
@@ -981,6 +982,18 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
+	}
+	
+	/**
+	 * The function get a command and do it in priv and corp, after it the test
+	 * will verify that there is the same regular expression in both of the
+	 * personas and check the the wanted groups (etc (\s*),(\d+:\d+),(\S*),(\w*)
+	 * and much more) inside of the expression is equal.
+	 * */
+	@Test
+	@TestProperties(name = "Compare Results Corp And Priv of ${cliCommand} with the expression : \"${expectedLine}\"", paramsInclude = { "currentDevice,cliCommand,expectedLine" })
+	public void compareResultsCorpAndPriv() throws Exception {		
+		devicesMannager.getDevice(currentDevice).compareResultsCorpAndPriv(cliCommand, expectedLine);
 	}
 
 	@Test
