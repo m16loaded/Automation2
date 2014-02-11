@@ -322,7 +322,8 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 		}
 	}
-
+	
+    
 	@Test
 	@TestProperties(name = "Click on UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,waitForNewWindow,exceptionThrower" })
 	public void clickByDesc() throws Exception {
@@ -603,7 +604,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 * The function finds the location of the wanted ui object and click on it in the middle of it location
 	 * */
 	@Test
-	@TestProperties(name = "Click Text \"${text}\" , Class \"${text}\"  By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,text,childClassName" })
+	@TestProperties(name = "Click Text \"${text}\" , Class \"${childClassName}\"  By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,text,childClassName" })
 	public void clickTextAndClassByUiLocation() throws Exception {
 		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText(text).setClassName(childClassName), persona);
 	}
