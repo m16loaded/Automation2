@@ -269,32 +269,75 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         /**
-         * @throws Exception 
-         * 
+         * This function adding to the summary(Jsystem report) the properties
          * */
         public void addToTheSummarySystemProp() throws Exception {
+        	
+        	String hardware = null;
         	
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial() +" root");
         	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
+        	
+        	//add build sdk version prop
         	executeCliCommand("getprop | fgrep ro.build.version.sdk");
         	String propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
-        	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1]);
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	Summary.getInstance().setProperty("Build sdk version", propToParse.split(":")[1].trim());
+        
+        	//add Build_display_id prop
         	executeCliCommand("getprop | fgrep ro.build.display.id");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
-        	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1]);
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	Summary.getInstance().setProperty("Build display id", propToParse.split(":")[1].trim());
+        	
+        	//add Build_date prop
         	executeCliCommand("getprop | fgrep ro.build.date]");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
-        	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1]);
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	Summary.getInstance().setProperty("Build date", propToParse.split(":")[1].trim());
+        	
+        	//add hardware prop
+        	executeCliCommand("getprop | fgrep ro.hardware]");
+        	propToParse = cli.getTestAgainstObject().toString();
+        	propToParse =propToParse.replace("getprop | fgrep ro.hardware]", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	hardware = propToParse.split(":")[1].trim();
+        	Summary.getInstance().setProperty("hardware", hardware);
+        	
+        	//add IMEI or MAC address to prop
+        	if(hardware.trim().equalsIgnoreCase("Flo")) {
+        		//in this case bring the mac address
+        		executeCliCommand("netcfg | grep wlan0");
+        		propToParse = cli.getTestAgainstObject().toString();
+        		propToParse =propToParse.replace("netcfg | grep wlan0", "");
+        		String [] propToParseArr = propToParse.split("\n");
+        		for (String propLine : propToParseArr) {
+					if(!propLine.startsWith("wlan0")) {
+						continue;
+					}
+					String [] propLineArr = propLine.split(" ");
+					for (String prop : propLineArr) {
+						if (prop.contains(":")) {
+							Summary.getInstance().setProperty("Mac address", prop);
+							break;
+						}
+					}
+				}
+        	}
+        	else {
+        		//in this case bring the IMIE
+            	executeCliCommand("getprop | fgrep IMEI]");
+            	propToParse = cli.getTestAgainstObject().toString();
+            	propToParse =propToParse.replace("getprop | fgrep IMEI]", "");
+            	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+            	hardware = propToParse.split(":")[1].trim();
+            	Summary.getInstance().setProperty("IMEI", hardware);
+        		
+        	}
         	
         	cli.disconnect();
         }
