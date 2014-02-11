@@ -41,8 +41,8 @@ public class JsystemReporter {
 //
 	final static String propName = "config.properties";
 //	final static String propNameTmporery = "config_tmp_new.properties"; 
-	final static String from =  "cellrox99@gmail.com";
-	final static String password = "cellrox2011";
+	final static String from =  "auto@cellrox.com";
+	final static String password = "%SMd*6ya";
 	
 	
 	/**
@@ -58,14 +58,15 @@ public class JsystemReporter {
 		String doaCrash = null, deviceCrash = null, personaCrash = null;
 		String compareStatus, seconedColor;
 		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
-		String date = null, version = null, id = null, nameOfReport = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null;
+		String date = null, version = null, id = null, nameOfReport = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
+				endTime = null, hardware = null, imei = null, macAdr = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
 
 		//get the args[] parm, if they not inserted use the default 
 		if(args.length < 2 ) {
-			currentLogLocation = "/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current/reports.0.xml";//"/home/topq/dev/runner6003/log/current/reports.0.xml";
+			currentLogLocation = "/home/topq/dev/runnreNew/runner/log/current/reports.0.xml";//"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current/reports.0.xml";//"/home/topq/dev/runner6003/log/current/reports.0.xml";
 			nameOfReport = "/home/topq/dev/managerReport.html";
 		}
 		else {
@@ -87,10 +88,11 @@ public class JsystemReporter {
 			for (int i = 0; i < nList.getLength(); i++) {
 				Node nNode = nList.item(i);
 				Element eElement = (Element) nNode;
-				date = eElement.getAttribute("Build_date");
-				version = eElement.getAttribute("Build_display_id");
-				id = eElement.getAttribute("Build_sdk_version");
-				startTime = eElement.getAttribute("Date");
+				date = eElement.getAttribute("Build date");
+				version = eElement.getAttribute("Build display id");
+				id = eElement.getAttribute("Build sdk version");
+				startTime = eElement.getAttribute("Start Time");
+				
 				try {
 				doaCrash = eElement.getAttribute("Doa_Crash");
 				}catch (Exception e){}
@@ -101,25 +103,45 @@ public class JsystemReporter {
 				personaCrash = eElement.getAttribute("Persona_Crash");
 				}catch (Exception e){}
 				try {
-					endTime = eElement.getAttribute("End_Time");
+					endTime = eElement.getAttribute("End Time");
 				}catch (Exception e){}
+				try {
+					hardware = eElement.getAttribute("hardware");
+				}catch (Exception e){}
+				try {
+					macAdr = eElement.getAttribute("Mac address");
+				}catch (Exception e){}
+				try {
+					imei = eElement.getAttribute("IMEI");
+				}catch (Exception e){}
+				
 			}
 			//begin to create the html file
 			nList = doc.getElementsByTagName("test");
-			pw.println("<!DOCTYPE html><html><head><title>Automaion Report for build : "+version+"</title></head><body>");
-			pw.println("<h1><em>Automaion Report for build : "+version+"<em></h1>");
+			pw.println("<!DOCTYPE html><html><head><title>Automation report - for build : "+ version +"</title></head><body>");
+			pw.println("<h1><em>Automaion Report - for build : "+version+"<em></h1>");
 //			pw.println("<p><b>Build_date : " + date + ", Build_sdk_version : " + version + ", Build_display_id : " + id+ " </b></p>");
 			pw.println("<p><b>Tests report : </b></p>");
 			pw.println("<p>Start time : "+startTime+"</p>");
 			if(!endTime.isEmpty())
 				pw.println("<p>End time : "+endTime+"</p>");
+			if(!hardware.isEmpty())
+				pw.println("<p>Hardware : "+hardware+"</p>");
+			if(hardware.equalsIgnoreCase("flo")) {
+				if(!macAdr.isEmpty())
+					pw.println("<p>Mac address : "+macAdr+"</p>");
+			}
+			else {
+				if(!imei.isEmpty())
+					pw.println("<p>IMEI : "+imei+"</p>");
+			}
 			if(!doaCrash.isEmpty())
 				pw.println("<p>Doa Crash : true</p>");
 			if(!deviceCrash.isEmpty())
 				pw.println("<p>Device Crash : true</p>");
 			if(!personaCrash.isEmpty())
 				pw.println("<p>Persona Crash : true</p>");
-			pw.println("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Time<TH>Result<TH>Last Run Result<b></TR>");
+			pw.println("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Test Duration<TH>Result<TH>Last Run Result<b></TR>");
 
 			Map<String, String> testsStatusMapOld = getMapFromConfigFile(propName);
 			//writing to the html file all the lines
@@ -203,7 +225,7 @@ public class JsystemReporter {
 			if(fail>0)
 				status = "fail";
 			//sending the email
-			sendEmail(to, from, "Automation summary report"+status, "Here the report of the automation", nameOfReport, password);
+			sendEmail(to, from, "Automation report - for build : "+ version +" - results : " +status, "Here the report of the automation", nameOfReport, password);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
