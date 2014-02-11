@@ -49,8 +49,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         private int privePort = 3435;
         private int corpPort = 4321;
         private int deviceIndex = 0;
-        private String user = "topq";
-        private String password = "Aa123456";
+        private String user = "itay";
+        private String password = "8620265";
         private boolean deviceAsRootOnInit = false;
         // will not be init from the SUT
         private AdbController adbController;
