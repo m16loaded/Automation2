@@ -211,6 +211,45 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	}
 
+	/**
+	 * This is a general function for finding the father and than find the child
+	 * and enter text to it. If you are not need some of the data, than do not enter
+	 * the data
+	 * */
+	@Test
+	@TestProperties(name = "enter text on the child from father ${persona} . father : \"${fatherClass}\",\"${fatherText}\",\"${fatherIndex}\" "
+			+ " , child : \"${childClass}\",\"${childText}\" ,\"${chilsIndex}\".", paramsInclude = { "currentDevice,persona,fatherClass,fatherText,fatherIndex,childClass,childText,childIndex,value" })
+	public void enterTextChildFromFather() throws Exception {
+
+		Selector father = new Selector();
+		Selector child = new Selector();
+
+		// father
+		if (fatherClass != null) 
+			father.setClassName(fatherClass);
+		if (fatherText != null) 
+			father.setText(fatherText);
+		if (fatherIndex != null)
+			father.setIndex(Integer.valueOf(fatherIndex));
+
+		// child
+		if (childClass != null) 
+			child.setClassName(childClassName);
+		if (childText != null) 
+			child.setText(childText);
+		if (childIndex != null) 
+			child.setIndex(Integer.valueOf(childIndex));
+
+		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(father);
+		report.report("The father id : " + fatherInstance);
+		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
+		report.report("The child id : " + objectId);
+
+		System.out.println(objectId);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
+
+	}
+	
 	@Test
 	@TestProperties(name = "open application by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void openApp() throws UiObjectNotFoundException {
@@ -312,8 +351,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@Test
 	@TestProperties(name = "Scroll and Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void scrollAndClick() throws Exception {
-		Selector s = new Selector();
-		s.setText(text);
+		
 		try {
 			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 					new Selector().setText(text), text, true);
@@ -323,7 +361,20 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 	
-    
+	
+	@Test
+	@TestProperties(name = "Scroll and Click on UiObject by Text \"${text}\" from the father with the class \"${fatherClass}\" and Index \"${fatherIndex}\"  on ${persona}", paramsInclude = { "currentDevice,text,persona,fatherIndex,fatherClass" })
+	public void scrollAndClickByClass() throws Exception {
+		
+		try {
+			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true).setClassName(fatherClass).setIndex(Integer.valueOf(fatherIndex)),
+					new Selector().setText(text), text, true);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+		} catch (Exception e) {
+			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+		}
+	}
+
 	@Test
 	@TestProperties(name = "Click on UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,waitForNewWindow,exceptionThrower" })
 	public void clickByDesc() throws Exception {
@@ -527,12 +578,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 
 	
+	
 	@Test
 	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "currentDevice,childClassName,childDescription,childIndex,childText,value,persona" })
 	public void enterTextBy() throws Exception {
 
 		Selector s = new Selector();
-
 		if (childText != null)
 			s.setText(childText);
 		if (childClassName != null)
@@ -544,7 +595,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
-
+	
 	@Test
 	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,value,persona" })
 	public void enterTextByText() throws Exception {
