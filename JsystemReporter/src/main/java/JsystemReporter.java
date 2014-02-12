@@ -60,7 +60,7 @@ public class JsystemReporter {
 		String compareStatus, seconedColor, lastTime = null;
 		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
 		String date = null, version = null, id = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
-				endTime = null, hardware = null, imei = null, macAdr = null;
+				endTime = null, hardware = null, imei = null, macAdr = null, noCon = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
@@ -110,6 +110,7 @@ public class JsystemReporter {
 			hardware = prop.getProperty("hardware");
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
+			noCon = prop.getProperty("No_Connection");
 				
 			//begin to create the html file
 			nList = doc.getElementsByTagName("test");
@@ -129,6 +130,7 @@ public class JsystemReporter {
 			pw.println("<p>Doa crash number: "+doaCrash+"</p>");
 			pw.println("<p>Device crash number: "+deviceCrash+"</p>");
 			pw.println("<p>Persona crash number: "+personaCrash+"</p>");
+			pw.println("<p>Persona crash number: "+noCon+"</p>");
 			
 			testsTable.append("<p><b>Tests report : </b></p>").append(System.getProperty("line.separator"));
 			testsTable.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Test Duration<TH>Last Test Duration<TH>Result<TH>Last Run Result<b></TR>").append(System.getProperty("line.separator"));
