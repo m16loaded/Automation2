@@ -39,10 +39,10 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	    	cellroxDevicesList = new CellRoxDevice[numberOfDevices];
 	
 	    	adbController = AdbController.getInstance();
+	    	report.report("Wait for "+numberOfDevices +" to connect.");
 	    	USBDevice[] devices = adbController.waitForDevicesToConnect(numberOfDevices);
 	    	
 	    	//initing each one of the devices
-	    	
 	    	for(int index =0 ; index < devices.length ;index++){
 	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber());
 	    	}
