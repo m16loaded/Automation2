@@ -7,12 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jsystem.extensions.analyzers.compare.CompareValues;
-import jsystem.extensions.report.html.Report;
 import jsystem.framework.TestProperties;
 import jsystem.framework.analyzer.AnalyzerException;
-import jsystem.framework.report.ReportElement;
 import jsystem.framework.report.Reporter;
-import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 import junit.framework.SystemTestCase4;
@@ -80,18 +77,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
-			
-
-			
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-//			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-//				long uptime = device.getCurrentUpTime();
-//				if(device.getUpTime() > uptime) {
-//					report.report("The uptime is smaller from what it should be.", Reporter.FAIL);
-//					throw new Exception("Unwanted reboot happened to device : " + device.getDeviceSerial());
-//				}
-//				device.setUpTime(uptime);
-//			}
 			report.report("Finish the initing of the before test.");
 		}
 		finally {
