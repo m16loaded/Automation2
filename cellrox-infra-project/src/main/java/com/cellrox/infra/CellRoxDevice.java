@@ -254,12 +254,27 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This function perform : "adb devices" and "cell list stsate"
          * if the sell list state isn't returned it will include this as error and throw exception.
          * */
-        public void checkForDoa() throws Exception {
+        public void validateConnectivity() throws Exception {
         	cli.connect();
         	executeCliCommand("adb devices");
         	if(!cli.getTestAgainstObject().toString().contains(getDeviceSerial())) {
-        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
+        		throw new Exception("no connection, the device" +getDeviceSerial() +" isn't online.");
         	}
+//        	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
+//        	executeCliCommand("cell list state");
+//        	if(!((cli.getTestAgainstObject().toString().contains("priv (3)"))&&(cli.getTestAgainstObject().toString().contains("corp (3)")))) {
+//        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
+//        	}
+        	cli.disconnect();
+        }
+        
+        
+        /**
+         * This function perform : "adb devices" and "cell list stsate"
+         * if the sell list state isn't returned it will include this as error and throw exception.
+         * */
+        public void validateDoaCrash() throws Exception {
+        	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
         	executeCliCommand("cell list state");
         	if(!((cli.getTestAgainstObject().toString().contains("priv (3)"))&&(cli.getTestAgainstObject().toString().contains("corp (3)")))) {

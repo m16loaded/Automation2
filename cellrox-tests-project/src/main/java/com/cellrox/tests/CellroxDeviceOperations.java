@@ -73,7 +73,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private Size size = Size.Smaller; 
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
-	private int doaCrach = 0, personaCrash = 0, deviceCrash = 0;    
+	private int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;    
 	
 	
 	@Before
@@ -1436,6 +1436,51 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 	
+	@Test
+	@TestProperties(name = "Validate doa", paramsInclude = { "currentDevice" })
+	public void validateDoa() throws Exception {
+		try {
+			 devicesMannager.getDevice(currentDevice).validateDoaCrash();
+		}
+		catch(Exception e) {
+			
+			sleep(20 * 1000);
+			report.report("Device : " + devicesMannager.getDevice(currentDevice).getDeviceSerial());
+			// last_kmsg
+			devicesMannager.getDevice(currentDevice).printLastKmsg();
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+			report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
+			// sleep
+			devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
+			// configure
+			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+			// connect
+			devicesMannager.getDevice(currentDevice).connectToServers();
+			// to wake up and type password
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).wakeUp();
+			devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
+			devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+			devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
+			try {
+				 devicesMannager.getDevice(currentDevice).validateDoaCrash();
+			}
+			catch(Exception e1) {
+				doaCrach++;
+				Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
+				report.report("Doa Crash",report.FAIL);
+			}
+		}
+		
+	}
+	
+	
+	
 	/**
 	 * This function runs only in case of fails in the tests and check if
 	 * unexpected reboot happened or persona crash or DOA
@@ -1447,11 +1492,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			boolean crashHappened = false;
 			//Step 1 is to check for doa crash
 			try {
-				device.checkForDoa();
+				device.validateConnectivity();
 			}
 			catch (Exception e) {
-				report.report("DOA", Reporter.FAIL);
-				doaCrach++;
+				report.report("Out of connection ", Reporter.FAIL);
+				connectionCrash++;
 				return;
 			}
 			
@@ -1461,6 +1506,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 				crashHappened = true;
 				report.report("Device_Crash", Reporter.FAIL);
 				deviceCrash++;
+				sleep(20 * 1000);
+				report.report("Device : " + device.getDeviceSerial());
+				// last_kmsg
+				device.printLastKmsg();
+				//here im doning all the thing beside the reboot
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.setDeviceAsRoot();
+				device.setUpTime(device.getCurrentUpTime());
+                device.setPsString(device.getPs());
 			}
 			
 			//Step 3 is to check for personas crash
@@ -1470,6 +1524,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 					crashHappened = true;
 					report.report("Persona_Crash", Reporter.FAIL);
 					personaCrash++;
+					sleep(20 * 1000);
+					report.report("Device : " + device.getDeviceSerial());
+					// last_kmsg
+					device.printLastKmsg();
+					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				}
 			}
 			
@@ -1477,11 +1536,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			if(crashHappened) {
 				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 				// sleep
-				sleep(20 * 1000);
-				// last_kmsg
-				report.report("Device : " + device.getDeviceSerial());
-				device.printLastKmsg();
-				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
 				// configure
 				device.configureDeviceForAutomation(true);
@@ -1504,41 +1558,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 				
-				
-//				// this function has a timeout in case the device cannot be
-//				// restarted
-//				devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
-//				// TODO add crush report
-//				report.report("Getting online after Crush", ReportAttribute.BOLD);
-//			} catch (Exception e) {
-//				report.report("Could not restart after reboot ", Reporter.FAIL);
-//			}
-//		} else {
-//			// validate both personas are up, if not, wait get the run logs and
-//			// reboot the device (from host)
-//			if (!personasUp) {
-//				// TODO add expressions
-//				// devicesMannager.getDevice(currentDevice).rebootDevice(Persona.PRIV, Persona.CORP);
-//				// LogParserExpression ex = new LogParserExpression();
-//				// ex.setColor(Color.RED);
-//				// ex.setExpression("CRUSH");
-//				// ex.setNiceName("CRUSH");
-//				// expression = new LogParserExpression[] { ex };
-//				// LogParser logParser = new LogParser(expression);
-//				// devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
-//				report.report("Perona Crush was detected!", ReportAttribute.BOLD);
-//
-//			}
-//		}
-		
 	
 
 	@After
 	public void tearDown() throws Exception {
 		try {
 
-//			String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
-			
 			report.startLevel("After");
 			if (!isPass()) {
 				validateDeviceStatus();
@@ -1546,6 +1571,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
+			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
