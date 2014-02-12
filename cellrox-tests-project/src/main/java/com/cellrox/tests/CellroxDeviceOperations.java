@@ -7,9 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jsystem.extensions.analyzers.compare.CompareValues;
+import jsystem.extensions.report.html.Report;
 import jsystem.framework.TestProperties;
 import jsystem.framework.analyzer.AnalyzerException;
+import jsystem.framework.report.ReportElement;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 import junit.framework.SystemTestCase4;
@@ -70,6 +73,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private Size size = Size.Smaller; 
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
+	private int doaCrach = 0, personaCrash = 0, deviceCrash = 0;    
 	
 	
 	@Before
@@ -77,10 +81,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		try {
 			report.startLevel("Before");
 			
-			//adding the start time to summary
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			Summary.getInstance().setProperty("Start Time", sdf.format(cal.getTime()));
+
 			
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
 //			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
@@ -1450,7 +1451,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			}
 			catch (Exception e) {
 				report.report("DOA", Reporter.FAIL);
-				Summary.getInstance().setProperty("Doa_Crash", "true");
+				doaCrach++;
 				return;
 			}
 			
@@ -1459,16 +1460,16 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			if(knownUpTime>device.getUpTime()) {
 				crashHappened = true;
 				report.report("Device_Crash", Reporter.FAIL);
-				Summary.getInstance().setProperty("Device_Crash", "true");
+				deviceCrash++;
 			}
 			
-			//Step 1 is to check for doa crash
+			//Step 3 is to check for personas crash
 			String str2 = device.getPs();
 			if(!crashHappened) {
 				if(!device.isPsDiff(device.getPsString(), str2)) {
 					crashHappened = true;
 					report.report("Persona_Crash", Reporter.FAIL);
-					Summary.getInstance().setProperty("Persona_Crash", "true");
+					personaCrash++;
 				}
 			}
 			
@@ -1535,19 +1536,26 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	@After
 	public void tearDown() throws Exception {
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
+
 //			String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
-			Summary.getInstance().setProperty("End Time", sdf.format(cal.getTime()));
+			
 			report.startLevel("After");
 			if (!isPass()) {
-//				validateDeviceStatus();
+				validateDeviceStatus();
 			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
+			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
+			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
+			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
 			report.stopLevel();
 		}
 	}
+	
+	
 	
 
 
