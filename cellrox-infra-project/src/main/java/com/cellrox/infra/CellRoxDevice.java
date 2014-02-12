@@ -284,21 +284,21 @@ public class CellRoxDevice extends SystemObjectImpl {
         	String propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
         	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	Summary.getInstance().setProperty("Build sdk version", propToParse.split(":")[1].trim());
+        	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1].trim());
         
         	//add Build_display_id prop
         	executeCliCommand("getprop | fgrep ro.build.display.id");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
         	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	Summary.getInstance().setProperty("Build display id", propToParse.split(":")[1].trim());
+        	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1].trim());
         	
         	//add Build_date prop
         	executeCliCommand("getprop | fgrep ro.build.date]");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
         	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	Summary.getInstance().setProperty("Build date", propToParse.split(":")[1].trim());
+        	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1].trim());
         	
         	//add hardware prop
         	executeCliCommand("getprop | fgrep ro.hardware]");
@@ -322,7 +322,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 					String [] propLineArr = propLine.split(" ");
 					for (String prop : propLineArr) {
 						if (prop.contains(":")) {
-							Summary.getInstance().setProperty("Mac address", prop);
+							Summary.getInstance().setProperty("Mac_address", prop);
 							break;
 						}
 					}
@@ -336,7 +336,6 @@ public class CellRoxDevice extends SystemObjectImpl {
             	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
             	hardware = propToParse.split(":")[1].trim();
             	Summary.getInstance().setProperty("IMEI", hardware);
-        		
         	}
         	
         	cli.disconnect();
