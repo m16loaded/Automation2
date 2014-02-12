@@ -130,7 +130,7 @@ public class JsystemReporter {
 			pw.println("<p>Doa crash number: "+doaCrash+"</p>");
 			pw.println("<p>Device crash number: "+deviceCrash+"</p>");
 			pw.println("<p>Persona crash number: "+personaCrash+"</p>");
-			pw.println("<p>Persona crash number: "+noCon+"</p>");
+			pw.println("<p>No Connection number: "+noCon+"</p>");
 			
 			testsTable.append("<p><b>Tests report : </b></p>").append(System.getProperty("line.separator"));
 			testsTable.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Test Duration<TH>Last Test Duration<TH>Result<TH>Last Run Result<b></TR>").append(System.getProperty("line.separator"));
@@ -161,6 +161,7 @@ public class JsystemReporter {
 						++pass;
 					}
 					//The comparing to the last run
+					lastTime = "0";
 					if(testsStatusMapOld.containsKey(name)) {
 						if(status.equals(testsStatusMapOld.get(name))) {
 							compareStatus = testsStatusMapOld.get(name);
@@ -171,12 +172,9 @@ public class JsystemReporter {
 							seconedColor = "RED";
 						}
 						//here the try to take the last time
-						try{
-							lastTime = testsTimeMapOld.get(name+"Time");
-						}
-						catch(Exception e) {
-							lastTime = "N/A";
-						}
+						lastTime = testsTimeMapOld.get(name+"Time");
+						if(lastTime == null)
+							lastTime = "0";
 					}
 					else {
 						compareStatus = "N/A";
