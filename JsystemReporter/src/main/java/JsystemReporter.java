@@ -127,7 +127,7 @@ public class JsystemReporter {
 				if(!imei.isEmpty())
 					pw.println("<p>IMEI : "+imei+"</p>");
 			}
-			pw.println("<p>Doa crash number: "+doaCrash+"</p>");
+			pw.println("<p>DOA crash number: "+doaCrash+"</p>");
 			pw.println("<p>Device crash number: "+deviceCrash+"</p>");
 			pw.println("<p>Persona crash number: "+personaCrash+"</p>");
 			pw.println("<p>No Connection number: "+noCon+"</p>");
