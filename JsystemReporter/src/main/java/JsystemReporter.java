@@ -66,6 +66,7 @@ public class JsystemReporter {
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
 	
 		StringBuilder testsTable = new StringBuilder();
+		StringBuilder docHtmlString = new StringBuilder();
 		
 		//get the args[] parm, if they not inserted use the default 
 		if(args.length < 3 ) {
@@ -114,19 +115,32 @@ public class JsystemReporter {
 				
 			//begin to create the html file
 			nList = doc.getElementsByTagName("test");
+			docHtmlString.append("<!DOCTYPE html><html><head><title>Automation report for build : "+ version +"</title></head><body>").append(System.getProperty("line.separator"));
 			pw.println("<!DOCTYPE html><html><head><title>Automation report for build : "+ version +"</title></head><body>");
+			docHtmlString.append("<h1><em>Automaion Report - for build : "+version+"<em></h1>").append(System.getProperty("line.separator"));
 			pw.println("<h1><em>Automaion Report - for build : "+version+"<em></h1>");
+			docHtmlString.append("<p>Start time : "+startTime+"</p>").append(System.getProperty("line.separator"));
 			pw.println("<p>Start time : "+startTime+"</p>");
+			docHtmlString.append("<p>End time : "+endTime+"</p>").append(System.getProperty("line.separator"));
 			pw.println("<p>End time : "+endTime+"</p>");
+			docHtmlString.append("<p>Hardware : "+hardware+"</p>").append(System.getProperty("line.separator"));
 			pw.println("<p>Hardware : "+hardware+"</p>");
 			if(hardware.equalsIgnoreCase("flo")) {
-				if(!macAdr.isEmpty())
+				if(!macAdr.isEmpty()){
+					docHtmlString.append("<p>Mac address : "+macAdr+"</p>").append(System.getProperty("line.separator"));
 					pw.println("<p>Mac address : "+macAdr+"</p>");
+				}
 			}
 			else {
-				if(!imei.isEmpty())
+				if(!imei.isEmpty()){
+					docHtmlString.append("<p>IMEI : "+imei+"</p>").append(System.getProperty("line.separator"));
 					pw.println("<p>IMEI : "+imei+"</p>");
+				}
 			}
+			docHtmlString.append("<p>DOA crash number: "+doaCrash+"</p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p>Device crash number: "+deviceCrash+"</p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p>Persona crash number: "+personaCrash+"</p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
 			pw.println("<p>DOA crash number: "+doaCrash+"</p>");
 			pw.println("<p>Device crash number: "+deviceCrash+"</p>");
 			pw.println("<p>Persona crash number: "+personaCrash+"</p>");
@@ -182,6 +196,7 @@ public class JsystemReporter {
 					}
 					testsStatusMapOld.remove(name);
 					//finally write the wanted line
+					
 					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>" + getTimeFormat(time)+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"<TD>" + status  + "<TD BGCOLOR="+seconedColor+">"+compareStatus+"</em>").append(System.getProperty("line.separator"));
 				}
 			}
@@ -192,13 +207,22 @@ public class JsystemReporter {
 			}
 			
 			testsTable.append("</TABLE>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p><b>Summary report : </b></p>").append(System.getProperty("line.separator"));
 			pw.println("<p><b>Summary report : </b></p>");
+			docHtmlString.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Pass<TH>Warnning<TH>Fail<TH>Total<b></TR>").append(System.getProperty("line.separator"));
 			pw.println("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Pass<TH>Warnning<TH>Fail<TH>Total<b></TR>");
+			docHtmlString.append("<TR ><em><TD>" + pass + "<TD>" + warning + "<TD>" + fail + "<TD>" + total + "</em>").append(System.getProperty("line.separator"));
 			pw.println("<TR ><em><TD>" + pass + "<TD>" + warning + "<TD>" + fail + "<TD>" + total + "</em>");
+			docHtmlString.append("</TABLE>").append(System.getProperty("line.separator"));
 			pw.println("</TABLE>");
-			
+			docHtmlString.append(testsTable.toString()).append(System.getProperty("line.separator"));
 			pw.println(testsTable.toString());
+			
+			docHtmlString.append("<p><b>The automation run can be found at : http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?</b></p>").append(System.getProperty("line.separator"));
+			
+			docHtmlString.append("</body></html>").append(System.getProperty("line.separator"));
 			pw.println("</body></html>");
+			
 			pw.close();
 
 			// copying the file to the wanted location
@@ -228,7 +252,7 @@ public class JsystemReporter {
 			if(fail>0)
 				status = "fail";
 			//sending the email
-			sendEmail(to, from, "Automation report - for build : "+ version +" - results : " +status, "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?", nameOfReport, password);
+			sendEmail(to, from, "Automation report - for build : "+ version +" - results : " +status, docHtmlString.toString()/*,"The automation run can be found at : http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?"*/, nameOfReport, password);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -317,7 +341,7 @@ public class JsystemReporter {
 	/**
 	 * Sending email to the wanted persons
 	 * */
-	public static void sendEmail(String to, final String username, String subject, String body, String fileName , final String password) {
+	public static void sendEmail(String to, final String username, String subject, String bodyHtml, String fileName , final String password) {
 
 	    Properties props = new Properties();
 	    props.put("mail.smtp.auth", true);
@@ -337,10 +361,12 @@ public class JsystemReporter {
 	        message.setFrom(new InternetAddress(username));
 	        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
 	        message.setSubject(subject);
-	        message.setText(body);
+	        message.setText(bodyHtml);
+	        
 	        
 	        BodyPart messageBodyPart1 = new MimeBodyPart();  
-	        messageBodyPart1.setText(body);  
+//	        messageBodyPart1.setText(body);  
+	        messageBodyPart1.setContent(bodyHtml, "text/html");
 	        
 	        MimeBodyPart messageBodyPart2 = new MimeBodyPart();  
 	        DataSource source = new FileDataSource(fileName);  
@@ -348,8 +374,10 @@ public class JsystemReporter {
 	        messageBodyPart2.setFileName(fileName);    
 	        
 	        Multipart multipart = new MimeMultipart();  
-	        multipart.addBodyPart(messageBodyPart1);  
+	        multipart.addBodyPart(messageBodyPart1); 
+ 
 	        multipart.addBodyPart(messageBodyPart2);  
+	        
 
 	        message.setContent(multipart);
 	        System.out.println("Sending");
