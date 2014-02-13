@@ -54,7 +54,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String timeout = "10000";
 	private boolean isExists;
 	private Direction dir;
-	int instance = 0;
+	int instance = 0, numberOfTimes = 1;
 	private boolean exceptionThrower = true;
 	// all the following string are for general function that use father,son
 	private String fatherClass, fatherDescription, fatherText, fatherIndex, childClass, childDescription, childText, childIndex, childClassName;
@@ -71,7 +71,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;    
-	
 	
 	@Before
 	public void init() throws Exception {
@@ -1133,9 +1132,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 *            - is this expression is a regular expression
 	 * */
 	@Test
-	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "currentDevice,cliCommand,text,regularExpression" })
+	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\" , for ${numberOfTimes} tries", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,numberOfTimes" })
 	public void validateExpressionCliCommand() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression);
+		
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, numberOfTimes);
 	}
 	
 	@Test
@@ -1162,9 +1162,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 	@Test
-	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona" })
+	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona,numberOfTimes" })
 	public void validateExpressionCliCommandCellPersona() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona, numberOfTimes);
 	}
 
 	@Test
@@ -2076,6 +2076,22 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	public void setLogType(LogcatHandler logType) {
 		this.logType = logType;
+	}
+
+
+	/**
+	 * @return the numberOfTimes
+	 */
+	public int getNumberOfTimes() {
+		return numberOfTimes;
+	}
+
+
+	/**
+	 * @param numberOfTimes the numberOfTimes to set
+	 */
+	public void setNumberOfTimes(int numberOfTimes) {
+		this.numberOfTimes = numberOfTimes;
 	}
 
 }

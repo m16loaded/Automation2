@@ -1291,23 +1291,45 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param isRegularExpression
          * - is this expression is a regular expression
          * */
-        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell)
+        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell, int numberOfTries)
                         throws Exception {
-        	
+        		boolean isPass = false;
                 cli.connect();
+                
                 if(isShell)
-                        executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-                executeCliCommand(cliCommand);
-                FindText findText = new FindText(expression, isRegularExpression);
-                cli.analyze(findText);
+                	executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+        		while (numberOfTries > 0 && !isPass) {
+        			executeCliCommand(cliCommand);
+        			FindText findText = new FindText(expression, isRegularExpression);
+        			// cli.analyze(findText, false);
+        			findText.setTestAgainst(cli.getTestAgainstObject());
+        			findText.analyze();
+        			isPass = findText.getStatus();
+        			numberOfTries--;
+        		}
+
+        		if (!isPass) {
+        			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
+        		}
+                
                 cli.disconnect();
 
         }
         
+        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell)
+                throws Exception {
+        	validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, 1);
+        }
+        
         public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression)
                         throws Exception {
-                validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true);
+                validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, 1);
         }
+        
+        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, int numberOfTries)
+                throws Exception {
+        validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, numberOfTries);
+}
 
         /**
          * find the expression to find after cli command in the adb shell
@@ -1352,33 +1374,42 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         }
         
-        public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
-                        Persona persona) throws Exception {
-                
-                cli.connect();
-                executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-                if (persona == Persona.PRIV) {
-                        executeCliCommand("cell console priv");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                } else {
-                        executeCliCommand("cell console corp");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                }
-                executeCliCommand("");
-                executeCliCommand(cliCommand);
-                
-                FindText findText = new FindText(expression, isRegularExpression);
-                cli.analyze(findText);
-                cli.switchToHost();
-                cli.disconnect();
+	public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
+			Persona persona, int numberOfTries) throws Exception {
+		boolean isPass = false;
 
-        }
+		cli.connect();
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+		if (persona == Persona.PRIV) {
+			executeCliCommand("cell console priv");
+		} else {
+			executeCliCommand("cell console corp");
+		}
+		executeCliCommand(" ");
+		executeCliCommand(" ");
+		executeCliCommand(" ");
+		executeCliCommand(" ");
+		executeCliCommand("");
+
+		/* for(int i = 0 ; i < NumberOfTries ; i++) { */
+		while (numberOfTries > 0 && !isPass) {
+			executeCliCommand(cliCommand);
+			FindText findText = new FindText(expression, isRegularExpression);
+			// cli.analyze(findText, false);
+			findText.setTestAgainst(cli.getTestAgainstObject());
+			findText.analyze();
+			isPass = findText.getStatus();
+			numberOfTries--;
+			Thread.sleep(1000);
+		}
+
+		if (!isPass) {
+			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
+		}
+//		cli.switchToHost();
+		cli.disconnect();
+
+	}
 //        /**
 //         * get the path of the application and push it to the priv and the corp
 //         * - the application full path on the local cpu
