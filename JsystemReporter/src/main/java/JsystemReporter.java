@@ -54,6 +54,7 @@ public class JsystemReporter {
 	 * arg[3] - String to -the wanted email to send to
 	 */
 	public static void main(String[] args) {
+		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null;
@@ -218,7 +219,8 @@ public class JsystemReporter {
 			docHtmlString.append(testsTable.toString()).append(System.getProperty("line.separator"));
 			pw.println(testsTable.toString());
 			
-			docHtmlString.append("<p><b>The automation run can be found at : http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?</b></p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p></p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
 			
 			docHtmlString.append("</body></html>").append(System.getProperty("line.separator"));
 			pw.println("</body></html>");
