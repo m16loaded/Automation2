@@ -54,7 +54,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String timeout = "10000";
 	private boolean isExists;
 	private Direction dir;
-	int instance = 0;
+	int instance = 0, numberOfTimes = 1;
 	private boolean exceptionThrower = true;
 	// all the following string are for general function that use father,son
 	private String fatherClass, fatherDescription, fatherText, fatherIndex, childClass, childDescription, childText, childIndex, childClassName;
@@ -70,21 +70,13 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private Size size = Size.Smaller; 
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
-	
+	private int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;    
 	
 	@Before
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-//			for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-//				long uptime = device.getCurrentUpTime();
-//				if(device.getUpTime() > uptime) {
-//					report.report("The uptime is smaller from what it should be.", Reporter.FAIL);
-//					throw new Exception("Unwanted reboot happened to device : " + device.getDeviceSerial());
-//				}
-//				device.setUpTime(uptime);
-//			}
 			report.report("Finish the initing of the before test.");
 		}
 		finally {
@@ -211,6 +203,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	}
 
+	
 	/**
 	 * This is a general function for finding the father and than find the child
 	 * and enter text to it. If you are not need some of the data, than do not enter
@@ -223,7 +216,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 		Selector father = new Selector();
 		Selector child = new Selector();
-
+		
 		// father
 		if (fatherClass != null) 
 			father.setClassName(fatherClass);
@@ -245,30 +238,7 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
 		report.report("The child id : " + objectId);
 
-		try {
-			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
-		}
-		catch(Exception e) {
-			
-			//in this case the child is with only 2 locations that im not know about them
-			if(childIndex.equals("0")) 
-				childIndex = "1";
-			if(childIndex.equals("1")) 
-				childIndex = "0";
-			
-			child = new Selector();
-			if (childClass != null) 
-				child.setClassName(childClass);
-			if (childText != null) 
-				child.setText(childText);
-			if (childIndex != null) 
-				child.setIndex(Integer.valueOf(childIndex));
-			
-			objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
-			
-			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
-			
-		}
+		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
 
 	}
 	
@@ -1162,9 +1132,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	 *            - is this expression is a regular expression
 	 * */
 	@Test
-	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\"", paramsInclude = { "currentDevice,cliCommand,text,regularExpression" })
+	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\" , for ${numberOfTimes} tries", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,numberOfTimes" })
 	public void validateExpressionCliCommand() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression);
+		
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, numberOfTimes);
 	}
 	
 	@Test
@@ -1191,9 +1162,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	}
 	
 	@Test
-	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona" })
+	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona,numberOfTimes" })
 	public void validateExpressionCliCommandCellPersona() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona, numberOfTimes);
 	}
 
 	@Test
@@ -1451,6 +1422,51 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 	
+	@Test
+	@TestProperties(name = "Validate doa", paramsInclude = { "currentDevice" })
+	public void validateDoa() throws Exception {
+		try {
+			 devicesMannager.getDevice(currentDevice).validateDoaCrash();
+		}
+		catch(Exception e) {
+			
+			sleep(20 * 1000);
+			report.report("Device : " + devicesMannager.getDevice(currentDevice).getDeviceSerial());
+			// last_kmsg
+			devicesMannager.getDevice(currentDevice).printLastKmsg();
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+			report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
+			// sleep
+			devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
+			// configure
+			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+			// connect
+			devicesMannager.getDevice(currentDevice).connectToServers();
+			// to wake up and type password
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).wakeUp();
+			devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
+			devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+			devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
+			try {
+				 devicesMannager.getDevice(currentDevice).validateDoaCrash();
+			}
+			catch(Exception e1) {
+				doaCrach++;
+				Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
+				report.report("Doa Crash",report.FAIL);
+			}
+		}
+		
+	}
+	
+	
+	
 	/**
 	 * This function runs only in case of fails in the tests and check if
 	 * unexpected reboot happened or persona crash or DOA
@@ -1462,11 +1478,11 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			boolean crashHappened = false;
 			//Step 1 is to check for doa crash
 			try {
-				device.checkForDoa();
+				device.validateConnectivity();
 			}
 			catch (Exception e) {
-				report.report("DOA", Reporter.FAIL);
-				Summary.getInstance().setProperty("Doa_Crash", "true");
+				report.report("Out of connection ", Reporter.FAIL);
+				connectionCrash++;
 				return;
 			}
 			
@@ -1475,16 +1491,30 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			if(knownUpTime>device.getUpTime()) {
 				crashHappened = true;
 				report.report("Device_Crash", Reporter.FAIL);
-				Summary.getInstance().setProperty("Device_Crash", "true");
+				deviceCrash++;
+				sleep(20 * 1000);
+				report.report("Device : " + device.getDeviceSerial());
+				// last_kmsg
+				device.printLastKmsg();
+				//here im doning all the thing beside the reboot
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.setDeviceAsRoot();
+				device.setUpTime(device.getCurrentUpTime());
+                device.setPsString(device.getPs());
 			}
 			
-			//Step 1 is to check for doa crash
+			//Step 3 is to check for personas crash
 			String str2 = device.getPs();
 			if(!crashHappened) {
 				if(!device.isPsDiff(device.getPsString(), str2)) {
 					crashHappened = true;
 					report.report("Persona_Crash", Reporter.FAIL);
-					Summary.getInstance().setProperty("Persona_Crash", "true");
+					personaCrash++;
+					sleep(20 * 1000);
+					report.report("Device : " + device.getDeviceSerial());
+					// last_kmsg
+					device.printLastKmsg();
+					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				}
 			}
 			
@@ -1492,11 +1522,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			if(crashHappened) {
 				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 				// sleep
-				sleep(20 * 1000);
-				// last_kmsg
-				report.report("Device : " + device.getDeviceSerial());
-				device.printLastKmsg();
-				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
 				// configure
 				device.configureDeviceForAutomation(true);
@@ -1519,51 +1544,30 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 				
-				
-//				// this function has a timeout in case the device cannot be
-//				// restarted
-//				devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted ,Persona.PRIV, Persona.CORP);
-//				// TODO add crush report
-//				report.report("Getting online after Crush", ReportAttribute.BOLD);
-//			} catch (Exception e) {
-//				report.report("Could not restart after reboot ", Reporter.FAIL);
-//			}
-//		} else {
-//			// validate both personas are up, if not, wait get the run logs and
-//			// reboot the device (from host)
-//			if (!personasUp) {
-//				// TODO add expressions
-//				// devicesMannager.getDevice(currentDevice).rebootDevice(Persona.PRIV, Persona.CORP);
-//				// LogParserExpression ex = new LogParserExpression();
-//				// ex.setColor(Color.RED);
-//				// ex.setExpression("CRUSH");
-//				// ex.setNiceName("CRUSH");
-//				// expression = new LogParserExpression[] { ex };
-//				// LogParser logParser = new LogParser(expression);
-//				// devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
-//				report.report("Perona Crush was detected!", ReportAttribute.BOLD);
-//
-//			}
-//		}
-		
 	
 
 	@After
 	public void tearDown() throws Exception {
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
-			Summary.getInstance().setProperty("End_Time", currentDate);
+
 			report.startLevel("After");
 			if (!isPass()) {
-//				validateDeviceStatus();
+				validateDeviceStatus();
 			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
+			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
+			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
+			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
+			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
 			report.stopLevel();
 		}
 	}
+	
+	
 	
 
 
@@ -2072,6 +2076,22 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 
 	public void setLogType(LogcatHandler logType) {
 		this.logType = logType;
+	}
+
+
+	/**
+	 * @return the numberOfTimes
+	 */
+	public int getNumberOfTimes() {
+		return numberOfTimes;
+	}
+
+
+	/**
+	 * @param numberOfTimes the numberOfTimes to set
+	 */
+	public void setNumberOfTimes(int numberOfTimes) {
+		this.numberOfTimes = numberOfTimes;
 	}
 
 }

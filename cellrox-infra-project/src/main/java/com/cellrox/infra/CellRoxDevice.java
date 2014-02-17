@@ -254,12 +254,27 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This function perform : "adb devices" and "cell list stsate"
          * if the sell list state isn't returned it will include this as error and throw exception.
          * */
-        public void checkForDoa() throws Exception {
+        public void validateConnectivity() throws Exception {
         	cli.connect();
         	executeCliCommand("adb devices");
         	if(!cli.getTestAgainstObject().toString().contains(getDeviceSerial())) {
-        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
+        		throw new Exception("no connection, the device" +getDeviceSerial() +" isn't online.");
         	}
+//        	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
+//        	executeCliCommand("cell list state");
+//        	if(!((cli.getTestAgainstObject().toString().contains("priv (3)"))&&(cli.getTestAgainstObject().toString().contains("corp (3)")))) {
+//        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
+//        	}
+        	cli.disconnect();
+        }
+        
+        
+        /**
+         * This function perform : "adb devices" and "cell list stsate"
+         * if the sell list state isn't returned it will include this as error and throw exception.
+         * */
+        public void validateDoaCrash() throws Exception {
+        	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
         	executeCliCommand("cell list state");
         	if(!((cli.getTestAgainstObject().toString().contains("priv (3)"))&&(cli.getTestAgainstObject().toString().contains("corp (3)")))) {
@@ -269,32 +284,74 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         /**
-         * @throws Exception 
-         * 
+         * This function adding to the summary(Jsystem report) the properties
          * */
         public void addToTheSummarySystemProp() throws Exception {
+        	
+        	String hardware = null;
         	
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial() +" root");
         	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
+        	
+        	//add build sdk version prop
         	executeCliCommand("getprop | fgrep ro.build.version.sdk");
         	String propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
-        	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1]);
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1].trim());
+        
+        	//add Build_display_id prop
         	executeCliCommand("getprop | fgrep ro.build.display.id");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
-        	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1]);
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1].trim());
+        	
+        	//add Build_date prop
         	executeCliCommand("getprop | fgrep ro.build.date]");
         	propToParse = cli.getTestAgainstObject().toString();
         	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "");
-        	propToParse =propToParse.trim();
-        	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1]);
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1].trim());
+        	
+        	//add hardware prop
+        	executeCliCommand("getprop | fgrep ro.hardware]");
+        	propToParse = cli.getTestAgainstObject().toString();
+        	propToParse =propToParse.replace("getprop | fgrep ro.hardware]", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+        	hardware = propToParse.split(":")[1].trim();
+        	Summary.getInstance().setProperty("hardware", hardware);
+        	
+        	//add IMEI or MAC address to prop
+        	if(hardware.trim().equalsIgnoreCase("Flo")) {
+        		//in this case bring the mac address
+        		executeCliCommand("netcfg | grep wlan0");
+        		propToParse = cli.getTestAgainstObject().toString();
+        		propToParse =propToParse.replace("netcfg | grep wlan0", "");
+        		String [] propToParseArr = propToParse.split("\n");
+        		for (String propLine : propToParseArr) {
+					if(!propLine.startsWith("wlan0")) {
+						continue;
+					}
+					String [] propLineArr = propLine.split(" ");
+					for (String prop : propLineArr) {
+						if (prop.contains(":")) {
+							Summary.getInstance().setProperty("Mac_address", prop);
+							break;
+						}
+					}
+				}
+        	}
+        	else {
+        		//in this case bring the IMIE
+            	executeCliCommand("getprop | fgrep IMEI]");
+            	propToParse = cli.getTestAgainstObject().toString();
+            	propToParse =propToParse.replace("getprop | fgrep IMEI]", "");
+            	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
+            	hardware = propToParse.split(":")[1].trim();
+            	Summary.getInstance().setProperty("IMEI", hardware);
+        	}
         	
         	cli.disconnect();
         }
@@ -1234,23 +1291,45 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param isRegularExpression
          * - is this expression is a regular expression
          * */
-        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell)
+        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell, int numberOfTries)
                         throws Exception {
-        	
+        		boolean isPass = false;
                 cli.connect();
+                
                 if(isShell)
-                        executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-                executeCliCommand(cliCommand);
-                FindText findText = new FindText(expression, isRegularExpression);
-                cli.analyze(findText);
+                	executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+        		while (numberOfTries > 0 && !isPass) {
+        			executeCliCommand(cliCommand);
+        			FindText findText = new FindText(expression, isRegularExpression);
+        			// cli.analyze(findText, false);
+        			findText.setTestAgainst(cli.getTestAgainstObject());
+        			findText.analyze();
+        			isPass = findText.getStatus();
+        			numberOfTries--;
+        		}
+
+        		if (!isPass) {
+        			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
+        		}
+                
                 cli.disconnect();
 
         }
         
+        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell)
+                throws Exception {
+        	validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, 1);
+        }
+        
         public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression)
                         throws Exception {
-                validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true);
+                validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, 1);
         }
+        
+        public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, int numberOfTries)
+                throws Exception {
+        validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, numberOfTries);
+}
 
         /**
          * find the expression to find after cli command in the adb shell
@@ -1295,33 +1374,42 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         }
         
-        public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
-                        Persona persona) throws Exception {
-                
-                cli.connect();
-                executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-                if (persona == Persona.PRIV) {
-                        executeCliCommand("cell console priv");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                } else {
-                        executeCliCommand("cell console corp");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                        executeCliCommand(" ");
-                }
-                executeCliCommand("");
-                executeCliCommand(cliCommand);
-                
-                FindText findText = new FindText(expression, isRegularExpression);
-                cli.analyze(findText);
-                cli.switchToHost();
-                cli.disconnect();
+	public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
+			Persona persona, int numberOfTries) throws Exception {
+		boolean isPass = false;
 
-        }
+		cli.connect();
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+		if (persona == Persona.PRIV) {
+			executeCliCommand("cell console priv");
+		} else {
+			executeCliCommand("cell console corp");
+		}
+		executeCliCommand(" ");
+		executeCliCommand(" ");
+		executeCliCommand(" ");
+		executeCliCommand(" ");
+		executeCliCommand("");
+
+		/* for(int i = 0 ; i < NumberOfTries ; i++) { */
+		while (numberOfTries > 0 && !isPass) {
+			executeCliCommand(cliCommand);
+			FindText findText = new FindText(expression, isRegularExpression);
+			// cli.analyze(findText, false);
+			findText.setTestAgainst(cli.getTestAgainstObject());
+			findText.analyze();
+			isPass = findText.getStatus();
+			numberOfTries--;
+			Thread.sleep(1000);
+		}
+
+		if (!isPass) {
+			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
+		}
+//		cli.switchToHost();
+		cli.disconnect();
+
+	}
 //        /**
 //         * get the path of the application and push it to the priv and the corp
 //         * - the application full path on the local cpu
