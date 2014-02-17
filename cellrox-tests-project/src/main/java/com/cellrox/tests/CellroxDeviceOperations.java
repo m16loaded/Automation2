@@ -270,7 +270,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 			
 		}
 
-		
 	}
 	
 	@Test
