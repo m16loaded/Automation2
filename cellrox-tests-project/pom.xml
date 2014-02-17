@@ -16,6 +16,15 @@
 			<url>http://maven.top-q.co.il/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>[4.2.1]</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
@@ -27,6 +36,7 @@
 			<artifactId>cellrox-infra-project</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
