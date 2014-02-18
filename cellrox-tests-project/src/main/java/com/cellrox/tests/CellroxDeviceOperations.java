@@ -1,8 +1,6 @@
 package com.cellrox.tests;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,18 +10,14 @@ import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
-import junit.framework.SystemTestCase4;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.cellrox.infra.CellRoxDevice;
-import com.cellrox.infra.CellRoxDeviceManager;
-import com.cellrox.infra.enums.DeviceNumber;
+import com.cellrox.infra.TestCase;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
@@ -34,12 +28,8 @@ import com.cellrox.infra.object.LogParserExpression;
 
 
 
-public class CellroxDeviceOperations extends SystemTestCase4 {
+public class CellroxDeviceOperations extends TestCase {
 
-	CellRoxDeviceManager devicesMannager;
-	private File localLocation;
-	private String remotefileLocation;
-	Persona persona;
 	Selector selector;
 	private String button, text, value;
 	private LogParserExpression[] expression;
@@ -63,28 +53,15 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	private String appFullPath;
 	private State onOff;
 	private String wifiNetwork, wifiPassword, propertyName, expectedValue, packageName, x, y;
-	private boolean deviceEncrypted = true;
 	private String applyUpdateLocation, phoneNumber; 
 	private String messageContent = "Hello from automation.";
-	private DeviceNumber currentDevice = DeviceNumber.PRIMARY;
 	private Size size = Size.Smaller; 
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
-	private int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;    
 	
-	@Before
-	public void init() throws Exception {
-		try {
-			report.startLevel("Before");
-			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
-			report.report("Finish the initing of the before test.");
-		}
-		finally {
-			report.stopLevel();
-		}
-		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-		// devicesMannager.getDevice(currentDevice).connectToServers();
-	}
+
+	
+
 	
 	
 	@Test
@@ -93,12 +70,12 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 //		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).configureDeviceForAutomation(true);
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).connectToServers();
-		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
 		
 		for(int i = 0 ; i < 5 ; i++) {
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassNameMatches("").setIndex(1).setDescription("Apps"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 			sleep(10000);
 		}
 		
@@ -399,6 +376,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		}
 	}
 
+	/**
+	 *	Print the text from ui object's text
+	 * */
 	@Test
 	@TestProperties(name = "Get Full Text of Text Contains \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void getTextByTextContains() throws Exception {
@@ -406,6 +386,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		report.report(msg);
 	}
 
+	/**
+	 * Print the text from ui object's text
+	 * */
 	@Test
 	@TestProperties(name = "Get Full Text of UiObject \"${text}/${childClassName}\" index ${instance}", paramsInclude = { "currentDevice,text,persona,childClassName,instance,index" })
 	public void getTextTextViewFather() throws Exception {
@@ -416,6 +399,9 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		report.report(msg);
 	}
 
+	/**
+	 * Waiting until the uiobject will come to the screen
+	 * */
 	@Test
 	@TestProperties(name = "Wait for UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,timeout,interval" })
 	public void waitByTextContains() throws Exception {
@@ -1467,133 +1453,17 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 	
 	
 	
-	/**
-	 * This function runs only in case of fails in the tests and check if
-	 * unexpected reboot happened or persona crash or DOA
-	 * */
-	private void validateDeviceStatus() throws Exception {
 
-		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-
-			boolean crashHappened = false;
-			//Step 1 is to check for doa crash
-			try {
-				device.validateConnectivity();
-			}
-			catch (Exception e) {
-				report.report("Out of connection ", Reporter.FAIL);
-				connectionCrash++;
-				return;
-			}
-			
-			//Step 2 is to check for device crash by the upTime
-			long knownUpTime = device.getUpTime();
-			if(knownUpTime>device.getUpTime()) {
-				crashHappened = true;
-				report.report("Device_Crash", Reporter.FAIL);
-				deviceCrash++;
-				sleep(20 * 1000);
-				report.report("Device : " + device.getDeviceSerial());
-				// last_kmsg
-				device.printLastKmsg();
-				//here im doning all the thing beside the reboot
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
-				device.setDeviceAsRoot();
-				device.setUpTime(device.getCurrentUpTime());
-                device.setPsString(device.getPs());
-			}
-			
-			//Step 3 is to check for personas crash
-			String str2 = device.getPs();
-			if(!crashHappened) {
-				if(!device.isPsDiff(device.getPsString(), str2)) {
-					crashHappened = true;
-					report.report("Persona_Crash", Reporter.FAIL);
-					personaCrash++;
-					sleep(20 * 1000);
-					report.report("Device : " + device.getDeviceSerial());
-					// last_kmsg
-					device.printLastKmsg();
-					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
-				}
-			}
-			
-			//taking care in a cases of persona crash
-			if(crashHappened) {
-				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
-				// sleep
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
-				// configure
-				device.configureDeviceForAutomation(true);
-				// connect
-				device.connectToServers();
-				// to wake up and type password
-				device.getPersona(Persona.CORP).wakeUp();
-				device.switchPersona(Persona.CORP);
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
-				device.getPersona(Persona.PRIV).wakeUp();
-				device.switchPersona(Persona.PRIV);
-				device.unlockBySwipe(Persona.PRIV);
-				
-			}
-
-		}
-	}
 				
 	
 
-	@After
-	public void tearDown() throws Exception {
-		try {
 
-			report.startLevel("After");
-			if (!isPass()) {
-				validateDeviceStatus();
-			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
-			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
-			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
-			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
-			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
-		}
-		finally {
-			report.stopLevel();
-		}
-	}
 	
 	
 	
 
 
-	public File getLocalLocation() {
-		return localLocation;
-	}
 
-	public String getRemotefileLocation() {
-		return remotefileLocation;
-	}
-
-	public Persona getPersona() {
-		return persona;
-	}
-
-	public void setLocalLocation(File localLocation) {
-		this.localLocation = localLocation;
-	}
-
-	public void setRemotefileLocation(String remotefileLocation) {
-		this.remotefileLocation = remotefileLocation;
-	}
-
-	public void setPersona(Persona persona) {
-		this.persona = persona;
-	}
 
 	/*
 	 * @UseProvider(provider =
@@ -2040,14 +1910,6 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		this.messageContent = messageContent;
 	}
 
-	public DeviceNumber getCurrentDevice() {
-		return currentDevice;
-	}
-
-	public void setCurrentDevice(DeviceNumber currentDevice) {
-		this.currentDevice = currentDevice;
-	}
-
 	/**
 	 * @return the size
 	 */
@@ -2078,18 +1940,10 @@ public class CellroxDeviceOperations extends SystemTestCase4 {
 		this.logType = logType;
 	}
 
-
-	/**
-	 * @return the numberOfTimes
-	 */
 	public int getNumberOfTimes() {
 		return numberOfTimes;
 	}
 
-
-	/**
-	 * @param numberOfTimes the numberOfTimes to set
-	 */
 	public void setNumberOfTimes(int numberOfTimes) {
 		this.numberOfTimes = numberOfTimes;
 	}
