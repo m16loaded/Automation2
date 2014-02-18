@@ -161,7 +161,7 @@ public class MDMOperation extends TestCase {
 		
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
 		
-		devicesMannager.getDevice(currentDevice).connectToServers();
+		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 		
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Next"));
 		

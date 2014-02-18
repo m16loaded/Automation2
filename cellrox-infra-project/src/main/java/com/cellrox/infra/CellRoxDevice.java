@@ -1098,6 +1098,16 @@ public class CellRoxDevice extends SystemObjectImpl {
 	        Process proc = Runtime.getRuntime().exec(cmdss1, null);
         }
         
+
+        public void connectToServerPriv() throws Exception {
+                
+        		device = adbController.waitForDeviceToConnect(getDeviceSerial());
+                report.report("Device is online");
+                setPortForwarding(privePort, privePort);
+                // connect client to server
+                uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
+        }
+        
         /**
          * - ADB forword to priv and corp port as configured in the SUT<br>
          * - Connect to UIAutomator servers on the two personas<br><br>
