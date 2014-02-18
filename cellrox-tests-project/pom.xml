@@ -16,15 +16,15 @@
 			<url>http://maven.top-q.co.il/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
-	<dependencyManagement>
-		<dependencies>
+ <!--	<dependencyManagement>
+ 		<dependencies>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>[4.2.1]</version>
 			</dependency>
 		</dependencies>
-	</dependencyManagement>
+	</dependencyManagement>  -->
 	<dependencies>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
@@ -32,11 +32,35 @@
 			<version>6.0.02</version>
 		</dependency>
 		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.cellrox.infra</groupId>
 			<artifactId>cellrox-infra-project</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+<!--  		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+		</dependency>  -->
+<!-- 		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>2.39.0</version>
+		</dependency> -->
+<!--  		<dependency>
+			<groupId>org.jsystemtest.systemobjects</groupId>
+			<artifactId>webdriver-so</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>  -->
+ 	<!-- 				 <dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>[4.2.1]</version>
+			</dependency>   -->
 	</dependencies>
 	<build>
 		<plugins>
