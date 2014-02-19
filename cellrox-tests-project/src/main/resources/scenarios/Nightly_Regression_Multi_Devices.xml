@@ -26,8 +26,8 @@
         <antcallback target="t10"/>
     </target>
     <target name="t0">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_Two_Devices.xml">
-            <property name="jsystem.uuid" value="5f12e9f2-c57c-40c6-aebc-a5a5814e969f"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device.xml">
+            <property name="jsystem.uuid" value="061223ab-9683-415d-9732-05474e31e694"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
