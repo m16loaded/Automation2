@@ -1,6 +1,7 @@
 package com.cellrox.tests;
 
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,6 +87,64 @@ public class CellroxDeviceOperations extends TestCase {
 
 	}
 		
+	/**
+	 * This function validate that the insert state is the correct one with the screen
+	 * */
+	@Test	
+	@TestProperties(name ="Validate the Screen is ${onOff}" ,paramsInclude = "currentDevicem,persona,onOff" )
+	public void validateScreenIsOn() throws RemoteException {
+		
+		boolean isOn = devicesMannager.getDevice(currentDevice).getPersona(persona).isScreenOn();
+		
+		if(onOff == State.OFF) {
+			//device should be off
+			if(isOn) {
+				report.report("The device screen is on and suppose to be off." , Reporter.FAIL);
+			}
+			else {
+				report.report("The device screen is off");
+			}
+		}
+		else{
+			//device should be on
+			if(isOn) {
+				report.report("The device screen is on");
+
+			}
+			else {
+				report.report("The device screen is off and suppose to be on." , Reporter.FAIL);
+			}
+		}
+	}
+	
+	
+	/**
+	 * This function validate that the ui object is exist in the screen by description and if not the function fails. 
+	 * */
+	@Test
+	@TestProperties(name = "Validate UiObject Exist By Description ${childDescription}", paramsInclude = "currentDevicem,persona,childDescription")
+	public void validateUiObjectExistByDescription() throws Exception{
+		if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription(childDescription))) {
+			report.report("The uiobject is found.");
+		}
+		else {
+			report.report("Couldn't find the uiobject with the desc : "+childDescription +".",Reporter.FAIL);
+		}
+	}
+	
+	
+	
+	/**
+	 * This function :
+	 * 	1.	Execute command
+	 * 	2.	validate that the command output text is exists on the screen 
+	 * */
+	@Test
+	@TestProperties(name = "Validate Cli Command Output Exists On The Screen ${text}", paramsInclude = "currentDevicem,persona,text")
+	public void validateCliCommandOutputExistsOnTheScreen() throws Exception{
+		devicesMannager.getDevice(currentDevice).validateCliCommandOutputExistsOnTheScreen(text, persona);
+	}
+	
 	
 	@Test
 	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice}" , paramsInclude = {"currentDevice,text"})

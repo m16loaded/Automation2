@@ -405,6 +405,25 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.disconnect();
         }
         
+        /**
+         * Validate Cli Command Output Exists On The Screen
+         * @throws Exception 
+         * */
+        public void validateCliCommandOutputExistsOnTheScreen(String command, Persona persona) throws Exception {
+        	cli.connect();
+        	executeCliCommand("adb -s "+ getDeviceSerial()+" root");
+        	executeCliCommand("adb -s "+ getDeviceSerial()+" shell");
+        	executeCliCommand(command);
+        	String output = cli.getTestAgainstObject().toString().replace(command, "").replace("\n", "").replace("root@mako:/ #", "").trim();
+        	
+        	
+        	if (getPersona(persona).exist(new Selector().setTextContains(output))) {
+    			report.report("The uiobject is found with the text : "+output +".");
+    		}
+    		else {
+    			report.report("Couldn't find the uiobject with the text : "+output +".",Reporter.FAIL);
+    		}
+        }
         
         /**
          *	print out the kmesg 
