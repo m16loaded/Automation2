@@ -335,6 +335,12 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	@Test
+	@TestProperties(name = "Connect to Servers", paramsInclude = {"currentDevice"})
+	public void connectToServerPriv() throws Exception {
+		devicesMannager.getDevice(currentDevice).connectToServerPriv();
+	}
+	
+	@Test
 	@TestProperties(name = "Click on x,y on ${persona}", paramsInclude = { "currentDevice,x,y,persona" })
 	public void clickByCordinate() {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(Integer.valueOf(x), Integer.valueOf(y));

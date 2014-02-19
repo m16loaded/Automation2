@@ -461,26 +461,11 @@ public class CellRoxDevice extends SystemObjectImpl {
         	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill uiautomator");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -x nc");
         	//kill uiautomator
-            executeCliCommand("pkill uiautomator");
-          //kill the sh script, of the while
-/*            executeCliCommand("ps | grep busybox");
-            String retData = cli.getTestAgainstObject().toString();
-            retData = retData.replace("\n", "");
-            retData = retData.replace("\r", "");
-            String []retDataArr = retData.split("busybox");
-            for(int index = 0 ;  index < retDataArr.length ; index++) {
-            	Pattern pattern = Pattern.compile(expectedLine);
-        	    Matcher matcher = pattern.matcher(retDataArr[index]);
-        	    if(matcher.find()) {
-        	        	String fatherProcessNumber = matcher.group(2);
-        	        	executeCliCommand("kill "+fatherProcessNumber);
-        	    }
-            }*/
-        	  //kill the busybox
-//        	executeCliCommand("pkill busybox");
-//            executeCliCommand("pkill nc");
+//            executeCliCommand("pkill uiautomator");
+//            executeCliCommand("pkill -x nc");
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
