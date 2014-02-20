@@ -4,7 +4,17 @@
         <privePort>3435</privePort>
         <corpPort>4321</corpPort>
         <deviceAsRootOnInit>true</deviceAsRootOnInit>
-	<otaFileLocation>/home/topq/main_jenkins/workspace/Automation_Nightly/artifacts/ota-nightly.zip</otaFileLocation>
-	<numberOfDevices>2</numberOfDevices>
+		<otaFileLocation>/home/topq/main_jenkins/workspace/Automation_Nightly/artifacts/ota-nightly.zip</otaFileLocation>
+		<numberOfDevices>2</numberOfDevices>
     </devicesMannager>
+    <webDriver>
+        <class>com.cellrox.infra.WebDriverSO</class>
+    </webDriver>
+    <!-- 	<webDriverSystemObject>
+		<class>org.jsystem.webdriver_so.WebDriverSystemObject</class>
+		<webDriver>CHROME_DRIVER</webDriver>
+		<seleniumTimeOut>30000</seleniumTimeOut>
+		<domain>about:blank</domain>
+		<chromeDriverPath>/home/topq/dev/chromedriver</chromeDriverPath>
+	</webDriverSystemObject> -->
 </sut>

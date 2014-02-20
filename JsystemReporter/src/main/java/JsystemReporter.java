@@ -132,10 +132,7 @@ public class JsystemReporter {
 				}
 			}
 			
-			if (doaCrash.trim().equals("0")) {
-				docHtmlString.append("<p>DOA crash count: false</p>").append(System.getProperty("line.separator"));
-			}
-			else {
+			if (!doaCrash.trim().equals("0")) {
 				docHtmlString.append("<p>DOA crash count: true</p>").append(System.getProperty("line.separator"));
 			}
 			

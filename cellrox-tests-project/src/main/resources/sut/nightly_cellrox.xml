@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><sut validators="">
+    <device>
+        <class>com.cellrox.infra.CellRoxDevice</class>
+        <privePort>3435</privePort>
+        <corpPort>4321</corpPort>
+        <deviceAsRootOnInit>true</deviceAsRootOnInit>
+	<otaFileLocation>/home/topq/main_jenkins/workspace/Automation_Nightly/artifacts/product-out/*ota.zip</otaFileLocation>
+    </device>
+</sut>

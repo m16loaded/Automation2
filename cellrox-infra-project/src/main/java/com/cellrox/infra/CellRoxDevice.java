@@ -49,8 +49,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         private int privePort = 3435;
         private int corpPort = 4321;
         private int deviceIndex = 0;
-        private String user = "itay";
-        private String password = "8620265";
+        private String user = "topq";
+        private String password = "Aa123456";
         private boolean deviceAsRootOnInit = false;
         // will not be init from the SUT
         private AdbController adbController;
@@ -143,6 +143,55 @@ public class CellRoxDevice extends SystemObjectImpl {
         	processForCheck.add("com.android.email");
         	processForCheck.add("com.android.exchange");
         }
+        
+        
+        /**
+         * This class was make in order to compare between the data in the mdm and the phone, 
+         * the returned map is the map from the phone
+         * @throws Exception 
+         * */
+    	public Map<String, String> getMapOfData() throws Exception {
+    		Map<String,String> compareMap = new HashMap<String, String>();
+    		String var = "", cmd = "";
+    		
+    		cli.connect();
+        	executeCliCommand("adb -s "+getDeviceSerial()+" root");
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
+        	
+        	cmd = "getprop ro.hardware";//Type
+        	executeCliCommand(cmd);
+        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
+        			replace("\n", "").trim();
+        	compareMap.put("Type", var);
+        	 //ROM Version
+        	cmd = "getprop ro.build.display.id";
+        	executeCliCommand(cmd);
+        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
+        			replace("\n", "").trim();
+        	compareMap.put("ROM Version", var);
+        	//Android Version
+        	cmd = "getprop ro.build.version.release";
+        	executeCliCommand(cmd);
+        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
+        			replace("\n", "").trim();
+        	compareMap.put("Android Version", var);
+//        	 //ID/IMEI
+        	cmd = "getprop ril.IMEI";
+        	executeCliCommand(cmd);
+        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
+        			replace("\n", "").trim();
+        	compareMap.put("ID/IMEI", var);
+//        	 //Kernel Version
+        	cmd = "uname -r";
+        	executeCliCommand(cmd);
+        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
+        			replace("\n", "").trim();
+        	compareMap.put("Kernel Version", var);
+        	
+    		
+    		
+    		return compareMap;
+    	}
         
         public void executeCommandAdbShell(String cmd) throws Exception {
         	cli.connect();
@@ -356,6 +405,25 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.disconnect();
         }
         
+        /**
+         * Validate Cli Command Output Exists On The Screen
+         * @throws Exception 
+         * */
+        public void validateCliCommandOutputExistsOnTheScreen(String command, Persona persona) throws Exception {
+        	cli.connect();
+        	executeCliCommand("adb -s "+ getDeviceSerial()+" root");
+        	executeCliCommand("adb -s "+ getDeviceSerial()+" shell");
+        	executeCliCommand(command);
+        	String output = cli.getTestAgainstObject().toString().replace(command, "").replace("\n", "").replace("root@mako:/ #", "").trim();
+        	
+        	
+        	if (getPersona(persona).exist(new Selector().setTextContains(output))) {
+    			report.report("The uiobject is found with the text : "+output +".");
+    		}
+    		else {
+    			report.report("Couldn't find the uiobject with the text : "+output +".",Reporter.FAIL);
+    		}
+        }
         
         /**
          *	print out the kmesg 
@@ -393,26 +461,11 @@ public class CellRoxDevice extends SystemObjectImpl {
         	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill uiautomator");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -x nc");
         	//kill uiautomator
-            executeCliCommand("pkill uiautomator");
-          //kill the sh script, of the while
-/*            executeCliCommand("ps | grep busybox");
-            String retData = cli.getTestAgainstObject().toString();
-            retData = retData.replace("\n", "");
-            retData = retData.replace("\r", "");
-            String []retDataArr = retData.split("busybox");
-            for(int index = 0 ;  index < retDataArr.length ; index++) {
-            	Pattern pattern = Pattern.compile(expectedLine);
-        	    Matcher matcher = pattern.matcher(retDataArr[index]);
-        	    if(matcher.find()) {
-        	        	String fatherProcessNumber = matcher.group(2);
-        	        	executeCliCommand("kill "+fatherProcessNumber);
-        	    }
-            }*/
-        	  //kill the busybox
-//        	executeCliCommand("pkill busybox");
-            executeCliCommand("pkill nc");
+//            executeCliCommand("pkill uiautomator");
+//            executeCliCommand("pkill -x nc");
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
@@ -600,6 +653,46 @@ public class CellRoxDevice extends SystemObjectImpl {
             cli.disconnect();
     }
 
+    /**
+    * Configure the device only for priv
+    * */
+	public void configureDeviceForPriv(boolean runServer) throws Exception {
+
+		killAllAutomaionProcesses();
+
+		report.startLevel("Configure Device For Automation Priv");
+
+		cli.connect();
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+
+		Thread.sleep(200);
+		cli.switchToPersona(Persona.PRIV);
+		/**
+		 * For QA mode this line will open a mock server
+		 * executeShellCommand(String
+		 * .format("busybox nc -l -p %d -e /system/bin/sh&",privPort));
+		 */
+		Thread.sleep(200);
+		if (runServer) {
+			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
+			executeCliCommand("rm /tmp/local_pipe");
+			executeCliCommand("mkfifo /tmp/local_pipe");
+			executeCliCommand("rm /data/unix_soc");
+			executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/tmp/local_pipe) &");
+		}
+
+		cli.switchToHost();
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		executeCliCommand("rm /tmp/local_pipe");
+		executeCliCommand("mkfifo /tmp/local_pipe");
+		executeCliCommand("nc -lk " + privePort
+				+ " < /tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/tmp/local_pipe &");
+
+		report.stopLevel();
+		cli.disconnect();
+	}
+
 
         /**
          * Install APK on device
@@ -680,10 +773,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
 
         public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, Persona... personas) throws Exception {
-                vlidateDeviceIsOffline(personas);
+                validateDeviceIsOffline(personas);
                 Thread.sleep(2000);
                 device = adbController.waitForDeviceToConnect(getDeviceSerial());
-                System.out.println("finsh to wait");
                 if(isEncrypted) {
                         validateEncryptedPersonasAreOnline(beginTime, timeout, personas);
                         Thread.sleep(3000);
@@ -736,7 +828,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param personas
          * @throws Exception
          */
-        public void vlidateDeviceIsOffline(Persona... personas) throws Exception {
+        public void validateDeviceIsOffline(Persona... personas) throws Exception {
                 boolean offline = false;
                 String result = null;
                 int found = 0;
@@ -942,7 +1034,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          * this function just do ps and split it 
          * */
         public String getPs() throws Exception {
-        	
+        	cli.setExitTimeout(180*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
         	executeCliCommand("ps", true , 2*60*1000);
@@ -1008,6 +1100,16 @@ public class CellRoxDevice extends SystemObjectImpl {
         public void openLogcatTerminal() throws IOException {
 	        String[] cmdss1= {"gnome-terminal","-x","adb", "-s", deviceSerial ,"logcat","-v","pidns"};
 	        Process proc = Runtime.getRuntime().exec(cmdss1, null);
+        }
+        
+
+        public void connectToServerPriv() throws Exception {
+                
+        		device = adbController.waitForDeviceToConnect(getDeviceSerial());
+                report.report("Device is online");
+                setPortForwarding(privePort, privePort);
+                // connect client to server
+                uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
         }
         
         /**

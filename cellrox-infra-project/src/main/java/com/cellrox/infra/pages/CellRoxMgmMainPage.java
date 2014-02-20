@@ -26,11 +26,10 @@ public class CellRoxMgmMainPage extends CellRoxAbstractPage {
 
 	public void navigateToSite() {
 
-		WebDriverWait wait = new WebDriverWait(driver, 30);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li/a[text()='Sites']")));
-		
 		String href = siteBtn.getAttribute("href");
-		System.out.println(href);
+		report.report("About to navigate to : " + href);
 		driver.get(href);
 
 	}
