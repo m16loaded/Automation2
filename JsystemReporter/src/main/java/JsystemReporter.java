@@ -152,9 +152,10 @@ public class JsystemReporter {
 					docHtmlString.append("<p>IMEI : "+imei+"</p>").append(System.getProperty("line.separator"));
 				}
 			}
-			
-			if (!doaCrash.trim().equals("0")) {
-				docHtmlString.append("<p>DOA crash count: true</p>").append(System.getProperty("line.separator"));
+			if(doaCrash!=null){
+				if (!doaCrash.trim().equals("0")) {
+					docHtmlString.append("<p>DOA crash count: true</p>").append(System.getProperty("line.separator"));
+				}
 			}
 			
 			docHtmlString.append("<p>Device crash count: "+deviceCrash+"</p>").append(System.getProperty("line.separator"));
@@ -234,6 +235,7 @@ public class JsystemReporter {
 			String newLogLocation = copyTheCurrentLogTo(args[4], args[5]);
 			
 			urltoReporter = args[6] + newLogLocation;
+			System.out.println(urltoReporter);
 			
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
 			
@@ -424,6 +426,7 @@ public class JsystemReporter {
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
 		newLogDir = newLogDir+ File.separator +currentDate;
 		
+		System.out.println("newLogDir : " + newLogDir);
 		//Make a new dir
 		FileUtils.mkdirs(newLogDir);
 		
