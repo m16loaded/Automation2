@@ -54,6 +54,20 @@ public class JsystemReporter {
 	 * arg[3] - String to -the wanted email to send to
 	 */
 	public static void main(String[] args) {
+		
+		sendEmail(args);
+	}
+	
+	/**
+	 * The application takes the .xml and make from it .html table with the wanted fields
+	 * This application will compare to the last run from the config file
+	 * 	@param args- the first arg should be : 
+	 * arg[0] - currentLogLocation - the place of reports.0.xml
+	 * arg[1] - nameOfReport - the place to save the .html name
+	 * arg[2] - summary location 
+	 * arg[3] - String to -the wanted email to send to
+	 */
+	public static void sendEmail(String[] args) {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
@@ -249,8 +263,9 @@ public class JsystemReporter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    
 	}
+	
+
 	
 	/**
 	 * This function is returning the time in the currect format 
