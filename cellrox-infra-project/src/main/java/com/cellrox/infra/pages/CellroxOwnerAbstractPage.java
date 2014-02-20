@@ -25,6 +25,7 @@ public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 	
 	public void selectTheCorrectOwnerAndEnroll(String ownerName) throws InterruptedException {
 		
+		Thread.sleep(3000);
 		List<WebElement> weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col1 colt1']/span")); 
 		List<WebElement> weList2 = driver.findElements(By.cssSelector(".ngSelectionCheckbox")); 
 		
@@ -44,7 +45,8 @@ public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 		PageFactory.initElements(driver, this);
 		enrollBtn.click();
 		Thread.sleep(2000);
-		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).click();
+		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).submit();
+		Thread.sleep(5000);
 		
 	}
 
