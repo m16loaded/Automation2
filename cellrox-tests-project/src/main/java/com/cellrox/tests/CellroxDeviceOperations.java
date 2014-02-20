@@ -1253,18 +1253,27 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
-					
-			start = System.currentTimeMillis();
-			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
-				if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
-					report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", Reporter.FAIL);
-					break;
-				}
-				Thread.sleep(1500);
+			//check if the application already exist
+			if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("UNINSTALL"), 2*1000)){
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
 			}
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OPEN"));
+			else {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
+						
+				start = System.currentTimeMillis();
+				while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
+					if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
+						report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", Reporter.FAIL);
+						break;
+					}
+					Thread.sleep(1500);
+				}
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OPEN"));
+			}
 		}
 		catch(Exception e) {
 			report.report("Error" + e.getMessage(),Reporter.FAIL);
