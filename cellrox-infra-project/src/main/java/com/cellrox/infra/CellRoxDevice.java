@@ -72,12 +72,14 @@ public class CellRoxDevice extends SystemObjectImpl {
         private Set<String> processForCheck = new HashSet<String>();
         private long upTime;
         
-        public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber) throws Exception {
+        public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber, String user, String password) throws Exception {
         	
         	this.privePort = privePort;
         	this.corpPort = corpPort;
         	this.otaFileLocation = otaFileLocation;
         	this.deviceSerial = serialNumber;
+        	this.user = user;
+        	this.password = password;
         		
         	adbController = AdbController.getInstance();
         	device = adbController.waitForDeviceToConnect(serialNumber);
@@ -461,50 +463,11 @@ public class CellRoxDevice extends SystemObjectImpl {
         	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill uiautomator");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -x nc");
-        	//kill uiautomator
-//            executeCliCommand("pkill uiautomator");
-//            executeCliCommand("pkill -x nc");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL -x uiautomator");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL -x nc");
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
-        
-/*        public CellRoxDevice() throws Exception {
-                adbController = AdbController.getInstance();
-                // find all devices
-                USBDevice[] devices = adbController.waitForDevicesToConnect(1);
-                // set the device serial number by its index
-                setDeviceSerial(devices[deviceIndex].getSerialNumber());
-                device = adbController.waitForDeviceToConnect(getDeviceSerial());
-                cli = new AdbConnection("127.0.0.1", getUser(), getPassword());
-                cli.setExitTimeout(60*1000);
-                cli.connect();
-
-        }*/
-
-  /*      @Override
-        public void init() throws Exception {
-//                super.init();
-//                getDeviceFromAdb();
-//                cli = new AdbConnection("127.0.0.1", "topq", "Aa123456");
-//                cli.connect();
-                // set device as root
-                if (deviceAsRootOnInit) {
-                        setDeviceAsRoot();
-                        isDeviceConnected();
-                }
-                // validate that syslog is enabled
-                String status = device.getProperty("persist.service.syslogs.enable");
-                // if not enabled enable it...
-                if (status == null) {
-                        report.report("no persist.service.syslogs.enable", report.WARNING);
-                } else if (status.equals("0")) {
-                        device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
-                }
-        }
-*/
-        
 
         public void getDeviceFromAdb() throws Exception {
                 adbController = AdbController.getInstance();
