@@ -52,11 +52,15 @@ public class JsystemReporter {
 	 * arg[1] - nameOfReport - the place to save the .html name
 	 * arg[2] - summary location 
 	 * arg[3] - String to -the wanted email to send to
+	 * arg[4] - the directory of the reports to copy from
+	 * args[5] - the directory of the reports to copy to
+	 * args[6] - the working directory of the jenkins
 	 */
-	public static void main(String[] args) {
+  	public static void main(String[] args) {
 		
 		sendEmail(args);
 	}
+	
 	
 	/**
 	 * The application takes the .xml and make from it .html table with the wanted fields
@@ -66,6 +70,9 @@ public class JsystemReporter {
 	 * arg[1] - nameOfReport - the place to save the .html name
 	 * arg[2] - summary location 
 	 * arg[3] - String to -the wanted email to send to
+	 * arg[4] - the directory of the reports to copy from
+	 * args[5] - the directory of the reports to copy to
+	 * args[6] - the working directory of the jenkins
 	 */
 	public static void sendEmail(String[] args) {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
@@ -222,6 +229,12 @@ public class JsystemReporter {
 			docHtmlString.append(testsTable.toString()).append(System.getProperty("line.separator"));
 			
 			docHtmlString.append("<p></p>").append(System.getProperty("line.separator"));
+			
+			//the report directory creating 
+			String newLogLocation = copyTheCurrentLogTo(args[4], args[5]);
+			
+			urltoReporter = args[6] + newLogLocation;
+			
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
 			
 			docHtmlString.append("</body></html>").append(System.getProperty("line.separator"));
@@ -348,7 +361,8 @@ public class JsystemReporter {
 	/**
 	 * Sending email to the wanted persons
 	 * */
-	public static void sendEmail(String to, final String username, String subject, String bodyHtml, String fileName , final String password) {
+	public static void sendEmail(String to, final String username, String subject, String bodyHtml, 
+			String fileName , final String password) {
 
 	    Properties props = new Properties();
 	    props.put("mail.smtp.auth", true);
@@ -395,5 +409,48 @@ public class JsystemReporter {
 	        e.printStackTrace();
 	    }
 	}
+	
+
+	
+	
+		
+
+//	/home/topq/main_jenkins/workspace/Automation_Nightly/Logs
+//	/home/topq/dev/runnreNew/runner/log/current
+	public static String copyTheCurrentLogTo(String logDir, String newLogDir) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
+		newLogDir = newLogDir+ File.separator +currentDate;
+		
+		//Make a new dir
+		FileUtils.mkdirs(newLogDir);
+		
+		//Copy all the current log dir
+    	File source = new File(logDir);
+    	File desc = new File(newLogDir);
+    	try {
+    	    FileUtils.copyDirectory(source, desc);
+    	} catch (IOException e) {
+    	    e.printStackTrace();
+    	}
+        
+		return currentDate + File.separator + "index.html";
+	}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
