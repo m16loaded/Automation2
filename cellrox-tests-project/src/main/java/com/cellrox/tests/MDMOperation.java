@@ -39,7 +39,7 @@ public class MDMOperation extends TestCase {
 	 public void initWebDriver() throws Exception {
 //		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
 //	    driver = new ChromeDriver();
-		 initTheWebDriver();
+//		 initTheWebDriver();
 		 
 		 System.out.println("dfgdfgdf");
 	 }
@@ -79,6 +79,7 @@ public class MDMOperation extends TestCase {
 		//wait for 
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV);
 		//return the server connectivity in Priv
+		Thread.sleep(8000);
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
 		//to try to switch persona
@@ -148,9 +149,6 @@ public class MDMOperation extends TestCase {
 	public void enrollOwner() throws Exception {
 		
 		//step 3
-//		devicesMannager.getDevice(currentDevice).connectToServers();
-//		CellroxMdmLoginPage loginPage = new CellroxMdmLoginPage(driver, siteUrl);
-//		loginPage.login(mdmUser, mdmPassword);
 
 		CellroxOwnerAbstractPage ownerPage = new CellroxOwnerAbstractPage(driver, siteUrl);
 		
@@ -268,7 +266,6 @@ public class MDMOperation extends TestCase {
 		//click apply
 		//to click on the device , click on history , check done is in the coosen policy
 		//to check that the application installed
-		
 		
 		//go back to the default policy (without any apps)
 		//make sure its done and that there is no application

@@ -41,6 +41,11 @@
 			<artifactId>cellrox-infra-project</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+<!-- 		<dependency>
+			<groupId>JsystemReporter</groupId>
+			<artifactId>JsystemReporter</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency> -->
 <!--  		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
@@ -61,6 +66,11 @@
 				<artifactId>httpclient</artifactId>
 				<version>[4.2.1]</version>
 			</dependency>   -->
+ 	<dependency>
+ 		<groupId>JsystemReporter</groupId>
+ 		<artifactId>JsystemReporter</artifactId>
+ 		<version>0.0.1-SNAPSHOT</version>
+ 	</dependency>
 	</dependencies>
 	<build>
 		<plugins>
