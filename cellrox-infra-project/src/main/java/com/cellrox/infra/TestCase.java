@@ -39,7 +39,7 @@ public class TestCase extends SystemTestCase4 {
 			report.report("Finish the initing of the before test.");
 		}
 		finally {
-//			initTheWebDriver();
+			initTheWebDriver();
 			report.stopLevel();
 		}
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
@@ -62,7 +62,8 @@ public class TestCase extends SystemTestCase4 {
 			if (!isPass()) {
 				validateDeviceStatus();
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
 			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
