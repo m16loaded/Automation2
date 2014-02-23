@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -39,8 +40,8 @@ import org.w3c.dom.NodeList;
 
 public class JsystemReporter {
 
-	final static String propName = "config.properties";
-	final static String propTimes = "configTimes.properties";
+	final static String propName = "/home/topq/git/automation/config.properties";
+	final static String propTimes = "/home/topq/git/automation/configTimes.properties";
 	final static String from =  "auto@cellrox.com";
 	final static String password = "%SMd*6ya";
 	
@@ -219,7 +220,7 @@ public class JsystemReporter {
 					testsStatusMapOld.remove(name);
 					//finally write the wanted line
 					status = modifyTrueFalseToPassFail(status);
-					status = modifyTrueFalseToPassFail(compareStatus);
+					compareStatus = modifyTrueFalseToPassFail(compareStatus);
 					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>" + getTimeFormat(time)+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"<TD>" + status  + "<TD BGCOLOR="+seconedColor+">"+compareStatus+"</em>").append(System.getProperty("line.separator"));
 				}
 			}
@@ -239,9 +240,14 @@ public class JsystemReporter {
 			docHtmlString.append("<p></p>").append(System.getProperty("line.separator"));
 			
 			//the report directory creating 
+			//TODO
 			String newLogLocation = copyTheCurrentLogTo(args[4], args[5]);
+//			String newLogLocation = copyTheCurrentLogTo("/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current",
+//					"/home/topq/main_jenkins/workspace");
 			
+			//TODO
 			urltoReporter = args[6] + newLogLocation;
+//			urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/" +newLogLocation;
 			System.out.println(urltoReporter);
 			
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
@@ -379,9 +385,10 @@ public class JsystemReporter {
 	
 	/**
 	 * Sending email to the wanted persons
+	 * @throws UnsupportedEncodingException 
 	 * */
 	public static void sendEmail(String to, final String username, String subject, String bodyHtml, 
-			String fileName , final String password) {
+			String fileName , final String password) throws UnsupportedEncodingException {
 
 	    Properties props = new Properties();
 	    props.put("mail.smtp.auth", true);
@@ -398,11 +405,10 @@ public class JsystemReporter {
 	    try {
 
 	        Message message = new MimeMessage(session);
-	        message.setFrom(new InternetAddress(username));
+	        message.setFrom(new InternetAddress(username , "Cellrox Automation"));
 	        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
 	        message.setSubject(subject);
 	        message.setText(bodyHtml);
-	        
 	        
 	        BodyPart messageBodyPart1 = new MimeBodyPart();  
 //	        messageBodyPart1.setText(body);  
