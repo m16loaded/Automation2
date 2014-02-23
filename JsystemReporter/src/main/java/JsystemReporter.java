@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +34,11 @@ import javax.mail.internet.MimeMultipart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+import org.joda.time.Seconds;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,10 +90,12 @@ public class JsystemReporter {
 		String compareStatus, seconedColor, lastTime = null;
 		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
 		String date = null, version = null, id = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
-				endTime = null, hardware = null, imei = null, macAdr = null, noCon = null;
+				endTime = null, hardware = null, imei = null, macAdr = null, noCon = null, duration = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+//		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
+		
 	
 		StringBuilder testsTable = new StringBuilder();
 		StringBuilder docHtmlString = new StringBuilder();
@@ -131,6 +140,7 @@ public class JsystemReporter {
 			personaCrash = prop.getProperty("Persona_Crash");
 			startTime = prop.getProperty("Start_Time");
 			endTime = prop.getProperty("End_Time");
+			duration = getDateDuration(startTime, endTime);
 			hardware = prop.getProperty("hardware");
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
@@ -142,6 +152,7 @@ public class JsystemReporter {
 			docHtmlString.append("<h1><em>Automaion Report - for build : "+version+"<em></h1>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>Start time : "+startTime+"</p>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>End time : "+endTime+"</p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p>Duration : "+duration+"</p>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>Hardware : "+hardware+"</p>").append(System.getProperty("line.separator"));
 			if(hardware.equalsIgnoreCase("flo")) {
 				if(!macAdr.isEmpty()){
@@ -170,7 +181,7 @@ public class JsystemReporter {
 //			docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
 			
 			testsTable.append("<p><b>Test report : </b></p>").append(System.getProperty("line.separator"));
-			testsTable.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Test Duration<TH>Last Test Duration<TH>Result<TH>Last Run Result<b></TR>").append(System.getProperty("line.separator"));
+			testsTable.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Index<TH>Test name<TH>Current result<TH>Current duration<TH>Previous result<TH>Previous duration<b></TR>").append(System.getProperty("line.separator"));
 
 			Map<String, String> testsStatusMapOld = getMapFromConfigFile(propName);
 			Map<String, String> testsTimeMapOld = getMapFromConfigFile(propTimes);
@@ -190,10 +201,10 @@ public class JsystemReporter {
 					if (status.equals("false")) {
 						color = "RED";
 						++fail;
-					} else if (status.equals("warning")) {
+					} /*else if (status.equals("warning")) {
 						color = "YELLOW";
 						++warning;
-					} else if (status.equals("true")) {
+					} */else if (status.equals("true")) {
 						color = "GREEN";
 						++pass;
 					}
@@ -214,26 +225,29 @@ public class JsystemReporter {
 							lastTime = "0";
 					}
 					else {
-						compareStatus = "N/A";
-						seconedColor = "YELLOW";
+//						compareStatus = "N/A";
+						compareStatus = "";
+						seconedColor = "WHITE";
+//						seconedColor = "YELLOW";
 					}
 					testsStatusMapOld.remove(name);
 					//finally write the wanted line
 					status = modifyTrueFalseToPassFail(status);
 					compareStatus = modifyTrueFalseToPassFail(compareStatus);
-					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>" + getTimeFormat(time)+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"<TD>" + status  + "<TD BGCOLOR="+seconedColor+">"+compareStatus+"</em>").append(System.getProperty("line.separator"));
+					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>"+status+"<TD>"+ getTimeFormat(time)+
+							 "<TD BGCOLOR="+seconedColor+">"+compareStatus+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"</em>").append(System.getProperty("line.separator"));
 				}
 			}
 			
 			//the tests from the last run that not exists
 			for (Entry<String, String> entry : testsStatusMapOld.entrySet()) {
-				testsTable.append("<TR ><em><TD>"+ ++index +"<TD>" + entry.getKey() + "<TD><TD><TD BGCOLOR=YELLOW>N/A<TD BGCOLOR=YELLOW>"+entry.getValue()+"</em>").append(System.getProperty("line.separator"));
+				testsTable.append("<TR ><em><TD>"+ ++index +"<TD>" + entry.getKey() + "<TD><TD><TD BGCOLOR=WHITE>"/*N/A*/+"<TD BGCOLOR=YELLOW>"+entry.getValue()+"</em>").append(System.getProperty("line.separator"));
 			}
 			
 			testsTable.append("</TABLE>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p><b>Summary : </b></p>").append(System.getProperty("line.separator"));
-			docHtmlString.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Pass<TH>Warnning<TH>Fail<TH>Total<b></TR>").append(System.getProperty("line.separator"));
-			docHtmlString.append("<TR ><em><TD>" + pass + "<TD>" + warning + "<TD>" + fail + "<TD>" + total + "</em>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<TABLE BORDER=1 BORDERCOLOR=BLACK width=\"100\"><TR><b><TH>Pass"/*<TH>Warnning*/+"<TH>Fail<TH>Total<b></TR>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<TR ><em><TD>" + pass + /*"<TD>" + warning + */"<TD>" + fail + "<TD>" + total + "</em>").append(System.getProperty("line.separator"));
 			docHtmlString.append("</TABLE>").append(System.getProperty("line.separator"));
 			docHtmlString.append(testsTable.toString()).append(System.getProperty("line.separator"));
 			
@@ -244,6 +258,7 @@ public class JsystemReporter {
 			String newLogLocation = copyTheCurrentLogTo(args[4], args[5]);
 //			String newLogLocation = copyTheCurrentLogTo("/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current",
 //					"/home/topq/main_jenkins/workspace");
+			
 			
 			//TODO
 			urltoReporter = args[6] + newLogLocation;
@@ -463,6 +478,44 @@ public class JsystemReporter {
     	}
         
 		return currentDate + File.separator + "index.html";
+	}
+	
+	
+	public static String getDateDuration(String dateStart , String dateStop) throws ParseException {
+		
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		 
+		Date d1 = null;
+		Date d2 = null;
+	 
+		d1 = format.parse(dateStart);
+		d2 = format.parse(dateStop);
+	 
+		DateTime dt1 = new DateTime(d1);
+		DateTime dt2 = new DateTime(d2);
+	 
+		System.out.print(Days.daysBetween(dt1, dt2).getDays() + " days, ");
+		System.out.print(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
+		System.out.print(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
+		System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
+	 
+		String hours = null, minutes = null, seconeds = null;
+		hours = String.valueOf(Hours.hoursBetween(dt1, dt2).getHours());
+		if(hours.length() == 1) {
+			hours = "0" +hours;
+		}
+		minutes = String.valueOf(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60);
+		if(minutes.length() == 1) {
+			minutes = "0" +minutes;
+		}
+		seconeds = String.valueOf(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60);
+		if(seconeds.length() == 1) {
+			seconeds = "0" +seconeds;
+		}
+		
+		return hours + ":" +minutes + ":" + seconeds;
+		
+		
 	}
 	
 
