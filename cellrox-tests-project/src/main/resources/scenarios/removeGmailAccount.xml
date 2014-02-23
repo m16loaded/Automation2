@@ -32,10 +32,10 @@
     </target>
     <target name="t1">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="4eb1e2ac-3d61-480a-a4e1-20cc224ffc7a"/>
+            <sysproperty key="jsystem.uuid" value="916b820f-cbe3-4f5f-91db-5e4a8cba19dc"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByText"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.openApp"/>
         </jsystem>
     </target>
     <target name="t2">
