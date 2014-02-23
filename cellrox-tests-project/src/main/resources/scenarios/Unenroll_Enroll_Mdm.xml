@@ -17,82 +17,33 @@
         <antcallback target="t1"/>
         <antcallback target="t2"/>
         <antcallback target="t3"/>
-        <antcallback target="t4"/>
-        <antcallback target="t5"/>
-        <antcallback target="t6"/>
-        <antcallback target="t7"/>
-        <antcallback target="t8"/>
     </target>
     <target name="t0">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="e9ed1ef1-d348-4773-97e6-8ac1b8ea5257"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Unenroll.xml">
+            <property name="jsystem.uuid" value="3da5ab3f-9e2d-49f4-835a-6ca4eb7f2348"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t1">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="8e820737-f417-470f-9444-0b58ef2f7eb2"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Enroll.xml">
+            <property name="jsystem.uuid" value="60c0f4a1-36ce-4753-931b-984f43ada70a"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t2">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="39dcd3a4-5304-4e0a-b3bb-02e6ba37f40d"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.unactivateDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Push_Policy_A.xml">
+            <property name="jsystem.uuid" value="87a45cdd-e461-46b9-b2de-b34675870ecf"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t3">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="2b80c89d-51f2-4c75-9b61-eafdbbbd11d3"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.loginToMDM"/>
-        </jsystem>
-    </target>
-    <target name="t4">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="adec68e7-772d-42cc-b51d-0d26b027f349"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.removeDevicefromMdmDeviceList"/>
-        </jsystem>
-    </target>
-    <target name="t5">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="818287ea-d8de-435e-ae1e-87770aee81bb"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.enrollOwner"/>
-        </jsystem>
-    </target>
-    <target name="t6">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="712edb11-6b22-46ff-9d81-8c7dcf6a1e7f"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.validateActivatedPersona"/>
-        </jsystem>
-    </target>
-    <target name="t7">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="451b600b-26cb-4f1a-9eb5-6a12c559754d"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.pushPolicy"/>
-        </jsystem>
-    </target>
-    <target name="t8">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="eba51ea1-605e-485b-bfc7-73e192cda5a7"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.MDMOperation.pushPolicy"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Push_Policy_Default.xml">
+            <property name="jsystem.uuid" value="c1f74987-9f02-4a2c-aa2e-bbd0c8c07b1e"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
 </project>
