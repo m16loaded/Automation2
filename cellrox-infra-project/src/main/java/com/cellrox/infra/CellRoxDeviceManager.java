@@ -33,7 +33,8 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     		 Summary.getInstance().clearAllProperties();
     		 
 			//adding the start time to summary
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+    		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("Start_Time", sdf.format(cal.getTime()));
     		
