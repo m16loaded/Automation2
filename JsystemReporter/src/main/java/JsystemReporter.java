@@ -154,8 +154,14 @@ public class JsystemReporter {
 			}
 			if(doaCrash!=null){
 				if (!doaCrash.trim().equals("0")) {
-					docHtmlString.append("<p>DOA crash count: true</p>").append(System.getProperty("line.separator"));
+					docHtmlString.append("<p>DOA : yes</p>").append(System.getProperty("line.separator"));
 				}
+				else {
+					docHtmlString.append("<p>DOA : no</p>").append(System.getProperty("line.separator"));
+				}
+			}
+			else {
+				docHtmlString.append("<p>DOA : no</p>").append(System.getProperty("line.separator"));
 			}
 			
 			docHtmlString.append("<p>Device crash count: "+deviceCrash+"</p>").append(System.getProperty("line.separator"));
@@ -212,7 +218,8 @@ public class JsystemReporter {
 					}
 					testsStatusMapOld.remove(name);
 					//finally write the wanted line
-					
+					status = modifyTrueFalseToPassFail(status);
+					status = modifyTrueFalseToPassFail(compareStatus);
 					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>" + getTimeFormat(time)+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"<TD>" + status  + "<TD BGCOLOR="+seconedColor+">"+compareStatus+"</em>").append(System.getProperty("line.separator"));
 				}
 			}
@@ -278,6 +285,16 @@ public class JsystemReporter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String modifyTrueFalseToPassFail(String status) {
+		if(status.equals("true")) {
+			return "pass";
+		}
+		if(status.equals("false")) {
+			return "fail";
+		}
+		return status;
 	}
 	
 
