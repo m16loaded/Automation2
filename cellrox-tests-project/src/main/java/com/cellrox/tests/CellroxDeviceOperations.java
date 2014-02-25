@@ -80,11 +80,6 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 			sleep(10000);
 		}
-		
-//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setDescription("Apps"));
-//		sleep(10000);
-//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
 
 	}
 		
