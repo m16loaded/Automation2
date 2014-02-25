@@ -18,7 +18,7 @@ public class WebDriverSO extends SystemObjectImpl {
 		report.report("init");
 		super.init();
 //		System.setProperty("webdriver.firefox.driver","/");
-		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
+		System.setProperty("webdriver.chrome.driver","/home/topq/git/automation/cellrox-tests-project/chromedriver");
 		this.driver = new ChromeDriver(); //new FirefoxDriver();
 //		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
 //		this.driver = new ChromeDriver();
