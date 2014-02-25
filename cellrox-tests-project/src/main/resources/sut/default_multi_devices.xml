@@ -11,5 +11,6 @@
     </devicesMannager>
     <webDriver>
         <class>com.cellrox.infra.WebDriverSO</class>
+        <chromWebDriverLocation>/home/topq/git/automation/cellrox-tests-project/chromedriver</chromWebDriverLocation>
     </webDriver>
 </sut>
