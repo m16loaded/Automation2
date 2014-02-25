@@ -19,6 +19,7 @@ import org.topq.uiautomator.Selector;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.TestCase;
+import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
@@ -1062,8 +1063,9 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
 	public void factoryDataReset() throws Exception {
+		
 		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Settings"));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setText("Backup & reset"), "Backup & reset", true);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(id);
@@ -1077,6 +1079,7 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).setDataAfterReboot();
 	}
 	
 	/**
@@ -1364,6 +1367,55 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("hangup.");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+		}
+		finally{
+			report.stopLevel();
+		}
+		
+	}
+	
+	/**
+	 * This test is making a phone call to the wanted phone number and answer.
+	 *   
+	 * */
+	@Test
+	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona} and answer, the caller : ${currentDevice} .", paramsInclude = { "currentDevice,phoneNumber,persona" })
+	public void callToAnotherPhoneAndAnswer() throws Exception {
+		try{
+			
+//			currentDevice = DeviceNumber.SECONDARY;
+//			phoneNumber = "0523039606";
+//			persona = Persona.PRIV;
+
+			report.startLevel("Calling to : "+ phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
+					.setPackageName("com.android.dialer").setIndex(1));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			//call
+			report.report("Dailing...");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial"));
+			
+			DeviceNumber secDevice;
+			if(currentDevice==DeviceNumber.SECONDARY) {
+				secDevice = DeviceNumber.PRIMARY;
+			}
+			else {
+				secDevice = DeviceNumber.SECONDARY;
+			}
+			report.report("Wait for incoming call.");
+			if(devicesMannager.getDevice(secDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60*1000)) {
+				devicesMannager.getDevice(secDevice).getPersona(persona).pressKeyCode(5);
+				Thread.sleep(7000);
+			}
+			else {
+				report.report("There was no incoming call.");
+			}
+			report.report("hangup");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			
 		}
 		finally{
 			report.stopLevel();
