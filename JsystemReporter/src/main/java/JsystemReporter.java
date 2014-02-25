@@ -241,7 +241,7 @@ public class JsystemReporter {
 			
 			//the tests from the last run that not exists
 			for (Entry<String, String> entry : testsStatusMapOld.entrySet()) {
-				testsTable.append("<TR ><em><TD>"+ ++index +"<TD>" + entry.getKey() + "<TD><TD><TD BGCOLOR=WHITE>"/*N/A*/+"<TD BGCOLOR=YELLOW>"+entry.getValue()+"</em>").append(System.getProperty("line.separator"));
+				testsTable.append("<TR ><em><TD>"+ ++index +"<TD>" + entry.getKey() + "<TD><TD><TD BGCOLOR=WHITE>"/*N/A*/+entry.getValue()+"<TD></em>").append(System.getProperty("line.separator"));
 			}
 			
 			testsTable.append("</TABLE>").append(System.getProperty("line.separator"));
@@ -263,7 +263,7 @@ public class JsystemReporter {
 			//TODO
 			urltoReporter = args[6] + newLogLocation;
 //			urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/" +newLogLocation;
-			System.out.println(urltoReporter);
+//			System.out.println(urltoReporter);
 			
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
 			
