@@ -99,9 +99,9 @@ public class CellRoxDevice extends SystemObjectImpl {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
             //here is our checks uptime and the processes, by this we can check the crashes
-            setUpTime(getCurrentUpTime());
+/*            setUpTime(getCurrentUpTime());
             initProcessesForCheck() ;
-        	setPsString(getPs());
+        	setPsString(getPs());*/
         	
         }
         
@@ -460,11 +460,18 @@ public class CellRoxDevice extends SystemObjectImpl {
         public void killAllAutomaionProcesses() throws Exception {
         	
         	report.report("Killing all the automation processes.");
-        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
+//        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL -x uiautomator");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL -x nc");
+//            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+/*            executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
+            Thread.sleep(2000);
+            executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");
+            Thread.sleep(2000);*/
+//            executeCliCommand("");
+            executeCliCommand("");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL uiautomator");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
@@ -591,6 +598,7 @@ public class CellRoxDevice extends SystemObjectImpl {
             executeCliCommand("mkfifo /tmp/local_pipe");
             executeCliCommand("nc -lk "+privePort+" < /tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/tmp/local_pipe &");
             
+            cli.switchToHost();
             cli.switchToPersona(Persona.CORP);
             /**
              * For QA mode this line will open a mock server
@@ -698,6 +706,12 @@ public class CellRoxDevice extends SystemObjectImpl {
                 setDeviceAsRoot();
                 upTime = getCurrentUpTime();
                 setPsString(getPs());
+        }
+        
+        public void setDataAfterReboot() throws Exception {
+            setDeviceAsRoot();
+            upTime = getCurrentUpTime();
+            setPsString(getPs());
         }
         
 
@@ -1567,6 +1581,20 @@ public class CellRoxDevice extends SystemObjectImpl {
     		}
     	}
         
+    	
+    	public void answerCall(Persona persona) throws Exception {
+    		try {
+    			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+    	
+    			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
+    			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
+    			getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+    		}
+    		catch(Exception e) {
+    			report.report("Error in answer.");
+    		}
+    		
+    	}
         
         /**
          * This function runs apply update script
