@@ -1381,6 +1381,10 @@ public class CellroxDeviceOperations extends TestCase {
 //			currentDevice = DeviceNumber.SECONDARY;
 //			phoneNumber = "0523039606";
 //			persona = Persona.PRIV;
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			}
+			catch (Exception e) {}
 
 			report.startLevel("Calling to : "+ phoneNumber);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
