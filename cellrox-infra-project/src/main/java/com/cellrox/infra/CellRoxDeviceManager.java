@@ -70,102 +70,59 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-	/**
-	 * @return the otaFileLocation
-	 */
+
 	public String getOtaFileLocation() {
 		return otaFileLocation;
 	}
-	/**
-	 * @param otaFileLocation the otaFileLocation to set
-	 */
+
 	public void setOtaFileLocation(String otaFileLocation) {
 		this.otaFileLocation = otaFileLocation;
 	}
-	/**
-	 * @return the corpPort
-	 */
+
 	public int getCorpPort() {
 		return corpPort;
 	}
-	/**
-	 * @param corpPort the corpPort to set
-	 */
+
 	public void setCorpPort(int corpPort) {
 		this.corpPort = corpPort;
 	}
-	/**
-	 * @return the privePort
-	 */
+
 	public int getPrivePort() {
 		return privePort;
 	}
-	/**
-	 * @param privePort the privePort to set
-	 */
+ 
 	public void setPrivePort(int privePort) {
 		this.privePort = privePort;
 	}
 
-	/**
-	 * @return the numberOfDevices
-	 */
 	public int getNumberOfDevices() {
 		return numberOfDevices;
 	}
 
-	/**
-	 * @param numberOfDevices the numberOfDevices to set
-	 */
 	public void setNumberOfDevices(int numberOfDevices) {
 		this.numberOfDevices = numberOfDevices;
 	}
-
 
 	public String getUser() {
 		return user;
 	}
 
-
 	public void setUser(String user) {
 		this.user = user;
 	}
-
 
 	public String getPassword() {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-
-	/**
-	 * @return the runStatus
-	 */
 	public String getRunStatus() {
 		return runStatus;
 	}
 
-
-	/**
-	 * @param runStatus the runStatus to set
-	 */
 	public void setRunStatus(String runStatus) {
 		this.runStatus = runStatus;
 	}
