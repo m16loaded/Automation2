@@ -117,13 +117,8 @@ public class CellroxDeviceOperations extends TestCase {
 	 * send to the agent DB the command and validate the returned answer.
 	 * */
 	@Test
-	@TestProperties(name = "Check Agent DB of the Command : ${text}", paramsInclude = "text,expectedLine,timeout,currentDevice")
-	public void checkAgentDB() throws NumberFormatException, Exception{
-		
-		timeout = "300000";
-		text = "select result from tasks where payload like '%policy.account%';";
-		expectedLine = "done";
-		
+	@TestProperties(name = "Validate Agent DB of the Command : ${text}", paramsInclude = "text,expectedLine,timeout,currentDevice")
+	public void validateAgentDB() throws NumberFormatException, Exception{
 		devicesMannager.getDevice(currentDevice).validateInAgent(text,expectedLine,Integer.valueOf(timeout));
 	}
 	

@@ -154,7 +154,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial()+" root");
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
-        	executeCliCommand("sqlite3");
+        	executeCliCommand("sqlite3 /data/agent/.agent.db");
         	long startTime = System.currentTimeMillis();
         	
         	do {
@@ -162,6 +162,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
         			isPass = true;
         			report.report(expectedLine + " return from the agent.");
+        			break;
         		}
         		Thread.sleep(1000);
         	}
@@ -170,7 +171,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         	if(!isPass) {
         		report.report(expectedLine + " wasn't return from the agent from the server.");
         	}
-        	
         	
         	cli.disconnect();
         }
