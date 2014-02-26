@@ -8,7 +8,7 @@
 		<numberOfDevices>2</numberOfDevices>
 		<user>topq</user>
 		<password>Aa123456</password>
-		<runStatus>full<runStatus>
+		<runStatus>full</runStatus>
     </devicesMannager>
     <webDriver>
         <class>com.cellrox.infra.WebDriverSO</class>
