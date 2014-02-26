@@ -113,6 +113,20 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 	
+	/**
+	 * send to the agent DB the command and validate the returned answer.
+	 * */
+	@Test
+	@TestProperties(name = "Check Agent DB of the Command : ${text}", paramsInclude = "text,expectedLine,timeout,currentDevice")
+	public void checkAgentDB() throws NumberFormatException, Exception{
+		
+		timeout = "300000";
+		text = "select result from tasks where payload like '%policy.account%';";
+		expectedLine = "done";
+		
+		devicesMannager.getDevice(currentDevice).validateInAgent(text,expectedLine,Integer.valueOf(timeout));
+	}
+	
 	
 	/**
 	 * This function validate that the ui object is exist in the screen by description and if not the function fails. 
@@ -1377,19 +1391,24 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona} and answer, the caller : ${currentDevice} .", paramsInclude = { "currentDevice,phoneNumber,persona" })
 	public void callToAnotherPhoneAndAnswer() throws Exception {
 		try{
-			
 //			currentDevice = DeviceNumber.SECONDARY;
 //			phoneNumber = "0523039606";
 //			persona = Persona.PRIV;
+			
 			try {
 				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
 			}
 			catch (Exception e) {}
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).switchPersona(persona);
+
 
 			report.startLevel("Calling to : "+ phoneNumber);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+			Thread.sleep(400);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
 					.setPackageName("com.android.dialer").setIndex(1));
+			Thread.sleep(400);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
 			//call
 			report.report("Dailing...");
