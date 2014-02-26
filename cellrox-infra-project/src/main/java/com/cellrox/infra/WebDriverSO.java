@@ -3,7 +3,7 @@ package com.cellrox.infra;
 import jsystem.framework.system.SystemObjectImpl;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 
 
@@ -15,9 +15,9 @@ public class WebDriverSO extends SystemObjectImpl {
 	public void init() throws Exception {
 		report.report("init");
 		super.init();
-//		System.setProperty("webdriver.firefox.driver","/");
-		System.setProperty("webdriver.chrome.driver", chromWebDriverLocation);
-		this.driver = new ChromeDriver(); //new FirefoxDriver();
+		System.setProperty("webdriver.firefox.driver","/");
+//		System.setProperty("webdriver.chrome.driver", chromWebDriverLocation);
+		this.driver = new FirefoxDriver();//new ChromeDriver(); //
 //		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
 //		this.driver = new ChromeDriver();
 	}
