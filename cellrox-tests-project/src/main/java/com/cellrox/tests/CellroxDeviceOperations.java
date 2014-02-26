@@ -1067,8 +1067,7 @@ public class CellroxDeviceOperations extends TestCase {
 
 	@Test
 	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
-	public void 
-() throws Exception {
+	public void factoryDataReset() throws Exception {
 		
 		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		report.report("Factory Data Reset");
