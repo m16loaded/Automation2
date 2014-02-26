@@ -61,7 +61,7 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
-			if (!isPass()) {
+			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
 				validateDeviceStatus();
 			}
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
