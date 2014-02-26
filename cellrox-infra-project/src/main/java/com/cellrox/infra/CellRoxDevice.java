@@ -463,15 +463,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 //        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-//            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-/*            executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
-            Thread.sleep(2000);
-            executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");
-            Thread.sleep(2000);*/
-//            executeCliCommand("");
+//          executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+/*          executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
+            executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");*/
             executeCliCommand("");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL uiautomator");
             executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL uiautomator");
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
