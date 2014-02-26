@@ -723,7 +723,6 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("WIRELESS & NETWORKS"), 10000);
 
-		
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByInstance(new Selector().setScrollable(true),
 				new Selector().setClassName("android.widget.LinearLayout"), 1);
 		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
@@ -1068,7 +1067,8 @@ public class CellroxDeviceOperations extends TestCase {
 
 	@Test
 	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
-	public void factoryDataReset() throws Exception {
+	public void 
+() throws Exception {
 		
 		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		report.report("Factory Data Reset");
@@ -1086,6 +1086,7 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Next"));
 		}
 		report.report("Erase everything");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Erase everything"), 10*1000);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
