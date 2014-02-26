@@ -723,10 +723,12 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("WIRELESS & NETWORKS"), 10000);
 
+		
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByInstance(new Selector().setScrollable(true),
 				new Selector().setClassName("android.widget.LinearLayout"), 1);
 		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
 
+		Thread.sleep(1000);
 		id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setClassName("android.widget.LinearLayout"), wifiNetwork, true);
 		//if the WiFi is disconnected it takes time to find the requested network
@@ -1069,17 +1071,21 @@ public class CellroxDeviceOperations extends TestCase {
 	public void factoryDataReset() throws Exception {
 		
 		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		report.report("Factory Data Reset");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setText("Backup & reset"), "Backup & reset", true);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(id);
+		
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Factory data reset"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset phone"));
 		boolean pin = devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Confirm your PIN"));
 		if (pin) {
+			report.report("Entering the pin for reset.");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), "1111");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Next"));
 		}
+		report.report("Erase everything");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
