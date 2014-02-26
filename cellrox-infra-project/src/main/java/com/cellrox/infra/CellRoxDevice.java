@@ -71,7 +71,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		boolean online = false;
         
-        public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber, String user, String password) throws Exception {
+        public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber, String user, String password, String runStatus) throws Exception {
         	
         	this.privePort = privePort;
         	this.corpPort = corpPort;
@@ -98,10 +98,11 @@ public class CellRoxDevice extends SystemObjectImpl {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
             //here is our checks uptime and the processes, by this we can check the crashes
-            setUpTime(getCurrentUpTime());
-            initProcessesForCheck() ;
-        	setPsString(getPs());
-        	
+			if (runStatus.equals("full")) {
+				setUpTime(getCurrentUpTime());
+				initProcessesForCheck();
+				setPsString(getPs());
+			}
         }
         
         public void initProcessesForCheck() {
@@ -145,6 +146,34 @@ public class CellRoxDevice extends SystemObjectImpl {
         	processForCheck.add("com.android.exchange");
         }
         
+        
+        public void validateInAgent(String cmd, String expectedLine, int timeout) throws Exception {
+        	
+        	boolean isPass = false;
+        	
+        	cli.connect();
+        	executeCliCommand("adb -s "+getDeviceSerial()+" root");
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
+        	executeCliCommand("sqlite3");
+        	long startTime = System.currentTimeMillis();
+        	
+        	do {
+        		executeCliCommand(cmd);
+        		if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
+        			isPass = true;
+        			report.report(expectedLine + " return from the agent.");
+        		}
+        		Thread.sleep(1000);
+        	}
+        	while((System.currentTimeMillis() - startTime) <timeout) ;
+        	
+        	if(!isPass) {
+        		report.report(expectedLine + " wasn't return from the agent from the server.");
+        	}
+        	
+        	
+        	cli.disconnect();
+        }
         
         /**
          * This class was make in order to compare between the data in the mdm and the phone, 

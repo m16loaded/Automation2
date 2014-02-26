@@ -20,6 +20,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     private int numberOfDevices = 2;
     private static boolean isInit = false;
     private String user, password;
+    private String runStatus= "debug";
     
     private AdbController adbController;
     
@@ -46,7 +47,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	    	
 	    	//initing each one of the devices
 	    	for(int index =0 ; index < devices.length ;index++){
-	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber(), user, password);
+	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber(), user, password, runStatus);
 	    	}
 	    	
 	    	//to add to the summary properties
@@ -150,6 +151,22 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+
+	/**
+	 * @return the runStatus
+	 */
+	public String getRunStatus() {
+		return runStatus;
+	}
+
+
+	/**
+	 * @param runStatus the runStatus to set
+	 */
+	public void setRunStatus(String runStatus) {
+		this.runStatus = runStatus;
 	}
     
 
