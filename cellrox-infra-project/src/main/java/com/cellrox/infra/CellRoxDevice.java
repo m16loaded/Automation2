@@ -57,13 +57,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         private USBDevice device;
         private AdbConnection cli;
         private String deviceSerial;
-        // public AutomatorService[] uiClient = new AutomatorService[2];
-
         List<AutomatorService> uiClient = Collections.synchronizedList(new ArrayList<AutomatorService>());
-//        private ArrayList<String> pidArray = new ArrayList<String>();
         private boolean afterCrush = false;
         private ExecutorService executor;
-//        private boolean isrun = true;
         //the otaFileLocation is for the jenkins/the local run to know where is the ota file located and what is it name
         private String otaFileLocation;
         private long defaultCliTimeout = 90000;
@@ -71,6 +67,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         private String psString;
         private Set<String> processForCheck = new HashSet<String>();
         private long upTime;
+        private Map<Persona,Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
+
+		boolean online = false;
         
         public CellRoxDevice(int privePort,int corpPort, String otaFileLocation, String serialNumber, String user, String password) throws Exception {
         	
@@ -99,9 +98,9 @@ public class CellRoxDevice extends SystemObjectImpl {
                     device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
             }
             //here is our checks uptime and the processes, by this we can check the crashes
-/*            setUpTime(getCurrentUpTime());
+            setUpTime(getCurrentUpTime());
             initProcessesForCheck() ;
-        	setPsString(getPs());*/
+        	setPsString(getPs());
         	
         }
         
@@ -268,7 +267,6 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This function use the get logs to returns the logs to the wanted location
          * */
         public void getTheLogs(LogcatHandler loggerType, String logLocation) throws Exception {
-//        	String userHome = System.getProperty("user.home");
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell rm -R /data/agent/logs/adb");
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell mkdir -p /data/agent/logs/adb/ 2>&1 >/dev/null");
@@ -282,9 +280,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         
         public long getCurrentUpTime() throws Exception {
         	String upTime = "";
-//        	cli.connect();
-//        	executeCliCommand("adb -s "+ deviceSerial +" shell");
-//        	executeCliCommand("uptime");
         	String retAns = executeHostShellCommand("uptime");
         	upTime = retAns.toString().replace("uptime", "").replace("shell@mako:/ $", "").replace("root@mako:/ #", "").trim();
         	
@@ -297,7 +292,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         		upTime = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
         	}
         	upTime = upTime.replace("time", "").trim();
-//        	cli.disconnect();
         	return Long.parseLong(upTime);
         }
         
@@ -837,40 +831,39 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param personas
          * @throws Exception
          */
-              	boolean online = false;
-                public boolean validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
-                String result = null;
-                int found = 0;
-                while (online != true) {
+	public boolean validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+		String result = null;
+		int found = 0;
+		while (online != true) {
 
-                        if (timeout < System.currentTimeMillis() - beginTime) {
-                                report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
-                                return false;
-                        }
-                        try {
-                                result = device.executeShellCommand("cell list state");
-                        } catch (AdbControllerException e) {
-                                continue;
-                        }
-                        if (result == null) {
-                                continue;
-                        }
-                        for (Persona persona : personas) {
-                                if (result.contains(persona.toString() + " (3)")) {
-                                        found++;
-                                }
-                        }
-                        if (found == personas.length) {
-                                online = true;
-                        } else {
-                                found = 0;
-                        }
-                }
-                report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
-                                + " seconds.");
-                Thread.sleep(7000);
-                return true;
-        }
+			if (timeout < System.currentTimeMillis() - beginTime) {
+				report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
+				return false;
+			}
+			try {
+				result = device.executeShellCommand("cell list state");
+			} catch (AdbControllerException e) {
+				continue;
+			}
+			if (result == null) {
+				continue;
+			}
+			for (Persona persona : personas) {
+				if (result.contains(persona.toString() + " (3)")) {
+					found++;
+				}
+			}
+			if (found == personas.length) {
+				online = true;
+			} else {
+				found = 0;
+			}
+		}
+		report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
+				+ " seconds.");
+		Thread.sleep(7000);
+		return true;
+	}
         
         
         /**
@@ -970,7 +963,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         /**
          * Pulls file(s) or folder(s).
-         *
          * @param remoteFilepath
          * @param localFilename
          * @param entries
@@ -1012,7 +1004,58 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
         	executeCliCommand("ps", true , 2*60*1000);
+        	getPsInitPrivCorp(true);
         	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
+        }
+        
+        /**
+         * The function : 
+         * initVars param - if true
+         * 		- add to the personaProcessIdMap the process ids
+         * initVars param - if false
+         * 		- return the map of the processes ids
+         * */
+        public Map<Persona,Integer> getPsInitPrivCorp(boolean initVars) throws Exception {
+        	Map<Persona,Integer> mapOfProcessLocal = new HashMap<Persona,Integer>();
+        	personaProcessIdMap.clear();
+        	cli.connect();
+        	executeCliCommand("adb -s " + deviceSerial + " shell");
+        	executeCliCommand("ps | grep init");
+        	String [] retStringArr = cli.getTestAgainstObject().toString().split("\n");
+        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
+        	int counterOfPersonas = 0;
+        	for (String retLine : retStringArr) {
+        		Pattern pattern = Pattern.compile(expectedLine);
+        	    Matcher matcher = pattern.matcher(retLine);
+
+        	    if(matcher.find()) {
+        	    	if(counterOfPersonas == 0) {
+        	    		counterOfPersonas++;
+        	    	}
+        	    	else if(counterOfPersonas==1) {
+        	    		
+        	    		if(initVars) {
+        	    			personaProcessIdMap.put(Persona.PRIV,Integer.valueOf(matcher.group(2)));
+        	    		}
+        	    		else {
+        	    			mapOfProcessLocal.put(Persona.PRIV,Integer.valueOf(matcher.group(2)));
+        	    		}
+        	    		counterOfPersonas++;
+        	    	}
+        	    	else if(counterOfPersonas==2) {
+        	    		
+        	    		if(initVars) {
+        	    			personaProcessIdMap.put(Persona.CORP,Integer.valueOf(matcher.group(2)));
+        	    		}
+        	    		else {
+        	    			mapOfProcessLocal.put(Persona.CORP,Integer.valueOf(matcher.group(2)));
+        	    		}
+        	    		counterOfPersonas++;
+        	    	}
+        	    }
+			}
+        	
+        	return mapOfProcessLocal;
         }
         
         /**
@@ -1073,9 +1116,8 @@ public class CellRoxDevice extends SystemObjectImpl {
          * */
         public void openLogcatTerminal() throws IOException {
 	        String[] cmdss1= {"gnome-terminal","-x","adb", "-s", deviceSerial ,"logcat","-v","pidns"};
-	        Process proc = Runtime.getRuntime().exec(cmdss1, null);
+	        /*Process proc = */Runtime.getRuntime().exec(cmdss1, null);
         }
-        
 
         public void connectToServerPriv() throws Exception {
                 
@@ -1101,7 +1143,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                 // connect client to server
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
                 uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
-
                 
                 /* executor = Executors.newFixedThreadPool(1);
                 Runnable worker = new Runnable() {
@@ -1467,11 +1508,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand(" ");
 		executeCliCommand("");
 
-		/* for(int i = 0 ; i < NumberOfTries ; i++) { */
 		while (numberOfTries > 0 && !isPass) {
 			executeCliCommand(cliCommand);
 			FindText findText = new FindText(expression, isRegularExpression);
-			// cli.analyze(findText, false);
 			findText.setTestAgainst(cli.getTestAgainstObject());
 			findText.analyze();
 			isPass = findText.getStatus();
@@ -1482,23 +1521,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (!isPass) {
 			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
 		}
-//		cli.switchToHost();
 		cli.disconnect();
 
 	}
-//        /**
-//         * get the path of the application and push it to the priv and the corp
-//         * - the application full path on the local cpu
-//         * */
-//        public void pushApplicationToDevice(String appFullPath) throws Exception {
-//                cli.connect();
-//                report.report("about to do : " + "adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
-//                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/corp/data/app/");
-//                report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
-//                executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " /data/containers/priv/data/app/");
-//                cli.disconnect();
-//        }
-        
         public void pushApplication(String appFullPath , String locationForPushing) throws Exception {
             cli.connect();
             report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " " +locationForPushing);
@@ -1622,7 +1647,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                         while (!executor.isTerminated()) {
                         }
                 }
-//                killAllAutomaionProcesses();
                 super.close();
         }
 
@@ -1728,5 +1752,13 @@ public class CellRoxDevice extends SystemObjectImpl {
 		public void setUpTime(long upTime) {
 			this.upTime = upTime;
 		}
+    	public Map<Persona, Integer> getPersonaProcessIdMap() {
+			return personaProcessIdMap;
+		}
+
+		public void setPersonaProcessIdMap(Map<Persona, Integer> personaProcessIdMap) {
+			this.personaProcessIdMap = personaProcessIdMap;
+		}
+
 
 }
