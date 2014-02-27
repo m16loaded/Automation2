@@ -30,8 +30,6 @@ public class TestCase extends SystemTestCase4 {
 
 	protected WebDriver driver;
 	protected WebDriverSO driverSo;
-//	protected WebDriverSystemObject seleniumSystemObject;
-	
 	
 	@Before
 	public void init() throws Exception {
