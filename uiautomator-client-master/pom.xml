@@ -12,14 +12,11 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-<<<<<<< HEAD
-=======
 			<groupId>com.github.briandilley.jsonrpc4j</groupId>
 			<artifactId>jsonrpc4j</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
->>>>>>> 86da095b9db46ad0055ee1b249e412014fcb9b88
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
 			<version>4.1.1.4</version>
