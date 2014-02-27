@@ -1078,15 +1078,23 @@ public class CellroxDeviceOperations extends TestCase {
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setText("Backup & reset"), "Backup & reset", true);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(id);
-		
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Factory data reset"), 10*1000);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Factory data reset"));
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Reset phone"), 10*1000);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset phone"));
+		
+		try {
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Confirm your PIN"), 10*1000);
 		boolean pin = devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Confirm your PIN"));
 		if (pin) {
 			report.report("Entering the pin for reset.");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), "1111");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Next"));
 		}
+		}catch (Exception e) {
+			report.report("No pin insertion.");
+		}
+		
 		report.report("Erase everything");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Erase everything"), 10*1000);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
@@ -1099,7 +1107,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 *	this function is passing the email password in the first time wizard if exist.
 	 * */
 	@Test
-	@TestProperties(name = "Try To Enter User Password First Time Wizard : ${uaer} , ${password}", paramsInclude = { "currentDevice,persona,user,password" })
+	@TestProperties(name = "Try To Enter User Password First Time Wizard : ${user} , ${password}", paramsInclude = {"currentDevice,persona,user,password"})
 	public void tryToEnterEmailPasswordFirstTimeWizard() throws Exception {	
 		try {
 			timeout = "20000";
@@ -1124,7 +1132,7 @@ public class CellroxDeviceOperations extends TestCase {
 	
 	//TODO
 	@Test
-	@TestProperties(name = "Try To Enter User Password First Time Wizard : ${uaer} , ${password}", paramsInclude = { "currentDevice,persona,user,password" })
+	@TestProperties(name = "Try To Enter this Phone belongs to First Time Wizard : ${uaer} , ${password}", paramsInclude = { "currentDevice,persona,user,password" })
 	public void tryToEnterThisPhoneBelongsToFirstTimeWizard() throws Exception {	
 		try {
 			timeout = "20000";

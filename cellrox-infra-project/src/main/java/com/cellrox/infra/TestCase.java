@@ -39,7 +39,7 @@ public class TestCase extends SystemTestCase4 {
 			report.report("Finish the initing of the before test.");
 		}
 		finally {
-//			initTheWebDriver();
+			initTheWebDriver();
 			report.stopLevel();
 		}
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
