@@ -1,3 +1,4 @@
+package com.cellrox.infraReporter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -56,17 +57,21 @@ public class JsystemReporter {
 	 * The application takes the .xml and make from it .html table with the wanted fields
 	 * This application will compare to the last run from the config file
 	 * 	@param args- the first arg should be : 
-	 * arg[0] - currentLogLocation - the place of reports.0.xml
+	 * arg[0] - working dir - from it the logs and the summary will be taken
 	 * arg[1] - nameOfReport - the place to save the .html name
-	 * arg[2] - summary location 
-	 * arg[3] - String to -the wanted email to send to
-	 * arg[4] - the directory of the reports to copy from
-	 * args[5] - the directory of the reports to copy to
-	 * args[6] - the working directory of the jenkins
+	 * arg[2] - String to -the wanted email to send to
+	 * args[3] - the directory of the reports to copy to
+	 * args[4] - the working directory of the jenkins
+	 * @throws UnsupportedEncodingException 
 	 */
-  	public static void main(String[] args) {
+  	public static void main(String[] args) throws UnsupportedEncodingException {
 		
-		sendEmail(args);
+//  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/", 
+//  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
+//  				"or.garfunkel@top-q.co.il",
+//  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
+//  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
+  		sendEmailFullReport(args);
 	}
 	
 	
@@ -74,23 +79,22 @@ public class JsystemReporter {
 	 * The application takes the .xml and make from it .html table with the wanted fields
 	 * This application will compare to the last run from the config file
 	 * 	@param args- the first arg should be : 
-	 * arg[0] - currentLogLocation - the place of reports.0.xml
+	 * arg[0] - working dir - from it the logs and the summary will be taken
 	 * arg[1] - nameOfReport - the place to save the .html name
-	 * arg[2] - summary location 
-	 * arg[3] - String to -the wanted email to send to
-	 * arg[4] - the directory of the reports to copy from
-	 * args[5] - the directory of the reports to copy to
-	 * args[6] - the working directory of the jenkins
+	 * arg[2] - String to -the wanted email to send to
+	 * args[3] - the directory of the reports to copy to
+	 * args[4] - the working directory of the jenkins
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static void sendEmail(String[] args) {
+	public static void sendEmailFullReport(String[] args) {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null;
 		String compareStatus, seconedColor, lastTime = null;
-		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
-		String date = null, version = null, id = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
-				endTime = null, hardware = null, imei = null, macAdr = null, noCon = null, duration = null;
+		int pass = 0, fail = 0, total = 0, index = 0;
+		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
+				endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 //		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
@@ -107,9 +111,9 @@ public class JsystemReporter {
 			summaryLocation = "/home/topq/dev/runnreNew/runner/summary.properties";
 		}
 		else {
-			currentLogLocation = args[0];
+			currentLogLocation = args[0] + "log/current/reports.0.xml";
 			nameOfReport = args[1];
-			summaryLocation = args[2];
+			summaryLocation = args[0] + "summary.properties";
 		}
 			
 		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate).concat(".html");
@@ -134,7 +138,6 @@ public class JsystemReporter {
 			}
 				
 			version = prop.getProperty("Build_display_id");
-			id = prop.getProperty("Build_sdk_version");
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
 			personaCrash = prop.getProperty("Persona_Crash");
@@ -255,13 +258,13 @@ public class JsystemReporter {
 			
 			//the report directory creating 
 			//TODO
-			String newLogLocation = copyTheCurrentLogTo(args[4], args[5]);
+			String newLogLocation = copyTheCurrentLogTo(args[0] + "log/current", args[3]);
 //			String newLogLocation = copyTheCurrentLogTo("/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current",
 //					"/home/topq/main_jenkins/workspace");
 			
 			
 			//TODO
-			urltoReporter = args[6] + newLogLocation;
+			urltoReporter = args[4] + newLogLocation;
 //			urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/" +newLogLocation;
 //			System.out.println(urltoReporter);
 			
@@ -293,7 +296,7 @@ public class JsystemReporter {
 			if(args.length < 3) 
 				to = "or.garfunkel@top-q.co.il";
 			else 
-				to = args[3];
+				to = args[2];
 			//the status for the summary email
 			String status = "passed";
 			if(fail>0)
@@ -329,8 +332,9 @@ public class JsystemReporter {
 		String timeStr = "";
 		time = time/1000;
 		
-		if(time==null) 
+		if(time==null) {
 			return timeStr;
+		}
 		
 		int sec = (int)(time % 60);
 		int min = (int)(time / 60);
