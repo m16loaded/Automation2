@@ -27,7 +27,7 @@ import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.object.LogParserExpression;
-
+import com.cellrox.infraReporter.JsystemReporter;
 
 
 public class CellroxDeviceOperations extends TestCase {
@@ -60,12 +60,13 @@ public class CellroxDeviceOperations extends TestCase {
 	private Size size = Size.Smaller; 
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
-	
+	private String user, password;
 
 	
 
 	
-	
+
+
 	@Test
 	public void orConnectivityTest() throws Exception {
 		
@@ -82,6 +83,8 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 
 	}
+	
+
 		
 	/**
 	 * This function validate that the insert state is the correct one with the screen
@@ -1093,6 +1096,63 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	/**
+	 *	this function is passing the email password in the first time wizard if exist.
+	 * */
+	@Test
+	@TestProperties(name = "Try To Enter User Password First Time Wizard : ${uaer} , ${password}", paramsInclude = { "currentDevice,persona,user,password" })
+	public void tryToEnterEmailPasswordFirstTimeWizard() throws Exception {	
+		try {
+			timeout = "20000";
+			final long start = System.currentTimeMillis();
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Yes"))) {
+				if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
+					report.report("Couldn't find the text 'Yes'.");
+					return;
+				}
+					Thread.sleep(1500);
+			}
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Email"), user);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText").setIndex(1), password);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(2));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
+		}
+		catch(Exception e) {
+			
+		}
+	}
+	
+	//TODO
+	@Test
+	@TestProperties(name = "Try To Enter User Password First Time Wizard : ${uaer} , ${password}", paramsInclude = { "currentDevice,persona,user,password" })
+	public void tryToEnterThisPhoneBelongsToFirstTimeWizard() throws Exception {	
+		try {
+			timeout = "20000";
+			final long start = System.currentTimeMillis();
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("This phone belongs to..."))) {
+				if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
+					report.report("Couldn't find the text 'This phone belongs to...'.");
+					return;
+				}
+					Thread.sleep(1500);
+			}
+			
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Next"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Next"));
+			
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Email"), user);
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText").setIndex(1), password);
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(2));
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
+		}
+		catch(Exception e) {
+			
+		}
+	}
+	
+	
+	/**
 	 * The function get a command and do it in priv and corp, after it the test
 	 * will verify that there is the same regular expression in both of the
 	 * personas and check the the wanted groups (etc (\s*),(\d+:\d+),(\S*),(\w*)
@@ -2092,5 +2152,31 @@ public class CellroxDeviceOperations extends TestCase {
 	public void setNumberOfTimes(int numberOfTimes) {
 		this.numberOfTimes = numberOfTimes;
 	}
+
+
+
+	public String getUser() {
+		return user;
+	}
+
+
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	
 
 }
