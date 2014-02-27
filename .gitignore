@@ -1,3 +1,6 @@
+/config.properties
+/configTimes.properties
+/cellrox-tests-project/jsystem0.log.lck
 /cellrox-tests-project/src/main/resources/scenarios/Sandbox.properties
 /cellrox-tests-project/src/main/resources/scenarios/Sandbox.xml
 /cellrox-infra-project/runnerState.properties

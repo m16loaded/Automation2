@@ -184,11 +184,6 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 	        }
 	    }
 		
-		
-		
-		
-//		driver.findElement(By.id("devicePolicies")).sendKeys(policy);
-
 	    Thread.sleep(2000);
 		driver.findElement(By.xpath("//*[@value='Apply']")).submit();
 		validateHistoryChanges(imei, macAdr, policy, 5 * 60 * 1000);

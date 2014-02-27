@@ -3,6 +3,8 @@ package com.cellrox.infra;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
@@ -59,10 +61,11 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
-			if (!isPass()) {
+			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
 				validateDeviceStatus();
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
 			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
@@ -124,7 +127,22 @@ public class TestCase extends SystemTestCase4 {
 					// last_kmsg
 					device.printLastKmsg();
 					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+					
+					//this is the check which persona crashed
+					Map<Persona,Integer> mapPerPrOld = new HashMap<Persona, Integer>();
+					mapPerPrOld = device.getPersonaProcessIdMap();
+					
+					Map<Persona,Integer> mapPerPrNew= new HashMap<Persona, Integer>();
+					mapPerPrNew = device.getPersonaProcessIdMap();
+					
+					if(!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
+						report.report("Error, persona Priv crashed.",Reporter.FAIL);
+					}
+					if(!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
+						report.report("Error, persona CORP crashed.",Reporter.FAIL);
+					}
 				}
+				
 			}
 			
 			//taking care in a cases of persona crash

@@ -19,6 +19,7 @@ import org.topq.uiautomator.Selector;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.TestCase;
+import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
@@ -79,11 +80,6 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 			sleep(10000);
 		}
-		
-//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setDescription("Apps"));
-//		sleep(10000);
-//		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
 
 	}
 		
@@ -115,6 +111,15 @@ public class CellroxDeviceOperations extends TestCase {
 				report.report("The device screen is off and suppose to be on." , Reporter.FAIL);
 			}
 		}
+	}
+	
+	/**
+	 * send to the agent DB the command and validate the returned answer.
+	 * */
+	@Test
+	@TestProperties(name = "Validate Agent DB of the Command : ${text}", paramsInclude = "text,expectedLine,timeout,currentDevice")
+	public void validateAgentDB() throws NumberFormatException, Exception{
+		devicesMannager.getDevice(currentDevice).validateInAgent(text,expectedLine,Integer.valueOf(timeout));
 	}
 	
 	
@@ -722,6 +727,7 @@ public class CellroxDeviceOperations extends TestCase {
 				new Selector().setClassName("android.widget.LinearLayout"), 1);
 		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
 
+		Thread.sleep(1000);
 		id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setClassName("android.widget.LinearLayout"), wifiNetwork, true);
 		//if the WiFi is disconnected it takes time to find the requested network
@@ -1062,21 +1068,28 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
 	public void factoryDataReset() throws Exception {
+		
 		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Settings"));
+		report.report("Factory Data Reset");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
 		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
 				new Selector().setText("Backup & reset"), "Backup & reset", true);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(id);
+		
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Factory data reset"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset phone"));
 		boolean pin = devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Confirm your PIN"));
 		if (pin) {
+			report.report("Entering the pin for reset.");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), "1111");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Next"));
 		}
+		report.report("Erase everything");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Erase everything"), 10*1000);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).setDataAfterReboot();
 	}
 	
 	/**
@@ -1253,18 +1266,27 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
-					
-			start = System.currentTimeMillis();
-			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
-				if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
-					report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", Reporter.FAIL);
-					break;
-				}
-				Thread.sleep(1500);
+			//check if the application already exist
+			if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("UNINSTALL"), 2*1000)){
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
 			}
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OPEN"));
+			else {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
+						
+				start = System.currentTimeMillis();
+				while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
+					if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
+						report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000+ " sec.", Reporter.FAIL);
+						break;
+					}
+					Thread.sleep(1500);
+				}
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OPEN"));
+			}
 		}
 		catch(Exception e) {
 			report.report("Error" + e.getMessage(),Reporter.FAIL);
@@ -1355,6 +1377,64 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("hangup.");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+		}
+		finally{
+			report.stopLevel();
+		}
+		
+	}
+	
+	/**
+	 * This test is making a phone call to the wanted phone number and answer.
+	 *   
+	 * */
+	@Test
+	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona} and answer, the caller : ${currentDevice} .", paramsInclude = { "currentDevice,phoneNumber,persona" })
+	public void callToAnotherPhoneAndAnswer() throws Exception {
+		try{
+//			currentDevice = DeviceNumber.SECONDARY;
+//			phoneNumber = "0523039606";
+//			persona = Persona.PRIV;
+			
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			}
+			catch (Exception e) {}
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).switchPersona(persona);
+
+
+			report.startLevel("Calling to : "+ phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+			Thread.sleep(400);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton")
+					.setPackageName("com.android.dialer").setIndex(1));
+			Thread.sleep(400);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			//call
+			report.report("Dailing...");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial"));
+			
+			DeviceNumber secDevice;
+			if(currentDevice==DeviceNumber.SECONDARY) {
+				secDevice = DeviceNumber.PRIMARY;
+			}
+			else {
+				secDevice = DeviceNumber.SECONDARY;
+			}
+			report.report("Wait for incoming call.");
+			if(devicesMannager.getDevice(secDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60*1000)) {
+				devicesMannager.getDevice(secDevice).getPersona(persona).pressKeyCode(5);
+				Thread.sleep(7000);
+			}
+			else {
+				report.report("There was no incoming call.");
+			}
+			report.report("hangup");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			
 		}
 		finally{
 			report.stopLevel();
