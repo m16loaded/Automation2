@@ -26,9 +26,14 @@
 			<artifactId>android-uiautomator-18</artifactId>
 			<version>18.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.briandilley.jsonrpc4j</groupId>
+			<artifactId>jsonrpc4j</artifactId>
+			<version>1.0</version>
+		</dependency> 
 	</dependencies>
 	<build>
-		<plugins>
+		 <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -38,6 +43,6 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-		</plugins>
+		</plugins> 
 	</build>
 </project>
