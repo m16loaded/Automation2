@@ -1109,58 +1109,58 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	
-	/**
-	 *	this function making all the first time wizard
-	 * */
-	@Test
-	@TestProperties(name = "First Time Wizard : ${user} , ${password}", paramsInclude = {"currentDevice,persona,user,password"})
-	public void firstTimeWizard() throws Exception {	
-		
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Agree"));
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Start"));
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("SKip"));
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Skip anyway"));
-		
-
-		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google & Location", new Selector[]{new Selector().setText("Google & Location")}
-			, new Selector().setDescription("Next"));
-		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google services", new Selector[]{new Selector().setText("Google services")}
-		, new Selector().setDescription("Next"));
-		devicesMannager.getDevice(currentDevice).getPersona(persona).runWatchers();
-		
-		
-		try {
-			timeout = "20000";
-			boolean isExist = false;
-			final long start = System.currentTimeMillis();
-			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Yes"))) {
-				if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
-					report.report("Couldn't find the text 'Yes'.");
-					isExist=true;
-				}
-					Thread.sleep(1500);
-			}
-			if(isExist) {
-				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
-				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Email"), user);
-				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText").setIndex(1), password);
-				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(2));
-				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
-			}
-			
-			Thread.sleep(9000);
-			
-		}
-		catch(Exception e) {
-			
-		}
-		
-		
-		
-
-		
-	}
+//	/**
+//	 *	this function making all the first time wizard
+//	 * */
+//	@Test
+//	@TestProperties(name = "First Time Wizard : ${user} , ${password}", paramsInclude = {"currentDevice,persona,user,password"})
+//	public void firstTimeWizard() throws Exception {	
+//		
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Agree"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Start"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("SKip"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Skip anyway"));
+//		
+//
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google & Location", new Selector[]{new Selector().setText("Google & Location")}
+//			, new Selector().setDescription("Next"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google services", new Selector[]{new Selector().setText("Google services")}
+//		, new Selector().setDescription("Next"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).runWatchers();
+//		
+//		
+//		try {
+//			timeout = "20000";
+//			boolean isExist = false;
+//			final long start = System.currentTimeMillis();
+//			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Yes"))) {
+//				if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
+//					report.report("Couldn't find the text 'Yes'.");
+//					isExist=true;
+//				}
+//					Thread.sleep(1500);
+//			}
+//			if(isExist) {
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Email"), user);
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText").setIndex(1), password);
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(2));
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
+//			}
+//			
+//			Thread.sleep(9000);
+//			
+//		}
+//		catch(Exception e) {
+//			
+//		}
+//		
+//		
+//		
+//
+//		
+//	}
 	
 	
 	/**
@@ -1190,7 +1190,6 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 	
-	//TODO
 	@Test
 	@TestProperties(name = "Try To Enter this Phone belongs to First Time Wizard : ${uaer} , ${password}", paramsInclude = { "currentDevice,persona,user,password" })
 	public void tryToEnterThisPhoneBelongsToFirstTimeWizard() throws Exception {	
