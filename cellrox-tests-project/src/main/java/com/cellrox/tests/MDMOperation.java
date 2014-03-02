@@ -81,7 +81,7 @@ public class MDMOperation extends TestCase {
 		//return the server connectivity in Priv
 		Thread.sleep(8000);
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
-		devicesMannager.getDevice(currentDevice).connectToServers();
+		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 		//to try to switch persona
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
