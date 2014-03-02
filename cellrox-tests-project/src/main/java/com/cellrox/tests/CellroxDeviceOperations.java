@@ -27,7 +27,6 @@ import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.object.LogParserExpression;
-import com.cellrox.infraReporter.JsystemReporter;
 
 
 public class CellroxDeviceOperations extends TestCase {
