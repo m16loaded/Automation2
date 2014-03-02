@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,20 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -68,7 +53,7 @@ public class JsystemReporter {
 		
 //  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/", 
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
-//  				"or.garfunkel@top-q.co.il",
+//  				"or.garfunkel@top-q.co.il,orgarfunkel@gmail.com",
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
 //  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
   		sendEmailFullReport(args);
@@ -410,7 +395,7 @@ public class JsystemReporter {
 		mail.setPassword(password);
 		mail.setMailMessageAsHtmlText(true);
 		mail.setFromAddress("Cellrox Automation");
-		mail.setSendTo(to);
+		mail.setSendTo(to.split(","));
 		mail.sendMail(subject, bodyHtml);
 		
 	}
