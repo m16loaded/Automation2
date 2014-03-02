@@ -42,8 +42,10 @@ public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 		}
 		
 		Thread.sleep(3000);
-		PageFactory.initElements(driver, this);
-		enrollBtn.click();
+		driver.findElement(By.cssSelector(".btn.btn-large.dropdown-toggle.ng-scope")).click();
+		driver.findElement(By.xpath("//*[text()= 'ACTIVATE']")).click();
+//		PageFactory.initElements(driver, this);
+//		enrollBtn.click();
 		Thread.sleep(2000);
 		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).submit();
 		Thread.sleep(5000);
