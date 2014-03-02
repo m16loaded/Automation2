@@ -23,10 +23,11 @@ public class GeneralOperations extends SystemTestCase4 {
 	* to - String to -the wanted email to send to
 	* directoryToSaveFullLog - the directory of the reports to copy to
 	* jenkinsLogLocation- the working directory of the jenkins
+	 * @throws Exception 
 	*/
 	@Test
 	@TestProperties(name = "Send email full jsystem report" , paramsInclude = "workingDir,locationForSavingHtml,to,directoryToSaveFullLog,jenkinsLogLocation") 
-	public void sendEmail() {
+	public void sendEmail() throws Exception {
 		report.report("before!!!!!");
 		String []args = new String[] {workingDir,locationForSavingHtml,to,directoryToSaveFullLog,jenkinsLogLocation};
 		JsystemReporter.sendEmailFullReport(args);
