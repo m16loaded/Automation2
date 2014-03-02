@@ -62,9 +62,9 @@ public class JsystemReporter {
 	 * arg[2] - String to -the wanted email to send to
 	 * args[3] - the directory of the reports to copy to
 	 * args[4] - the working directory of the jenkins
-	 * @throws UnsupportedEncodingException 
+	 * @throws Exception 
 	 */
-  	public static void main(String[] args) throws UnsupportedEncodingException {
+  	public static void main(String[] args) throws Exception {
 		
 //  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/", 
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
@@ -84,9 +84,9 @@ public class JsystemReporter {
 	 * arg[2] - String to -the wanted email to send to
 	 * args[3] - the directory of the reports to copy to
 	 * args[4] - the working directory of the jenkins
-	 * @throws UnsupportedEncodingException 
+	 * @throws Exception 
 	 */
-	public static void sendEmailFullReport(String[] args) {
+	public static void sendEmailFullReport(String[] args) throws Exception {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
@@ -95,8 +95,8 @@ public class JsystemReporter {
 		int pass = 0, fail = 0, total = 0, index = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
 				endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-//		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
 		
@@ -105,10 +105,8 @@ public class JsystemReporter {
 		StringBuilder docHtmlString = new StringBuilder();
 		
 		//get the args[] parm, if they not inserted use the default 
-		if(args.length < 3 ) {
-			currentLogLocation = "/home/topq/dev/runnreNew/runner/log/current/reports.0.xml";//"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current/reports.0.xml";//"/home/topq/dev/runner6003/log/current/reports.0.xml";
-			nameOfReport = "/home/topq/dev/managerReport.html";
-			summaryLocation = "/home/topq/dev/runnreNew/runner/summary.properties";
+		if(args.length < 5 ) {
+			throw new Exception("Less than 5 args.");
 		}
 		else {
 			currentLogLocation = args[0] + "log/current/reports.0.xml";
@@ -116,7 +114,7 @@ public class JsystemReporter {
 			summaryLocation = args[0] + "summary.properties";
 		}
 			
-		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate).concat(".html");
+		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate.replace("/", "_")).concat(".html");
 		
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -228,10 +226,8 @@ public class JsystemReporter {
 							lastTime = "0";
 					}
 					else {
-//						compareStatus = "N/A";
 						compareStatus = "";
 						seconedColor = "WHITE";
-//						seconedColor = "YELLOW";
 					}
 					testsStatusMapOld.remove(name);
 					//finally write the wanted line
@@ -261,7 +257,6 @@ public class JsystemReporter {
 			String newLogLocation = copyTheCurrentLogTo(args[0] + "log/current", args[3]);
 //			String newLogLocation = copyTheCurrentLogTo("/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current",
 //					"/home/topq/main_jenkins/workspace");
-			
 			
 			//TODO
 			urltoReporter = args[4] + newLogLocation;
@@ -302,8 +297,7 @@ public class JsystemReporter {
 			if(fail>0)
 				status = "fail";
 			//sending the email
-			sendEmail(to, from, "Automation report - for build : "+ version +" - results : " +status, docHtmlString.toString()
-					/*,"The automation run can be found at : http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?"*/
+			sendEmail1(to, from, "Automation report - for build : "+ version +" - results : " +status, docHtmlString.toString()
 					, nameOfReport, password);
 			
 		} catch (Exception e) {
@@ -401,64 +395,26 @@ public class JsystemReporter {
 		}
 	}
 	
-	
 	/**
 	 * Sending email to the wanted persons
-	 * @throws UnsupportedEncodingException 
+	 * @throws Exception 
 	 * */
-	public static void sendEmail(String to, final String username, String subject, String bodyHtml, 
-			String fileName , final String password) throws UnsupportedEncodingException {
+	public static void sendEmail1(String to, final String username, String subject, String bodyHtml, 
+			String fileName , final String password) throws Exception {
 
-	    Properties props = new Properties();
-	    props.put("mail.smtp.auth", true);
-	    props.put("mail.smtp.starttls.enable", true);
-	    props.put("mail.smtp.host", "smtp.gmail.com");
-	    props.put("mail.smtp.port", "587");
-
-	    Session session = Session.getInstance(props,
-	            new javax.mail.Authenticator() {
-	                protected PasswordAuthentication getPasswordAuthentication() {
-	                    return new PasswordAuthentication(username, password);
-	                }
-	            });
-	    try {
-
-	        Message message = new MimeMessage(session);
-	        message.setFrom(new InternetAddress(username , "Cellrox Automation"));
-	        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
-	        message.setSubject(subject);
-	        message.setText(bodyHtml);
-	        
-	        BodyPart messageBodyPart1 = new MimeBodyPart();  
-//	        messageBodyPart1.setText(body);  
-	        messageBodyPart1.setContent(bodyHtml, "text/html");
-	        
-	        MimeBodyPart messageBodyPart2 = new MimeBodyPart();  
-	        DataSource source = new FileDataSource(fileName);  
-	        messageBodyPart2.setDataHandler(new DataHandler(source));  
-	        messageBodyPart2.setFileName(fileName);    
-	        
-	        Multipart multipart = new MimeMultipart();  
-	        multipart.addBodyPart(messageBodyPart1); 
- 
-	        multipart.addBodyPart(messageBodyPart2);  
-	        
-
-	        message.setContent(multipart);
-	        System.out.println("Sending");
-	        Transport.send(message);
-	        System.out.println("Done");
-
-	    } catch (MessagingException e) {
-	        e.printStackTrace();
-	    }
+		MailUtil mail = new MailUtil();
+		mail.setSmtpHostName("smtp.gmail.com");
+		mail.setSmtpPort(465);
+		mail.setSsl(true);
+		mail.setUserName(username);
+		mail.setPassword(password);
+		mail.setMailMessageAsHtmlText(true);
+		mail.setFromAddress("Cellrox Automation");
+		mail.setSendTo(to);
+		mail.sendMail(subject, bodyHtml);
+		
 	}
 	
-
-	
-	
-		
-
 //	/home/topq/main_jenkins/workspace/Automation_Nightly/Logs
 //	/home/topq/dev/runnreNew/runner/log/current
 	public static String copyTheCurrentLogTo(String logDir, String newLogDir) {
@@ -523,6 +479,67 @@ public class JsystemReporter {
 	}
 	
 
+	/*	*//**
+	 * Sending email to the wanted persons
+	 * @throws UnsupportedEncodingException 
+	 * *//*
+	public static void sendEmail(String to, final String username, String subject, String bodyHtml, 
+			String fileName , final String password) throws UnsupportedEncodingException {
+
+	    Properties props = new Properties();
+	    props.put("mail.transport.protocol", "smtp");
+	    props.put("mail.smtp.auth", true);
+	    props.put("mail.smtp.starttls.enable", true);
+	    props.put("mail.smtp.host", "smtp.gmail.com");
+	    props.put("mail.smtp.port", "587");
+
+	    Session session = Session.getInstance(props,
+	            new javax.mail.Authenticator() {
+	                protected PasswordAuthentication getPasswordAuthentication() {
+	                    return new PasswordAuthentication(username, password);
+	                }
+	            });
+	    try {
+
+	        Message message = new MimeMessage(session);
+	        message.setFrom(new InternetAddress(username , "Cellrox Automation"));
+	        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
+	        message.setSubject(subject);
+	        message.setText(bodyHtml);
+	        
+	        BodyPart messageBodyPart1 = new MimeBodyPart();  
+//	        messageBodyPart1.setText(body);  
+	        messageBodyPart1.setContent(bodyHtml, "text/html");
+	        
+	        MimeBodyPart messageBodyPart2 = new MimeBodyPart();  
+	        DataSource source = new FileDataSource(fileName);  
+	        messageBodyPart2.setDataHandler(new DataHandler(source));  
+	        messageBodyPart2.setFileName(fileName);    
+	        
+	        Multipart multipart = new MimeMultipart();  
+	        multipart.addBodyPart(messageBodyPart1); 
+ 
+	        multipart.addBodyPart(messageBodyPart2);  
+
+	        message.setContent(multipart);
+	        System.out.println("Sending");
+	        String protocol = "smtp";
+	        props.put("mail." + protocol + ".auth", "true");
+	        Transport t = session.getTransport(protocol);
+	        try {
+	            t.connect(username, password);
+	            t.sendMessage(message, message.getAllRecipients());
+	        } finally {
+	            t.close();
+	        }
+//	        Transport.send(message);
+	        System.out.println("Done");
+
+	    } catch (MessagingException e) {
+	        e.printStackTrace();
+	        e.printStackTrace();
+	    }
+	}*/
 	
 	
 	
