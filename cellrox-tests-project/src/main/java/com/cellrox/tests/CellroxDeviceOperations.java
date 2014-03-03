@@ -129,13 +129,28 @@ public class CellroxDeviceOperations extends TestCase {
 	 * This function validate that the ui object is exist in the screen by description and if not the function fails. 
 	 * */
 	@Test
-	@TestProperties(name = "Validate UiObject Exist By Description ${childDescription}", paramsInclude = "currentDevicem,persona,childDescription")
+	@TestProperties(name = "Validate UiObject Exist By Description ${text}", paramsInclude = "currentDevicem,persona,text")
 	public void validateUiObjectExistByDescription() throws Exception{
-		if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription(childDescription))) {
+		if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription(text))) {
 			report.report("The uiobject is found.");
 		}
 		else {
-			report.report("Couldn't find the uiobject with the desc : "+childDescription +".",Reporter.FAIL);
+			report.report("Couldn't find the uiobject with the desc : "+text +".",Reporter.FAIL);
+		}
+	}
+	
+	
+	/**
+	 * This function validate that the ui object is exist in the screen by text and if not the function fails. 
+	 * */
+	@Test
+	@TestProperties(name = "Validate UiObject Exist By Text ${text}", paramsInclude = "currentDevicem,persona,text")
+	public void validateUiObjectExistByText() throws Exception{
+		if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText(text))) {
+			report.report("The uiobject is found.");
+		}
+		else {
+			report.report("Couldn't find the uiobject with the text : "+text +".",Reporter.FAIL);
 		}
 	}
 	
@@ -328,6 +343,12 @@ public class CellroxDeviceOperations extends TestCase {
 	public void configureDevice() throws Exception {
 		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 	}
+	
+	@Test
+	@TestProperties(name = "Configure Device Priv", paramsInclude = {"currentDevice"})
+	public void configureDevicePriv() throws Exception {
+		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
+	}
 
 	@Test
 	@TestProperties(name = "Wait Until Device is Online", paramsInclude = {"currentDevice"})
@@ -342,7 +363,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	@Test
-	@TestProperties(name = "Connect to Servers", paramsInclude = {"currentDevice"})
+	@TestProperties(name = "Connect to Server priv", paramsInclude = {"currentDevice"})
 	public void connectToServerPriv() throws Exception {
 		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 	}
@@ -1257,7 +1278,7 @@ public class CellroxDeviceOperations extends TestCase {
 
 	@Test
 	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
-	public void waitforLineInLogcat() throws Exception {
+	public void waitforLineInLogcat() throws Exception {		
 		devicesMannager.getDevice(currentDevice).waitForLineInTomcat(expectedLine, Integer.valueOf(timeout), interval);
 	}
 
@@ -1323,7 +1344,7 @@ public class CellroxDeviceOperations extends TestCase {
 	/**
 	 * find the expression to find after cli command in the adb shell. Can be
 	 * done with regular expression and with regular string.
-	 * 
+	 * This command include adb before!!!!!
 	 * @param cliCommand
 	 *            - the wanted cli command after the adb shell
 	 * @param expression
