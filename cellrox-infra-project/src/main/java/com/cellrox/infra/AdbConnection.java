@@ -78,7 +78,14 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		
 		p = new Prompt();
 		p.setAddEnter(true);
-		p.setPrompt("at java.lang.Thread.run(Thread.java:841)\\s(\n)\\s*");
+		p.setPrompt("at java.lang.Thread.run(Thread.java:841)\\s*(\n)\\s*");
+		p.setRegularExpression(true);
+		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
+		prompts.add(p);
+		
+		p = new Prompt();
+		p.setAddEnter(true);
+		p.setPrompt("at java.lang.Thread.run(Thread.java:841)\\s*");
 		p.setRegularExpression(true);
 		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
 		prompts.add(p);
