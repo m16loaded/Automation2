@@ -751,7 +751,10 @@ public class CellroxDeviceOperations extends TestCase {
 			}
 		} catch (Exception e) {
 			// the phone is in the correct condition
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Cancel"));
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Cancel"));
+			}
+			catch(Exception e2) {}
 		}
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 		//sleep to get the system properties to update
