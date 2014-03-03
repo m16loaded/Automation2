@@ -907,6 +907,12 @@ public class CellroxDeviceOperations extends TestCase {
 		runProperties.setRunProperty("isExists", String.valueOf(isExists));
 	}
 	
+	@Test
+	@TestProperties(name= "Validate that the uiautomator is up" , paramsInclude = {"currentDevice"})
+	public void validateUiautomatorUp() throws Exception {
+		devicesMannager.getDevice(currentDevice).validateUiautomatorIsUP();
+	}
+	
 	/**
 	 * This test :
 	 * 1. get the return result from a class

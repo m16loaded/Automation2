@@ -1272,6 +1272,25 @@ public class CellRoxDevice extends SystemObjectImpl {
         public AutomatorService getPersona(Persona persona) {
                 return uiClient.get(persona.ordinal());
         }
+        
+        public void validateUiautomatorIsUP() throws Exception {
+        	cli.connect();
+            executeCliCommand("adb -s " + getDeviceSerial() + " root");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+            executeCliCommand("ps | grep uiautomator");
+            String retPs = cli.getTestAgainstObject().toString().replace("ps | grep uiautomator", "");
+            if(retPs.split("uiautomator").length != 4) {
+            	report.report("The uiautomator not connect.");
+            	report.report("About to configure new device for the automation and to connect to the servers.");
+            	configureDeviceForAutomation(true);
+            	connectToServers();
+            	report.report("Now the uiautomator connect.");
+            }
+            else {
+            	report.report("The uiautomator connect.");
+            }
+            
+        }
 
         /**
          * set root persmission on deivce and that there is no unknown device
