@@ -134,7 +134,7 @@
     </target>
     <target name="t14">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Email_Notification.xml">
-            <property name="jsystem.uuid" value="d2c21d0c-f7b8-4bbb-97ab-cbc894e7354a"/>
+            <property name="jsystem.uuid" value="c04e26e6-ff82-46ef-865c-345c896d9290"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
