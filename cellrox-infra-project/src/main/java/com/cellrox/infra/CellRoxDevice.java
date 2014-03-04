@@ -1279,7 +1279,7 @@ public class CellRoxDevice extends SystemObjectImpl {
             executeCliCommand("adb -s " + getDeviceSerial() + " shell");
             executeCliCommand("ps | grep uiautomator");
             String retPs = cli.getTestAgainstObject().toString().replace("ps | grep uiautomator", "");
-            if(retPs.split("uiautomator").length != 4) {
+            if(retPs.split("uiautomator").length != 3) {
             	report.report("The uiautomator not connect.");
             	report.report("About to configure new device for the automation and to connect to the servers.");
             	configureDeviceForAutomation(true);
