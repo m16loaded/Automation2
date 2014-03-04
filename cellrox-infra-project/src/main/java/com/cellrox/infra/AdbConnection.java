@@ -87,7 +87,6 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setAddEnter(true);
 		p.setCommandEnd(false);
 		p.setPrompt("at java.lang.Thread.run(Thread.java:841)");
-		p.setRegularExpression(true);
 		p.setStringToSend(String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13) + String.valueOf((char) 13));
 		prompts.add(p);
 		
