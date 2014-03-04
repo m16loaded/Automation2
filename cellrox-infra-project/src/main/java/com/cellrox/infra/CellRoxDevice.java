@@ -189,7 +189,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	executeCliCommand(cmd);
         	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
         			replace("\n", "").trim();
-        	compareMap.put("Type", var);
+        	compareMap.put("Model Number", var);
         	 //ROM Version
         	cmd = "getprop ro.build.display.id";
         	executeCliCommand(cmd);
