@@ -16,22 +16,21 @@
         <antcallback target="t0"/>
         <antcallback target="t1"/>
         <antcallback target="t2"/>
-        <antcallback target="t3"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="dcab13e4-3972-4a6f-8437-b48f5fd8a33e"/>
+            <sysproperty key="jsystem.uuid" value="330ec721-81fb-40e4-80b2-f1a518ac4b11"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.checkAgentDB"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.validateAgentDB"/>
         </jsystem>
     </target>
     <target name="t1">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="d001f4eb-9009-4b14-89da-e85b97470ba1"/>
+            <sysproperty key="jsystem.uuid" value="71baa3b8-3c7d-401b-9261-2eaec794955c"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.checkAgentDB"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.validateAgentDB"/>
         </jsystem>
     </target>
     <target name="t2">
@@ -40,14 +39,6 @@
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.executeCommandCli"/>
-        </jsystem>
-    </target>
-    <target name="t3">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="8dc5dd98-76db-4bec-8023-9a452ca49301"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.sendEmail"/>
         </jsystem>
     </target>
 </project>
