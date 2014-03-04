@@ -59,10 +59,6 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
-			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
-				validateDeviceStatus();
-			}
-//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
@@ -70,6 +66,17 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
+			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
+				validateDeviceStatus();
+			}
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+//			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+//			Calendar cal = Calendar.getInstance();
+//			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
+//			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
+//			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
+//			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
+//			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
 			report.stopLevel();
