@@ -427,39 +427,42 @@ public class JsystemReporter {
 	
 	
 	public static String getDateDuration(String dateStart , String dateStop) throws ParseException {
-		
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		try{
+			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+			 
+			Date d1 = null;
+			Date d2 = null;
 		 
-		Date d1 = null;
-		Date d2 = null;
-	 
-		d1 = format.parse(dateStart);
-		d2 = format.parse(dateStop);
-	 
-		DateTime dt1 = new DateTime(d1);
-		DateTime dt2 = new DateTime(d2);
-	 
-		System.out.print(Days.daysBetween(dt1, dt2).getDays() + " days, ");
-		System.out.print(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
-		System.out.print(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
-		System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
-	 
-		String hours = null, minutes = null, seconeds = null;
-		hours = String.valueOf(Hours.hoursBetween(dt1, dt2).getHours());
-		if(hours.length() == 1) {
-			hours = "0" +hours;
+			d1 = format.parse(dateStart);
+			d2 = format.parse(dateStop);
+		 
+			DateTime dt1 = new DateTime(d1);
+			DateTime dt2 = new DateTime(d2);
+		 
+			System.out.print(Days.daysBetween(dt1, dt2).getDays() + " days, ");
+			System.out.print(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
+			System.out.print(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
+			System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
+		 
+			String hours = null, minutes = null, seconeds = null;
+			hours = String.valueOf(Hours.hoursBetween(dt1, dt2).getHours());
+			if(hours.length() == 1) {
+				hours = "0" +hours;
+			}
+			minutes = String.valueOf(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60);
+			if(minutes.length() == 1) {
+				minutes = "0" +minutes;
+			}
+			seconeds = String.valueOf(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60);
+			if(seconeds.length() == 1) {
+				seconeds = "0" +seconeds;
+			}
+			
+			return hours + ":" +minutes + ":" + seconeds;
 		}
-		minutes = String.valueOf(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60);
-		if(minutes.length() == 1) {
-			minutes = "0" +minutes;
+		catch(Exception e) {
+			return "Unknown";
 		}
-		seconeds = String.valueOf(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60);
-		if(seconeds.length() == 1) {
-			seconeds = "0" +seconeds;
-		}
-		
-		return hours + ":" +minutes + ":" + seconeds;
-		
 		
 	}
 	
