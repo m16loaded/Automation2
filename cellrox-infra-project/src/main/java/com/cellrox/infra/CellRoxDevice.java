@@ -158,15 +158,19 @@ public class CellRoxDevice extends SystemObjectImpl {
         	long startTime = System.currentTimeMillis();
         	
         	do {
+        		report.report(expectedLine);
         		executeCliCommand(cmd);
-        		if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
+        		if(expectedLine == null) {
+        			isPass = true;
+        		}
+        		else if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
         			isPass = true;
         		}
         	}
-        	while((System.currentTimeMillis() - startTime) <timeout);
+        	while(((System.currentTimeMillis() - startTime) <timeout)&&(!isPass));
         	
         	if(!isPass) {
-        		report.report(expectedLine + " wasn't return from the agent from the server.");
+        		report.report(expectedLine + " wasn't return from the agent from the server.",Reporter.FAIL);
         	}
         	
         	cli.disconnect();
