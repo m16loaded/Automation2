@@ -51,6 +51,11 @@ public class JsystemReporter {
 	 */
   	public static void main(String[] args) throws Exception {
 		
+  		
+//  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/",
+//  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
+//  						" or.garfunkel@top-q.co.il", "/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
+//  						"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
 //  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/", 
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
 //  				"or.garfunkel@top-q.co.il,orgarfunkel@gmail.com",
@@ -177,12 +182,18 @@ public class JsystemReporter {
 				Node nNode = nList.item(i);
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					double time = ((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))));
-							
+					double time = 0.0;
+					try {
+						time = ((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))));
+					}
+					catch(Exception e) {}
 					String status = eElement.getAttribute("status");
 					String name = eElement.getAttribute("name");
 					String color = null;
-					testsTimesMap.put(name+"Time", String.valueOf(((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))))));
+					try{
+						testsTimesMap.put(name+"Time", String.valueOf(((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))))));
+					}
+					catch(Exception e) {}
 					testsStatusMap.put(name, status);
 					if (status.equals("false")) {
 						color = "RED";
