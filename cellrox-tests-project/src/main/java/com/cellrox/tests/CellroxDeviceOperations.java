@@ -1110,7 +1110,14 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Factory data reset"), 10*1000);
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Factory data reset"));
 		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Reset phone"), 10*1000);
-		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset phone"));
+		if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Reset phone"))) {
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset phone"));
+		}
+		else {
+			if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Reset tablet"), 10*1000)) {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset tablet"));
+			}
+		}
 
 		try {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Confirm your PIN"), 10*1000);
@@ -1125,14 +1132,14 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 		
 		report.report("Erase everything");
-		if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Erase everything"), 10*1000)) {
+//		if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Erase everything"), 10*1000)) {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
-		}
-		else {
-			if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Reset tablet"), 10*1000)) {
-				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset tablet"));
-			}
-		}
+//		}
+//		else {
+//			if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("Reset tablet"), 10*1000)) {
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Reset tablet"));
+//			}
+//		}
 		sleep(2000);
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
 		devicesMannager.getDevice(currentDevice).setDataAfterReboot();
