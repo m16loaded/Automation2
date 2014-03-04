@@ -158,7 +158,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         	long startTime = System.currentTimeMillis();
         	
         	do {
-        		report.report(expectedLine);
         		executeCliCommand(cmd);
         		if(expectedLine == null) {
         			isPass = true;
