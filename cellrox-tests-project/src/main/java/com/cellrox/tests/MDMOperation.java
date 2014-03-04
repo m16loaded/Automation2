@@ -241,7 +241,6 @@ public class MDMOperation extends TestCase {
 		//to go to the mdm devices and to click on the device and find the results, max time is 5 min
 	}
 	
-	
 
 	
 	/**
