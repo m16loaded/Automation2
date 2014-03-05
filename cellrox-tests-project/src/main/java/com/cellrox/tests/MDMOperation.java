@@ -78,8 +78,12 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot recovery");
 		//wait for 
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV);
+		//init the data of the devices
+		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
+		devicesMannager.getDevice(currentDevice).initProcessesForCheck();
+		devicesMannager.getDevice(currentDevice).setPsString(devicesMannager.getDevice(currentDevice).getPs());
 		//return the server connectivity in Priv
-		Thread.sleep(8000);
+		Thread.sleep(20000);
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
 		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 		//to try to switch persona
