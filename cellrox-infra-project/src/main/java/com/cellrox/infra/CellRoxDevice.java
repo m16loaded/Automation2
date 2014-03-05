@@ -1029,10 +1029,10 @@ public class CellRoxDevice extends SystemObjectImpl {
          * this function just do ps and split it 
          * */
         public String getPs() throws Exception {
-        	cli.setExitTimeout(180*1000);
+        	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps", true , 2*60*1000);
+        	executeCliCommand("ps", true , 4*60*1000);
         	getPsInitPrivCorp(true);
         	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
         }

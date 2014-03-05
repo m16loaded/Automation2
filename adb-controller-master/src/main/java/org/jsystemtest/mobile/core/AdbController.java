@@ -222,6 +222,7 @@ public class AdbController implements IDeviceChangeListener {
 			} catch (InterruptedException e) {
 				// Not important
 			}
+			
 		}
 		List<USBDevice> foundDevices = new ArrayList<USBDevice>();
 		for (AbstractAndroidDevice device : devices.values()) {
