@@ -1729,6 +1729,7 @@ public class CellroxDeviceOperations extends TestCase {
 	public void validateDoa() throws Exception {
 		try {
 			 devicesMannager.getDevice(currentDevice).validateDoaCrash();
+			 
 		}
 		catch(Exception e) {
 			
