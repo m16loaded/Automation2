@@ -139,6 +139,13 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 	
+	@Test
+	@TestProperties(name = "pressPower", paramsInclude={"currentDevice"})
+	public void pressPower() throws Exception {
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).excuteCommand("input keyevent 26");
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).excuteCommand("input keyevent 26");
+	}
+	
 	
 	/**
 	 * This function validate that the ui object is exist in the screen by text and if not the function fails. 
