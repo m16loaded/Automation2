@@ -76,7 +76,7 @@ public class JsystemReporter {
 	 * args[4] - the working directory of the jenkins
 	 * @throws Exception 
 	 */
-	public static void sendEmailFullReport(String[] args) throws Exception {
+	public static boolean sendEmailFullReport(String[] args) throws Exception {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
@@ -293,11 +293,12 @@ public class JsystemReporter {
 			if(fail>0)
 				status = "fail";
 			//sending the email
-			sendEmail1(to, from, "[Automation report] - for build : "+ version +" - results : " +status, docHtmlString.toString()
+			return sendEmail1(to, from, "[Automation report] - for build : "+ version +" - results : " +status, docHtmlString.toString()
 					, nameOfReport, password);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -391,24 +392,34 @@ public class JsystemReporter {
 		}
 	}
 	
+	public static boolean sendEmail1(String to, String subject, String body) throws Exception {
+		return sendEmail1(to,from, subject, body, "" , password);
+	}
+	
 	/**
 	 * Sending email to the wanted persons
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 * */
-	public static void sendEmail1(String to, final String username, String subject, String bodyHtml, 
-			String fileName , final String password) throws Exception {
+	public static boolean sendEmail1(String to, final String username,
+			String subject, String bodyHtml, String fileName,
+			final String password) throws Exception {
+		try {
+			MailUtil mail = new MailUtil();
+			mail.setSmtpHostName("smtp.gmail.com");
+			mail.setSmtpPort(465);
+			mail.setSsl(true);
+			mail.setUserName(username);
+			mail.setPassword(password);
+			mail.setMailMessageAsHtmlText(true);
+			mail.setFromAddress("Cellrox Automation");
+			mail.setSendTo(to.split(","));
+			mail.sendMail(subject, bodyHtml);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 
-		MailUtil mail = new MailUtil();
-		mail.setSmtpHostName("smtp.gmail.com");
-		mail.setSmtpPort(465);
-		mail.setSsl(true);
-		mail.setUserName(username);
-		mail.setPassword(password);
-		mail.setMailMessageAsHtmlText(true);
-		mail.setFromAddress("Cellrox Automation");
-		mail.setSendTo(to.split(","));
-		mail.sendMail(subject, bodyHtml);
-		
 	}
 	
 //	/home/topq/main_jenkins/workspace/Automation_Nightly/Logs
