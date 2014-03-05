@@ -293,7 +293,7 @@ public class JsystemReporter {
 			if(fail>0)
 				status = "fail";
 			//sending the email
-			sendEmail1(to, from, "Automation report - for build : "+ version +" - results : " +status, docHtmlString.toString()
+			sendEmail1(to, from, "[Automation report] - for build : "+ version +" - results : " +status, docHtmlString.toString()
 					, nameOfReport, password);
 			
 		} catch (Exception e) {
