@@ -182,8 +182,16 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
 		Thread.sleep(400);
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
+		boolean isReboot= true;
+		try {
+			isReboot= devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 60 * 1000);
+		}
+		catch(Exception e) {
+			report.report("The reboot button isn't exist.",Reporter.FAIL);
+			isReboot = false;
+		}
 		
-		if(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 60 * 1000)){
+		if(isReboot){
 			report.report("The device activated");
 		}
 		else {
