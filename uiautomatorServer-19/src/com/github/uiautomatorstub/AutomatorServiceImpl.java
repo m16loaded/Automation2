@@ -2049,7 +2049,22 @@ public class AutomatorServiceImpl implements AutomatorService {
 				return "Error :" + e.getMessage() ;
 		} 
 		
-		
 	}
+	
+	
+	public void scrollForward() throws Exception {
+		
+		  UiScrollable appViews1 = new UiScrollable(new UiSelector().scrollable(true));
+
+		   appViews1.scrollForward();
+	}
+	
+	public void scrollBackward() throws Exception {
+		
+		  UiScrollable appViews1 = new UiScrollable(new UiSelector().scrollable(true));
+
+		   appViews1.scrollBackward();
+	}
+	
 
 }
