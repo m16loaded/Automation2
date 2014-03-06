@@ -224,6 +224,13 @@ public class CellRoxDevice extends SystemObjectImpl {
     		return compareMap;
     	}
         
+    	   public void executeCommandAdbShellRoot(String cmd) throws Exception {
+           	cli.connect();
+           	executeCliCommand("adb -s "+getDeviceSerial()+" root");
+           	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
+           	executeCliCommand(cmd);
+           }
+    	
         public void executeCommandAdbShell(String cmd) throws Exception {
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
@@ -356,6 +363,21 @@ public class CellRoxDevice extends SystemObjectImpl {
         		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
         	}
         	cli.disconnect();
+        }
+        
+        public boolean validateThatDevicesIsreadyForAutomation() {
+        	boolean isReady = true;
+        	try {
+	        	cli.connect();
+	        	cli.switchToPersona(Persona.CORP);
+	        	cli.switchToHost();
+	        	cli.switchToPersona(Persona.PRIV);
+        	}
+        	catch(Exception e) {
+        		report.report("The device isn't ready for automation, the runs will stop",Reporter.FAIL);
+        		return false;
+        	}
+        	return isReady;
         }
         
         /**

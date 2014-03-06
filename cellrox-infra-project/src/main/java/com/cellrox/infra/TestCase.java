@@ -20,6 +20,7 @@ import com.cellrox.infra.enums.Persona;
 
 public class TestCase extends SystemTestCase4 {
 	
+	protected boolean devicesReadyForAutomation = true;
 	protected CellRoxDeviceManager devicesMannager;    
 	protected Persona persona;
 	protected File localLocation;
@@ -35,6 +36,10 @@ public class TestCase extends SystemTestCase4 {
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
+			if(!devicesReadyForAutomation){
+				report.report("Error the device isn't ready for the automation.",Reporter.FAIL);
+				throw new Exception("The device isn't ready for the automation.");
+			}
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
 			report.report("Finish the initing of the before test.");
 		}

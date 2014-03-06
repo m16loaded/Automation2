@@ -83,6 +83,27 @@ public class CellroxDeviceOperations extends TestCase {
 
 	}
 	
+	/**
+	 * This test validate that both of the persona is exists on the running devices.
+	 * The test was build for 1-2 devices
+	 * */
+	@Test
+	@TestProperties
+	public void validateThatDevicesIsreadyForAutomation() {
+		
+		if(devicesMannager.getDevice(DeviceNumber.PRIMARY).validateThatDevicesIsreadyForAutomation()) {
+			
+			devicesReadyForAutomation = false;
+			return;
+		}
+		
+		if(devicesMannager.getNumberOfDevices() > 1) {
+			if(devicesMannager.getDevice(DeviceNumber.SECONDARY).validateThatDevicesIsreadyForAutomation()) {
+				
+				devicesReadyForAutomation = false;
+			}
+		}
+	}
 
 		
 	/**
@@ -176,6 +197,12 @@ public class CellroxDeviceOperations extends TestCase {
 	
 	
 	@Test
+	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root" , paramsInclude = {"currentDevice,text"})
+	public void executeCommandRoot() throws Exception{
+		devicesMannager.getDevice(currentDevice).executeCommandAdbShellRoot(text);
+	}
+	
+	@Test
 	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice}" , paramsInclude = {"currentDevice,text"})
 	public void executeCommand() throws Exception{
 		devicesMannager.getDevice(currentDevice).executeCommandAdbShell(text);
@@ -186,6 +213,7 @@ public class CellroxDeviceOperations extends TestCase {
 	public void executeCommandCli() throws Exception{
 		devicesMannager.getDevice(currentDevice).executeCommandAdb(text);
 	}
+	
 
 	/**
 	 * The function do the same action as the script get_logs_adb
