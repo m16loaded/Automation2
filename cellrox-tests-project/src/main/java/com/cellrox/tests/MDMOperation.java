@@ -187,6 +187,7 @@ public class MDMOperation extends TestCase {
 			report.report("The device activated");
 		}
 		else {
+			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("Error")),Reporter.FAIL);
 			report.report("The device fail to activate.", Reporter.FAIL);
 		}
 		
