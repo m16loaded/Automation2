@@ -513,7 +513,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 /*          executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
             executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");*/
             executeCliCommand("");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");
+//          executeCliCommand("adb -s " + getDeviceSerial() + " shell ps | grep nc");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");//-x nc"); //TODO kill nc by pid
             executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL uiautomator");
         	report.report("All the processes are down.");
         	cli.disconnect();
