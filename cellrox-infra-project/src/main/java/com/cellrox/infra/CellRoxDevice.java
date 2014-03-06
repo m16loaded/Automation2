@@ -40,6 +40,7 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.aqua.sysobj.conn.CliCommand;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
+import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 
 public class CellRoxDevice extends SystemObjectImpl {
@@ -1085,6 +1086,39 @@ public class CellRoxDevice extends SystemObjectImpl {
 			}
         	
         	return mapOfProcessLocal;
+        }
+        
+        /**
+         * This function check or uncheck all the checkboxes in the screen
+         * */
+        public void checkUncheckAllCheckBoxes(Persona persona, State isCheck) throws UiObjectNotFoundException {
+        	
+        	try {
+	        	String object;
+	        	boolean action =false;
+	        	if(isCheck.equals(State.OFF) ) {
+	        		action = true;
+	        	}
+	        	
+	        	while(true){
+		        	try {
+		        		 object = getPersona(persona).getUiObject(new Selector().setClassName("android.widget.CheckBox").setChecked(action).setEnabled(true));
+		        	}
+		        	catch(Exception e) {
+		        		break;
+		        	}
+		        	if(object == null){
+		        		break;
+		        	}
+		        	if(object.isEmpty()) {
+		        		break;
+		        	}
+		        	clickOnSelectorByUi(object, persona);
+		        }
+	        }
+        	catch (Exception e) {
+        		System.out.println("Exception nothing really happened, i waited for it.");
+        	} 
         }
         
         /**

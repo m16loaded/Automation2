@@ -1768,18 +1768,15 @@ public class CellroxDeviceOperations extends TestCase {
 		
 	}
 	
+	/**
+	 * Check all the cj=heckboxes.
+	 * */
+	@Test
+	@TestProperties(name ="Check or Unchek All CheckBoxes ${onOff}" , paramsInclude = {"currentDevice,persona,onOff"})
+	public void checkUnchekAllCheckBoxes() throws Exception{
+		devicesMannager.getDevice(currentDevice).checkUncheckAllCheckBoxes(persona, onOff);
+	}
 	
-	
-
-				
-	
-
-
-	
-	
-	
-
-
 
 
 	/*
