@@ -1438,12 +1438,19 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
 			//check if the application already exist
-			if(devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("UNINSTALL"), 2*1000)){
+			
+			boolean isAppExist = false;
+			try {
+				isAppExist = devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("UNINSTALL"), 2*1000);
+			}
+			catch(Exception e) {/*nothing really the application not exist*/}
+			if(isAppExist){
 				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 				devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
 			}
+			
 			else {
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
@@ -1672,6 +1679,9 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Type message"), messageContent);
 			//sending the sms
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Send"));
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("More options"));
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Delete thread"));
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Delete"));
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
