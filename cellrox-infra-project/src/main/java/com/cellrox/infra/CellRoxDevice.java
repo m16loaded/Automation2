@@ -174,6 +174,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		else if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
         			isPass = true;
         		}
+        		Thread.sleep(1000);
         	}
         	while(((System.currentTimeMillis() - startTime) <timeout)&&(!isPass));
         	
@@ -957,7 +958,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 					report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
 					return;
 				}
-	
+				
 				try {
 					result = device.executeShellCommand("cell list state");
 				} catch (AdbControllerException e) {
