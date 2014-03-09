@@ -69,6 +69,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         private Set<String> processForCheck = new HashSet<String>();
         private long upTime;
         private Map<Persona,Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
+        //this boolean is only for showing the summary data in the Jsystem result sender
+
 
 		boolean online = false;
         
@@ -455,6 +457,8 @@ public class CellRoxDevice extends SystemObjectImpl {
             	hardware = propToParse.split(":")[1].trim();
             	Summary.getInstance().setProperty("IMEI", hardware);
         	}
+        	
+        	Summary.getInstance().setProperty("Vellamo_Results", "");
         	
         	cli.disconnect();
         }
