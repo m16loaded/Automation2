@@ -60,6 +60,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private String user, password;
+    private boolean isVellamoRes = false;
 
 	
 
@@ -978,8 +979,9 @@ public class CellroxDeviceOperations extends TestCase {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size" })
+	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size,isVellamoRes" })
 	public void validateExpressionIsSmallerByClass() throws Exception {
+		
 		
 		report.report("About to validate expression is "+size.toString()+" than : " +expectedNumber);
 		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
@@ -991,15 +993,24 @@ public class CellroxDeviceOperations extends TestCase {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
 	        	boolean isTrue;
-	        	if(size == Size.Smaller) 
+	        	if(size == Size.Smaller)  {
 	        		isTrue = Double.valueOf(number) < Double.valueOf(expectedNumber);
-	        	else 
+	        	}
+	        	else  {
 	        		isTrue = Double.valueOf(number) > Double.valueOf(expectedNumber);
-	        	
-	        	if(isTrue) 
+	        		
+	        		if(isVellamoRes) {
+	        			Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results")+number + "\\");
+	        		}
+	        	}
+
+	        		
+	        	if(isTrue) { 
 	        		report.report("The value is "+size.toString()+" than : "+res);
-	        	else 
+	        	}
+	        	else { 
 	        		report.report("The value isn't "+ size.toString() +" than the value in : "+res, Reporter.FAIL);
+	        	}
 	    }
 	    else
 	        report.report("Couldnt find : " + res + " in : " +res ,Reporter.FAIL);
@@ -2341,6 +2352,14 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isVellamoRes() {
+		return isVellamoRes;
+	}
+
+	public void setVellamoRes(boolean isVellamoRes) {
+		this.isVellamoRes = isVellamoRes;
 	}
 
 	
