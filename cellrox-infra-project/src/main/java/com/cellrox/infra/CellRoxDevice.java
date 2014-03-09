@@ -106,6 +106,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 			}
         }
         
+        public void initAllTheCrashesValidationData() throws Exception {
+			setUpTime(getCurrentUpTime());
+			initProcessesForCheck();
+			setPsString(getPs());
+        }
+        
         public void initProcessesForCheck() {
         	processForCheck.add("/init");
         	processForCheck.add("/sbin/ueventd");
@@ -509,13 +515,26 @@ public class CellRoxDevice extends SystemObjectImpl {
 //        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-//          executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+          executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 /*          executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
             executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");*/
             executeCliCommand("");
 //          executeCliCommand("adb -s " + getDeviceSerial() + " shell ps | grep nc");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");//-x nc"); //TODO kill nc by pid
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL uiautomator");
+           // executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");//-x nc"); //TODO kill nc by pid
+            executeCliCommand("pkill -KILL uiautomator");
+            executeCliCommand("ps | grep nc");
+            String [] retStringArr = cli.getTestAgainstObject().toString().split("\n");
+        	String expectedLine = "root\\s*(\\d*)\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\S*\\s*\\S*\\s*\\S\\s*(\\S*)\\s*";
+        	for (String retLine : retStringArr) {
+    			Pattern pattern = Pattern.compile(expectedLine);
+    			Matcher matcher = pattern.matcher(retLine);
+
+    			if (matcher.find()) {
+    				if(matcher.group(2).toString().equals("nc")) {
+    					executeCliCommand("kill -KILL "+ Integer.valueOf(matcher.group(1)));
+    				}
+    			}
+        	}
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
@@ -1068,48 +1087,51 @@ public class CellRoxDevice extends SystemObjectImpl {
          * initVars param - if false
          * 		- return the map of the processes ids
          * */
-        public Map<Persona,Integer> getPsInitPrivCorp(boolean initVars) throws Exception {
-        	Map<Persona,Integer> mapOfProcessLocal = new HashMap<Persona,Integer>();
-        	personaProcessIdMap.clear();
-        	cli.connect();
-        	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps | grep init");
-        	String [] retStringArr = cli.getTestAgainstObject().toString().split("\n");
-        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
-        	int counterOfPersonas = 0;
-        	for (String retLine : retStringArr) {
-        		Pattern pattern = Pattern.compile(expectedLine);
-        	    Matcher matcher = pattern.matcher(retLine);
-
-        	    if(matcher.find()) {
-        	    	if(counterOfPersonas == 0) {
-        	    		counterOfPersonas++;
-        	    	}
-        	    	else if(counterOfPersonas==1) {
-        	    		
-        	    		if(initVars) {
-        	    			personaProcessIdMap.put(Persona.PRIV,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		else {
-        	    			mapOfProcessLocal.put(Persona.PRIV,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		counterOfPersonas++;
-        	    	}
-        	    	else if(counterOfPersonas==2) {
-        	    		
-        	    		if(initVars) {
-        	    			personaProcessIdMap.put(Persona.CORP,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		else {
-        	    			mapOfProcessLocal.put(Persona.CORP,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		counterOfPersonas++;
-        	    	}
-        	    }
-			}
         	
-        	return mapOfProcessLocal;
-        }
+	public Map<Persona, Integer> getPsInitPrivCorp(boolean initVars)
+			throws Exception {
+		Map<Persona, Integer> mapOfProcessLocal = new HashMap<Persona, Integer>();
+		personaProcessIdMap.clear();
+		cli.connect();
+		executeCliCommand("adb -s " + deviceSerial + " shell");
+		executeCliCommand("ps | grep /init");
+		String[] retStringArr = cli.getTestAgainstObject().toString()
+				.split("\n");
+		String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
+		int counterOfPersonas = 0;
+		for (String retLine : retStringArr) {
+			Pattern pattern = Pattern.compile(expectedLine);
+			Matcher matcher = pattern.matcher(retLine);
+
+			if (matcher.find()) {
+				if (counterOfPersonas == 0) {
+					counterOfPersonas++;
+				} else if (counterOfPersonas == 1) {
+
+					if (initVars) {
+						personaProcessIdMap.put(Persona.PRIV,
+								Integer.valueOf(matcher.group(2)));
+					} else {
+						mapOfProcessLocal.put(Persona.PRIV,
+								Integer.valueOf(matcher.group(2)));
+					}
+					counterOfPersonas++;
+				} else if (counterOfPersonas == 2) {
+
+					if (initVars) {
+						personaProcessIdMap.put(Persona.CORP,
+								Integer.valueOf(matcher.group(2)));
+					} else {
+						mapOfProcessLocal.put(Persona.CORP,
+								Integer.valueOf(matcher.group(2)));
+					}
+					counterOfPersonas++;
+				}
+			}
+		}
+
+		return mapOfProcessLocal;
+	}
         
         /**
          * This function check or uncheck all the checkboxes in the screen

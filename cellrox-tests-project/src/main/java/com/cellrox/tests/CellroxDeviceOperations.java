@@ -338,7 +338,9 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "open application by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void openApp() throws UiObjectNotFoundException {
-		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
+		if(!devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text)) {
+			report.report("Couldn't open the application : " + text , Reporter.FAIL);
+		}
 	}
 
 	@Test
@@ -1190,11 +1192,20 @@ public class CellroxDeviceOperations extends TestCase {
 //		
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Agree"));
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("SKip"));
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Start"));
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("SKip"));
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Skip anyway"));
 //		
-//
+//		if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("No"))) {
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("No"));
+//		}
+//		if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Not now"))) {
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Not now"));
+//		}
+//		
+//		
+//		
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google & Location", new Selector[]{new Selector().setText("Google & Location")}
 //			, new Selector().setDescription("Next"));
 //		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google services", new Selector[]{new Selector().setText("Google services")}
@@ -1227,11 +1238,7 @@ public class CellroxDeviceOperations extends TestCase {
 //		catch(Exception e) {
 //			
 //		}
-//		
-//		
-//		
 //
-//		
 //	}
 	
 	
@@ -1759,6 +1766,18 @@ public class CellroxDeviceOperations extends TestCase {
 	public void getUptime() throws Exception {
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 			device.setUpTime(device.getCurrentUpTime());
+		}
+	}
+	
+	
+	/**
+	 * TSet the up time and the proccesses id
+	 * */
+	@Test
+	@TestProperties(name = "Init All Validation Crashes Data" , paramsInclude = {""})
+	public void initAllValidationCrashesData() throws Exception {
+		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
+			device.initAllTheCrashesValidationData();
 		}
 	}
 	
