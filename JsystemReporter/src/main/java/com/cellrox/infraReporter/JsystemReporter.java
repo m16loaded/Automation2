@@ -81,7 +81,7 @@ public class JsystemReporter {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null;
-		String compareStatus, seconedColor, lastTime = null;
+		String compareStatus, seconedColor, lastTime = null , vellamoResults = "";
 		int pass = 0, fail = 0, total = 0, index = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
 				endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
@@ -135,6 +135,7 @@ public class JsystemReporter {
 			hardware = prop.getProperty("hardware");
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
+			vellamoResults = prop.getProperty("Vellamo_Results");
 //			noCon = prop.getProperty("No_Connection");
 				
 			//begin to create the html file
@@ -155,6 +156,7 @@ public class JsystemReporter {
 					docHtmlString.append("<p>IMEI : "+imei+"</p>").append(System.getProperty("line.separator"));
 				}
 			}
+			docHtmlString.append("<p>Vellamo Results : "+vellamoResults+"</p>").append(System.getProperty("line.separator"));
 			if(doaCrash!=null){
 				if (!doaCrash.trim().equals("0")) {
 					docHtmlString.append("<p>DOA : yes</p>").append(System.getProperty("line.separator"));
@@ -208,7 +210,7 @@ public class JsystemReporter {
 					//The comparing to the last run
 					lastTime = "0";
 					if(testsStatusMapOld.containsKey(name)) {
-						if(status.equals(testsStatusMapOld.get(name))) {
+						if(testsStatusMapOld.get(name).equals("true")) {
 							compareStatus = testsStatusMapOld.get(name);
 							seconedColor = "GREEN";
 						}
@@ -216,10 +218,18 @@ public class JsystemReporter {
 							compareStatus = testsStatusMapOld.get(name);
 							seconedColor = "RED";
 						}
-						//here the try to take the last time
-						lastTime = testsTimeMapOld.get(name+"Time");
-						if(lastTime == null)
-							lastTime = "0";
+//						if(status.equals(testsStatusMapOld.get(name))) {
+//							compareStatus = testsStatusMapOld.get(name);
+//							seconedColor = "GREEN";
+//						}
+//						else {
+//							compareStatus = testsStatusMapOld.get(name);
+//							seconedColor = "RED";
+//						}
+//						//here the try to take the last time
+//						lastTime = testsTimeMapOld.get(name+"Time");
+//						if(lastTime == null)
+//							lastTime = "0";
 					}
 					else {
 						compareStatus = "";
@@ -230,7 +240,7 @@ public class JsystemReporter {
 					status = modifyTrueFalseToPassFail(status);
 					compareStatus = modifyTrueFalseToPassFail(compareStatus);
 					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>"+status+"<TD>"+ getTimeFormat(time)+
-							 "<TD BGCOLOR="+seconedColor+">"+compareStatus+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"</em>").append(System.getProperty("line.separator"));
+							 "<TD BGCOLOR="+seconedColor+">"+compareStatus+"<TD BGCOLOR="+seconedColor+">"+getTimeFormat(Double.valueOf(lastTime))+"</em>").append(System.getProperty("line.separator"));
 				}
 			}
 			
