@@ -56,9 +56,9 @@ public class JsystemReporter {
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
 //  						" or.garfunkel@top-q.co.il", "/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
 //  						"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
-//  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/", 
+//  		args = new String [] {"/home/topq/dev/runner/", 
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
-//  				"or.garfunkel@top-q.co.il,orgarfunkel@gmail.com",
+//  				"or.garfunkel@top-q.co.il,",
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
 //  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
   		sendEmailFullReport(args);
@@ -125,6 +125,10 @@ public class JsystemReporter {
 				//in case that this is the first run the file not exist - return empty map
 			}
 				
+			/**
+			 * Don't get lost, here I'm beginning to get all the properties, from the properties file(summary file),
+			 * The next step is to make a table with the wanted color that represents the status of the test and the time of it.
+			 * */
 			version = prop.getProperty("Build_display_id");
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
@@ -135,7 +139,7 @@ public class JsystemReporter {
 			hardware = prop.getProperty("hardware");
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
-			vellamoResults = prop.getProperty("Vellamo_Results");
+			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " ");
 //			noCon = prop.getProperty("No_Connection");
 				
 			//begin to create the html file
@@ -226,10 +230,10 @@ public class JsystemReporter {
 //							compareStatus = testsStatusMapOld.get(name);
 //							seconedColor = "RED";
 //						}
-//						//here the try to take the last time
-//						lastTime = testsTimeMapOld.get(name+"Time");
-//						if(lastTime == null)
-//							lastTime = "0";
+						//here the try to take the last time
+						lastTime = testsTimeMapOld.get(name+"Time");
+						if(lastTime == null)
+							lastTime = "0";
 					}
 					else {
 						compareStatus = "";
@@ -259,15 +263,9 @@ public class JsystemReporter {
 			docHtmlString.append("<p></p>").append(System.getProperty("line.separator"));
 			
 			//the report directory creating 
-			//TODO
 			String newLogLocation = copyTheCurrentLogTo(args[0] + "log/current", args[3]);
-//			String newLogLocation = copyTheCurrentLogTo("/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current",
-//					"/home/topq/main_jenkins/workspace");
 			
-			//TODO
 			urltoReporter = args[4] + newLogLocation;
-//			urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/" +newLogLocation;
-//			System.out.println(urltoReporter);
 			
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
 			
