@@ -789,11 +789,18 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
 
 		Thread.sleep(1000);
-		id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
-				new Selector().setClassName("android.widget.LinearLayout"), wifiNetwork, true);
-		//if the WiFi is disconnected it takes time to find the requested network
-		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(id, 20000);
-		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
+		try {
+			id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
+					new Selector().setClassName("android.widget.LinearLayout"), wifiNetwork, true);
+			//if the WiFi is disconnected it takes time to find the requested network
+			devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(id, 20000);
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
+		}
+		catch (Exception e) {
+			report.report("Couldn't find "+wifiNetwork +Reporter.FAIL);
+			return;
+		}
+		
 
 		try {
 			if (onOff == State.OFF) {
