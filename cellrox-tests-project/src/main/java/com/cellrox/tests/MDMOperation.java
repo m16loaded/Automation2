@@ -79,11 +79,13 @@ public class MDMOperation extends TestCase {
 		//wait for 
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV);
 		//init the data of the devices
-		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
-		devicesMannager.getDevice(currentDevice).initProcessesForCheck();
-		devicesMannager.getDevice(currentDevice).setPsString(devicesMannager.getDevice(currentDevice).getPs());
+		Thread.sleep(5000);
+		devicesMannager.getDevice(currentDevice).initAllTheCrashesValidationData();
+//		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
+//		devicesMannager.getDevice(currentDevice).initProcessesForCheck();
+//		devicesMannager.getDevice(currentDevice).setPsString(devicesMannager.getDevice(currentDevice).getPs());
 		//return the server connectivity in Priv
-		Thread.sleep(20000);
+		Thread.sleep(15000);
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
 		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 		//to try to switch persona
@@ -209,10 +211,8 @@ public class MDMOperation extends TestCase {
 				Thread.sleep(400);
 				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
 				isReboot= devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 30 * 1000);
-
 		}
 	
-		
 		if(isReboot){
 			report.report("The device activated");
 		}
