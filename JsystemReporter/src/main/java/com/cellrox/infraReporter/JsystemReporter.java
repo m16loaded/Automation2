@@ -182,7 +182,8 @@ public class JsystemReporter {
 
 			Map<String, String> testsStatusMapOld = getMapFromConfigFile(propName);
 			Map<String, String> testsTimeMapOld = getMapFromConfigFile(propTimes);
-			//writing to the html file all the lines
+			//writing to the html file all the lines in the table
+			//this for is foreach node that is from type "test"
 			for (int i = 0; i < nList.getLength(); i++) {
 				++total;
 				Node nNode = nList.item(i);
@@ -264,11 +265,8 @@ public class JsystemReporter {
 			
 			//the report directory creating 
 			String newLogLocation = copyTheCurrentLogTo(args[0] + "log/current", args[3]);
-			
 			urltoReporter = args[4] + newLogLocation;
-			
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
-			
 			docHtmlString.append("</body></html>").append(System.getProperty("line.separator"));
 
 			pw.println(docHtmlString.toString());
