@@ -41,6 +41,7 @@ public class TestCase extends SystemTestCase4 {
 				throw new Exception("The device isn't ready for the automation.");
 			}
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
+			
 			report.report("Finish the initing of the before test.");
 		}
 		finally {
