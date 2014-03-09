@@ -60,7 +60,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private String user, password;
-    private boolean isVellamoRes = false;
+    private boolean vellamoResultShow = false;
 
 	
 
@@ -979,7 +979,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * 3. validate that the number is smaller that the first group of the pattern
 	 * */
 	@Test
-	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size,isVellamoRes" })
+	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size,vellamoResultShow" })
 	public void validateExpressionIsSmallerByClass() throws Exception {
 		
 		
@@ -999,7 +999,7 @@ public class CellroxDeviceOperations extends TestCase {
 	        	else  {
 	        		isTrue = Double.valueOf(number) > Double.valueOf(expectedNumber);
 	        		
-	        		if(isVellamoRes) {
+	        		if(vellamoResultShow) {
 	        			Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results")+number + "\\");
 	        		}
 	        	}
@@ -2330,37 +2330,31 @@ public class CellroxDeviceOperations extends TestCase {
 		this.numberOfTimes = numberOfTimes;
 	}
 
-
-
 	public String getUser() {
 		return user;
 	}
-
-
 
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-
-
 	public String getPassword() {
 		return password;
 	}
-
-
 
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public boolean isVellamoRes() {
-		return isVellamoRes;
+	public boolean isVellamoResultShow() {
+		return vellamoResultShow;
 	}
 
-	public void setVellamoRes(boolean isVellamoRes) {
-		this.isVellamoRes = isVellamoRes;
+	public void setVellamoResultShow(boolean vellamoResultShow) {
+		this.vellamoResultShow = vellamoResultShow;
 	}
+
+
 
 	
 
