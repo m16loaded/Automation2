@@ -60,7 +60,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private String logsLocation = System.getProperty("user.home")+"/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private String user, password;
-    private boolean vellamoResultShow = false;
+    private boolean vellamoResultShow = false, needForClearTheText = false;
 
 	
 
@@ -305,7 +305,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * */
 	@Test
 	@TestProperties(name = "enter text on the child from father ${persona} . father : \"${fatherClass}\",\"${fatherText}\",\"${fatherIndex}\" "
-			+ " , child : \"${childClass}\",\"${childText}\" ,\"${chilsIndex}\".", paramsInclude = { "currentDevice,persona,fatherClass,fatherText,fatherIndex,childClass,childText,childIndex,value" })
+			+ " , child : \"${childClass}\",\"${childText}\" ,\"${chilsIndex}\".", paramsInclude = { "currentDevice,persona,fatherClass,fatherText,fatherIndex,childClass,childText,childIndex,value,needForClearTheText" })
 	public void enterTextChildFromFather() throws Exception {
 
 		Selector father = new Selector();
@@ -332,6 +332,9 @@ public class CellroxDeviceOperations extends TestCase {
 		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, child);
 		report.report("The child id : " + objectId);
 
+		if(needForClearTheText) {
+			devicesMannager.getDevice(currentDevice).getPersona(persona).clearTextField(objectId);
+		}
 		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(objectId, value);
 
 	}
@@ -770,6 +773,22 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	
+	@Test
+	@TestProperties(name = "Open the Wi-Fi List on ${persona}", paramsInclude = { "persona,currentDevice" })
+	public void openTheWifiList() throws Exception {
+		report.report("About to open the wi-fi list");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("WIRELESS & NETWORKS"), 10000);
+
+		String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByInstance(new Selector().setScrollable(true),
+				new Selector().setClassName("android.widget.LinearLayout"), 1);
+		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
+
+		Thread.sleep(1000);
+	}
+	
 	/**
 	 * This function switch the network connection on/off
 	 * @param wifiNetwoek
@@ -828,8 +847,15 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "currentDevice,persona,text" })
+	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "currentDevice,persona,text,needForClearTheText" })
 	public void setText() throws UiObjectNotFoundException {
+		if(needForClearTheText) {
+			sleep(400);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).clearTextField(new Selector().setClassName("android.widget.EditText"));
+			sleep(400);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), "");
+			sleep(400);
+		}
 		devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), text);
 	}
 	
@@ -1073,7 +1099,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "sleep", paramsInclude = { "currentDevice,timeout" })
+	@TestProperties(name = "Sleep for ${timeout} milliseconeds", paramsInclude = { "currentDevice,timeout" })
 	public void sleep() throws Exception {
 		sleep(Integer.valueOf(timeout));
 	}
@@ -2359,6 +2385,14 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setVellamoResultShow(boolean vellamoResultShow) {
 		this.vellamoResultShow = vellamoResultShow;
+	}
+
+	public boolean isNeedForClearTheText() {
+		return needForClearTheText;
+	}
+
+	public void setNeedForClearTheText(boolean needForClearTheText) {
+		this.needForClearTheText = needForClearTheText;
 	}
 
 
