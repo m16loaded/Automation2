@@ -58,7 +58,7 @@ public class JsystemReporter {
 //  						"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
 //  		args = new String [] {"/home/topq/dev/runner/", 
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
-//  				"or.garfunkel@top-q.co.il,",
+//  			"orgarfunkel@gmail.com",//	"or.garfunkel@top-q.co.il,",
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
 //  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
   		sendEmailFullReport(args);
@@ -208,7 +208,7 @@ public class JsystemReporter {
 					} /*else if (status.equals("warning")) {
 						color = "YELLOW";
 						++warning;
-					} */else if (status.equals("true")) {
+					} */else if (status.equals("true") || status.equals("warning")) {
 						color = "GREEN";
 						++pass;
 					}
