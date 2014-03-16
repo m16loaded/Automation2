@@ -62,6 +62,9 @@ public class ImageFlowHtmlReport {
 	}
 
 	public String getHtmlReport() {
+		if (htmlBody == null){
+			htmlBody = new StringBuilder("");
+		}
 		return "<html><head>" + "<link type=\"text/css\" href=\""
 				+ cssUiLocation + "\" rel=\"stylesheet\">"
 				+ "<link type=\"text/css\" href=\"" + cssLocation
