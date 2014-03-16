@@ -988,7 +988,16 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Swipe Down Notification Bar on ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void openNotificationBar() throws Exception {
-		devicesMannager.getDevice(currentDevice).getPersona(persona).openNotification();
+		
+		if(!devicesMannager.getDevice(currentDevice).getPersona(persona).openNotification()) {
+			
+			sleep(1000);
+			report.report("Error, couldn't swipe down notifications bar - first try.");
+			//retry
+			if(!devicesMannager.getDevice(currentDevice).getPersona(persona).openNotification()) {
+				report.report("Error, couldn't swipe down notifications bar for the seconed try.", Reporter.FAIL);
+			}
+		}
 	}
 
 	@Test
