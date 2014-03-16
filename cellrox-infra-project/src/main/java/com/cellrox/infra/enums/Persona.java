@@ -2,11 +2,22 @@ package com.cellrox.infra.enums;
 
 public enum Persona {
 
-	PRIV("priv"), CORP("corp");
+	PRIV("priv", "/data/containers/priv/data/local/tmp/"), CORP("corp",
+			"/data/containers/corp/data/local/tmp/");
 	String value;
+	String tmpLib;
 
-	private Persona(String value) {
+	public String getTmpLib() {
+		return tmpLib;
+	}
+
+	public void setTmpLib(String tmpLib) {
+		this.tmpLib = tmpLib;
+	}
+
+	private Persona(String value, String tmpLib) {
 		this.value = value;
+		this.tmpLib = tmpLib;
 	}
 
 	public String getValue() {
