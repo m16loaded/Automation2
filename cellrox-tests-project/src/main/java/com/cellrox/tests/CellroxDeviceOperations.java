@@ -1806,6 +1806,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * The test is set the device upTime
 	 * */
 	@Test
+	@TestProperties(name = "Get Up Time", paramsInclude = {""})
 	public void getUptime() throws Exception {
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 			device.setUpTime(device.getCurrentUpTime());
