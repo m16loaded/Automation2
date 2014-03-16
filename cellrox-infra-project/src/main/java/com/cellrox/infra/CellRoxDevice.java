@@ -26,6 +26,7 @@ import jsystem.utils.FileUtils;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
+import org.openqa.selenium.remote.html5.AddWebStorage;
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -1239,6 +1240,10 @@ public class CellRoxDevice extends SystemObjectImpl {
                 setPortForwarding(privePort, privePort);
                 // connect client to server
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
+                
+    			Selector[] seList =   {new Selector().setTextContains("unfortunately"),new Selector().setTextContains("Unfortunately")};
+    			getPersona(Persona.PRIV).registerClickUiObjectWatcher("Pop-up Watcher", seList, new Selector().setText("Ok"));
+    			getPersona(Persona.PRIV).runWatchers();
         }
         
         /**
@@ -1257,6 +1262,12 @@ public class CellRoxDevice extends SystemObjectImpl {
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
                 uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
                 
+    			Selector[] seList =   {new Selector().setTextContains("unfortunately"),new Selector().setTextContains("Unfortunately")};
+    			getPersona(Persona.PRIV).registerClickUiObjectWatcher("Pop-up Watcher", seList, new Selector().setText("Ok"));
+    			getPersona(Persona.PRIV).runWatchers();
+    			
+    			getPersona(Persona.CORP).registerClickUiObjectWatcher("Pop-up Watcher", seList, new Selector().setText("Ok"));
+    			getPersona(Persona.CORP).runWatchers();
                 /* executor = Executors.newFixedThreadPool(1);
                 Runnable worker = new Runnable() {
                         public void run() {
