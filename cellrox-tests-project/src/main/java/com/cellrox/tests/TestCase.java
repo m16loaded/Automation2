@@ -67,7 +67,11 @@ public class TestCase extends SystemTestCase4 {
 		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
 	}
 	
-	
+	public void takeScreenShotAndReport(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
+
+		takeScreenShot(fileName, deviceNumber, persona, nameInTheReport);
+		report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
+	}
 	
 	
 	
@@ -89,16 +93,20 @@ public class TestCase extends SystemTestCase4 {
 			if (!isPass()) {
 				try{
 					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
+				}
+				catch(Exception e){ }
+				try{
 					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
 				}
 				catch(Exception e){ }
+				
+				report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 				
 				if(devicesMannager.getRunStatus().equals("full")) {
 					validateDeviceStatus();
 				}
 			}
-			//this line is for taking screen shots
-			
+			//TODO to remove if i dont find the use
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 //			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 //			Calendar cal = Calendar.getInstance();
@@ -109,7 +117,6 @@ public class TestCase extends SystemTestCase4 {
 //			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
-			report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 			report.stopLevel();
 		}
 	}
@@ -121,9 +128,6 @@ public class TestCase extends SystemTestCase4 {
 	 * */
 	private void validateDeviceStatus() throws Exception {
 
-		
-		
-		
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 
 			boolean crashHappened = false;

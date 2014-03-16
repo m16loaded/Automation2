@@ -3,8 +3,11 @@ package com.cellrox.infra;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import jsystem.framework.report.ListenerstManager;
+import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
+import junit.framework.TestListener;
 
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.device.USBDevice;
@@ -27,12 +30,12 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     
     public void init() throws Exception {
     	super.init();
-    	
+    	    	
     	
     	report.report("Initing CellRoxDeviceManager");
     	if(!isInit) {
-    		
-    		 Summary.getInstance().clearAllProperties();
+    		//init test report
+    		Summary.getInstance().clearAllProperties();
     		 
 			//adding the start time to summary
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
