@@ -46,7 +46,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	    	cellroxDevicesList = new CellRoxDevice[numberOfDevices];
 	
 	    	adbController = AdbController.getInstance();
-	    	report.report("Wait for "+numberOfDevices +" to connect.");
+	    	report.report("Wait for "+numberOfDevices +" of devices to connect.");
 	    	USBDevice[] devices = adbController.waitForDevicesToConnect(numberOfDevices);
 	    	
 	    	//initing each one of the devices
