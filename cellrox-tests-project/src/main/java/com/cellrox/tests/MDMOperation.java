@@ -15,7 +15,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.topq.uiautomator.Selector;
 
-import com.cellrox.infra.TestCase;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.pages.CellroxAutomationDevicesAbstractPage;
 import com.cellrox.infra.pages.CellroxMdmLoginPage;
@@ -31,18 +30,18 @@ public class MDMOperation extends TestCase {
 
 
 
-	/**
-	  * This test is needed for the first run of the webDriver
-	  * */
-	 @Test
-	 @TestProperties(name = "Init Web Driver", paramsInclude = {""})
-	 public void initWebDriver() throws Exception {
-//		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
-//	    driver = new ChromeDriver();
-//		 initTheWebDriver();
-		 
-		 System.out.println("dfgdfgdf");
-	 }
+//	/**
+//	  * This test is needed for the first run of the webDriver
+//	  * */
+//	 @Test
+//	 @TestProperties(name = "Init Web Driver", paramsInclude = {""})
+//	 public void initWebDriver() throws Exception {
+////		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
+////	    driver = new ChromeDriver();
+////		 initTheWebDriver();
+//		 
+//		 System.out.println("dfgdfgdf");
+//	 }
 	 
 
 
@@ -78,10 +77,16 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot recovery");
 		//wait for 
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV);
+		//init the data of the devices
+		Thread.sleep(5000);
+		devicesMannager.getDevice(currentDevice).initAllTheCrashesValidationData();
+//		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
+//		devicesMannager.getDevice(currentDevice).initProcessesForCheck();
+//		devicesMannager.getDevice(currentDevice).setPsString(devicesMannager.getDevice(currentDevice).getPs());
 		//return the server connectivity in Priv
-		Thread.sleep(8000);
+		Thread.sleep(15000);
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
-		devicesMannager.getDevice(currentDevice).connectToServers();
+		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 		//to try to switch persona
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
@@ -99,6 +104,9 @@ public class MDMOperation extends TestCase {
 		//Step 1
 	}
 	
+	/**
+	 * Login to the mdm
+	 * */
 	@Test
 	@TestProperties(name = "Login To MDM", paramsInclude = {"mdmUser,mdmPassword"})
 	public void loginToMDM() throws Exception {
@@ -117,7 +125,6 @@ public class MDMOperation extends TestCase {
 	@TestProperties(name = "Remove device from MDM device list", paramsInclude = {"mdmPassword"})
 	public void removeDevicefromMdmDeviceList() throws Exception {
 		//step2
-//		devicesMannager.getDevice(currentDevice).connectToServers();
 		
 		CellroxAutomationDevicesAbstractPage automationDevicesPage = new CellroxAutomationDevicesAbstractPage(driver, siteUrl);
 		
@@ -148,8 +155,6 @@ public class MDMOperation extends TestCase {
 	@TestProperties(name = "Enroll Owner", paramsInclude = {"ownerName,currentDevice"})
 	public void enrollOwner() throws Exception {
 		
-		//step 3
-
 		CellroxOwnerAbstractPage ownerPage = new CellroxOwnerAbstractPage(driver, siteUrl);
 		
 		//click on the owers tab and then click on the correct owner checkbox
@@ -178,11 +183,40 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
 		Thread.sleep(400);
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
-		
-		if(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 60 * 1000)){
+		boolean isReboot= true;
+		isReboot= devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 30 * 1000);
+		report.report("isReboot = " + isReboot);
+		if(!isReboot){
+				//try to do this for the seconed time
+				report.report("The reboot button isn't exist for the first time.", Reporter.WARNING);
+				report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("(E2")), Reporter.WARNING);
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Next"));
+				
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(0)
+						, activationCode.substring(0, 4));
+				
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(2)
+						, activationCode.substring(4, 8));
+				
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(4)
+						, activationCode.substring(8, 12));
+				
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(3)
+						, "p.cellrox.com");
+				
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
+				Thread.sleep(400);
+				devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
+				isReboot= devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 30 * 1000);
+		}
+	
+		if(isReboot){
 			report.report("The device activated");
 		}
 		else {
+			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("(E2")),Reporter.FAIL);
 			report.report("The device fail to activate.", Reporter.FAIL);
 		}
 		
@@ -193,7 +227,6 @@ public class MDMOperation extends TestCase {
 		
 		//to get the https://mdm-qa.cellrox.com/automation/devices.json and to get the activation_code
 		//to click add information , to enter to the device, click on the next and than on reboot
-		
 		
 	}
 	
@@ -206,11 +239,7 @@ public class MDMOperation extends TestCase {
 	@Test
 	@TestProperties(name = "Validate Activated Persona", paramsInclude = {"ownerName,currentDevice"})
 	public void validateActivatedPersona() throws Exception {
-		//step 4
-//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-//		devicesMannager.getDevice(currentDevice).connectToServers();
 		
-		//open 
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).wakeUp();
 		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
@@ -236,11 +265,7 @@ public class MDMOperation extends TestCase {
 		
 		devicesPage.validateDataDeviceDetails(imei, macAdr, compareMap, 10* 60 *1000);
 		
-		//TODO step 4
-		//to validate there is two personas inside of the phone and
-		//to go to the mdm devices and to click on the device and find the results, max time is 5 min
 	}
-	
 	
 
 	
@@ -260,15 +285,6 @@ public class MDMOperation extends TestCase {
 		String macAdr = (String) Summary.getInstance().getProperty("Mac Adress");
 		
 		devicesPage.changePolicy(imei, macAdr, policy);
-		
-		//while checking the history there is a need to refresh the page
-		//select the wanted device in the device page, click on change policy, choose the wanted policy
-		//click apply
-		//to click on the device , click on history , check done is in the coosen policy
-		//to check that the application installed
-		
-		//go back to the default policy (without any apps)
-		//make sure its done and that there is no application
 		
 	}
 

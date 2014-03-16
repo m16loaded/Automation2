@@ -838,6 +838,8 @@ public interface AutomatorService {
 	 * */
 	public String excuteCommand(String command) throws Exception;
 		
+	public void scrollForward() throws Exception;
 	
+	public void scrollBackward() throws Exception;
 	
 }

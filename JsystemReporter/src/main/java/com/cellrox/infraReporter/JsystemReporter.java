@@ -1,3 +1,4 @@
+package com.cellrox.infraReporter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -6,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,20 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -56,17 +42,26 @@ public class JsystemReporter {
 	 * The application takes the .xml and make from it .html table with the wanted fields
 	 * This application will compare to the last run from the config file
 	 * 	@param args- the first arg should be : 
-	 * arg[0] - currentLogLocation - the place of reports.0.xml
+	 * arg[0] - working dir - from it the logs and the summary will be taken
 	 * arg[1] - nameOfReport - the place to save the .html name
-	 * arg[2] - summary location 
-	 * arg[3] - String to -the wanted email to send to
-	 * arg[4] - the directory of the reports to copy from
-	 * args[5] - the directory of the reports to copy to
-	 * args[6] - the working directory of the jenkins
+	 * arg[2] - String to -the wanted email to send to
+	 * args[3] - the directory of the reports to copy to
+	 * args[4] - the working directory of the jenkins
+	 * @throws Exception 
 	 */
-  	public static void main(String[] args) {
+  	public static void main(String[] args) throws Exception {
 		
-		sendEmail(args);
+  		
+//  		args = new String [] {"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/",
+//  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
+//  						" or.garfunkel@top-q.co.il", "/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
+//  						"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
+//  		args = new String [] {"/home/topq/dev/runner/", 
+//  				"/home/topq/main_jenkins/workspace/Automation_Nightly/reports/managerReport.html",
+//  			"orgarfunkel@gmail.com",//	"or.garfunkel@top-q.co.il,",
+//  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
+//  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
+  		sendEmailFullReport(args);
 	}
 	
 	
@@ -74,25 +69,24 @@ public class JsystemReporter {
 	 * The application takes the .xml and make from it .html table with the wanted fields
 	 * This application will compare to the last run from the config file
 	 * 	@param args- the first arg should be : 
-	 * arg[0] - currentLogLocation - the place of reports.0.xml
+	 * arg[0] - working dir - from it the logs and the summary will be taken
 	 * arg[1] - nameOfReport - the place to save the .html name
-	 * arg[2] - summary location 
-	 * arg[3] - String to -the wanted email to send to
-	 * arg[4] - the directory of the reports to copy from
-	 * args[5] - the directory of the reports to copy to
-	 * args[6] - the working directory of the jenkins
+	 * arg[2] - String to -the wanted email to send to
+	 * args[3] - the directory of the reports to copy to
+	 * args[4] - the working directory of the jenkins
+	 * @throws Exception 
 	 */
-	public static void sendEmail(String[] args) {
+	public static boolean sendEmailFullReport(String[] args) throws Exception {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null;
-		String compareStatus, seconedColor, lastTime = null;
-		int pass = 0, fail = 0, total = 0, warning = 0, index = 0;
-		String date = null, version = null, id = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
-				endTime = null, hardware = null, imei = null, macAdr = null, noCon = null, duration = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-//		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		String compareStatus, seconedColor, lastTime = null , vellamoResults = "";
+		int pass = 0, fail = 0, total = 0, index = 0;
+		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
+				endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
 		
@@ -101,18 +95,16 @@ public class JsystemReporter {
 		StringBuilder docHtmlString = new StringBuilder();
 		
 		//get the args[] parm, if they not inserted use the default 
-		if(args.length < 3 ) {
-			currentLogLocation = "/home/topq/dev/runnreNew/runner/log/current/reports.0.xml";//"/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current/reports.0.xml";//"/home/topq/dev/runner6003/log/current/reports.0.xml";
-			nameOfReport = "/home/topq/dev/managerReport.html";
-			summaryLocation = "/home/topq/dev/runnreNew/runner/summary.properties";
+		if(args.length < 5 ) {
+			throw new Exception("Less than 5 args.");
 		}
 		else {
-			currentLogLocation = args[0];
+			currentLogLocation = args[0] + "log/current/reports.0.xml";
 			nameOfReport = args[1];
-			summaryLocation = args[2];
+			summaryLocation = args[0] + "summary.properties";
 		}
 			
-		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate).concat(".html");
+		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate.replace("/", "_")).concat(".html");
 		
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -133,8 +125,11 @@ public class JsystemReporter {
 				//in case that this is the first run the file not exist - return empty map
 			}
 				
+			/**
+			 * Don't get lost, here I'm beginning to get all the properties, from the properties file(summary file),
+			 * The next step is to make a table with the wanted color that represents the status of the test and the time of it.
+			 * */
 			version = prop.getProperty("Build_display_id");
-			id = prop.getProperty("Build_sdk_version");
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
 			personaCrash = prop.getProperty("Persona_Crash");
@@ -144,6 +139,7 @@ public class JsystemReporter {
 			hardware = prop.getProperty("hardware");
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
+			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " ");
 //			noCon = prop.getProperty("No_Connection");
 				
 			//begin to create the html file
@@ -164,6 +160,7 @@ public class JsystemReporter {
 					docHtmlString.append("<p>IMEI : "+imei+"</p>").append(System.getProperty("line.separator"));
 				}
 			}
+			docHtmlString.append("<p>Vellamo Results : "+vellamoResults+"</p>").append(System.getProperty("line.separator"));
 			if(doaCrash!=null){
 				if (!doaCrash.trim().equals("0")) {
 					docHtmlString.append("<p>DOA : yes</p>").append(System.getProperty("line.separator"));
@@ -185,18 +182,25 @@ public class JsystemReporter {
 
 			Map<String, String> testsStatusMapOld = getMapFromConfigFile(propName);
 			Map<String, String> testsTimeMapOld = getMapFromConfigFile(propTimes);
-			//writing to the html file all the lines
+			//writing to the html file all the lines in the table
+			//this for is foreach node that is from type "test"
 			for (int i = 0; i < nList.getLength(); i++) {
 				++total;
 				Node nNode = nList.item(i);
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					double time = ((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))));
-							
+					double time = 0.0;
+					try {
+						time = ((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))));
+					}
+					catch(Exception e) {}
 					String status = eElement.getAttribute("status");
 					String name = eElement.getAttribute("name");
 					String color = null;
-					testsTimesMap.put(name+"Time", String.valueOf(((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))))));
+					try{
+						testsTimesMap.put(name+"Time", String.valueOf(((Long.valueOf(eElement.getAttribute("endTime")) - Long.valueOf(eElement.getAttribute("startTime"))))));
+					}
+					catch(Exception e) {}
 					testsStatusMap.put(name, status);
 					if (status.equals("false")) {
 						color = "RED";
@@ -204,14 +208,14 @@ public class JsystemReporter {
 					} /*else if (status.equals("warning")) {
 						color = "YELLOW";
 						++warning;
-					} */else if (status.equals("true")) {
+					} */else if (status.equals("true") || status.equals("warning")) {
 						color = "GREEN";
 						++pass;
 					}
 					//The comparing to the last run
 					lastTime = "0";
 					if(testsStatusMapOld.containsKey(name)) {
-						if(status.equals(testsStatusMapOld.get(name))) {
+						if(testsStatusMapOld.get(name).equals("true")) {
 							compareStatus = testsStatusMapOld.get(name);
 							seconedColor = "GREEN";
 						}
@@ -219,23 +223,29 @@ public class JsystemReporter {
 							compareStatus = testsStatusMapOld.get(name);
 							seconedColor = "RED";
 						}
+//						if(status.equals(testsStatusMapOld.get(name))) {
+//							compareStatus = testsStatusMapOld.get(name);
+//							seconedColor = "GREEN";
+//						}
+//						else {
+//							compareStatus = testsStatusMapOld.get(name);
+//							seconedColor = "RED";
+//						}
 						//here the try to take the last time
 						lastTime = testsTimeMapOld.get(name+"Time");
 						if(lastTime == null)
 							lastTime = "0";
 					}
 					else {
-//						compareStatus = "N/A";
 						compareStatus = "";
 						seconedColor = "WHITE";
-//						seconedColor = "YELLOW";
 					}
 					testsStatusMapOld.remove(name);
 					//finally write the wanted line
 					status = modifyTrueFalseToPassFail(status);
 					compareStatus = modifyTrueFalseToPassFail(compareStatus);
 					testsTable.append("<TR BGCOLOR=" + color + "><em><TD>"+ ++index +"<TD>" +name + "<TD>"+status+"<TD>"+ getTimeFormat(time)+
-							 "<TD BGCOLOR="+seconedColor+">"+compareStatus+"<TD>"+getTimeFormat(Double.valueOf(lastTime))+"</em>").append(System.getProperty("line.separator"));
+							 "<TD BGCOLOR="+seconedColor+">"+compareStatus+"<TD BGCOLOR="+seconedColor+">"+getTimeFormat(Double.valueOf(lastTime))+"</em>").append(System.getProperty("line.separator"));
 				}
 			}
 			
@@ -254,19 +264,9 @@ public class JsystemReporter {
 			docHtmlString.append("<p></p>").append(System.getProperty("line.separator"));
 			
 			//the report directory creating 
-			//TODO
-			String newLogLocation = copyTheCurrentLogTo(args[4], args[5]);
-//			String newLogLocation = copyTheCurrentLogTo("/home/topq/main_jenkins/workspace/Automation_Nightly/cellrox-tests-project/log/current",
-//					"/home/topq/main_jenkins/workspace");
-			
-			
-			//TODO
-			urltoReporter = args[6] + newLogLocation;
-//			urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/" +newLogLocation;
-//			System.out.println(urltoReporter);
-			
+			String newLogLocation = copyTheCurrentLogTo(args[0] + "log/current", args[3]);
+			urltoReporter = args[4] + newLogLocation;
 			docHtmlString.append("<a href=\""+urltoReporter+"\"><b>Click here for the full automation report</b></a> ").append(System.getProperty("line.separator"));
-			
 			docHtmlString.append("</body></html>").append(System.getProperty("line.separator"));
 
 			pw.println(docHtmlString.toString());
@@ -293,18 +293,18 @@ public class JsystemReporter {
 			if(args.length < 3) 
 				to = "or.garfunkel@top-q.co.il";
 			else 
-				to = args[3];
+				to = args[2];
 			//the status for the summary email
 			String status = "passed";
 			if(fail>0)
 				status = "fail";
 			//sending the email
-			sendEmail(to, from, "Automation report - for build : "+ version +" - results : " +status, docHtmlString.toString()
-					/*,"The automation run can be found at : http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?"*/
+			return sendEmail1(to, from, "[Automation report] - for build : "+ version +" - results : " +status, docHtmlString.toString()
 					, nameOfReport, password);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -329,8 +329,9 @@ public class JsystemReporter {
 		String timeStr = "";
 		time = time/1000;
 		
-		if(time==null) 
+		if(time==null) {
 			return timeStr;
+		}
 		
 		int sec = (int)(time % 60);
 		int min = (int)(time / 60);
@@ -397,15 +398,112 @@ public class JsystemReporter {
 		}
 	}
 	
+	public static boolean sendEmail1(String to, String subject, String body) throws Exception {
+		return sendEmail1(to,from, subject, body, "" , password);
+	}
 	
 	/**
 	 * Sending email to the wanted persons
-	 * @throws UnsupportedEncodingException 
+	 * 
+	 * @throws Exception
 	 * */
+	public static boolean sendEmail1(String to, final String username,
+			String subject, String bodyHtml, String fileName,
+			final String password) throws Exception {
+		try {
+			MailUtil mail = new MailUtil();
+			mail.setSmtpHostName("smtp.gmail.com");
+			mail.setSmtpPort(465);
+			mail.setSsl(true);
+			mail.setUserName(username);
+			mail.setPassword(password);
+			mail.setMailMessageAsHtmlText(true);
+			mail.setFromAddress("Cellrox Automation");
+			mail.setSendTo(to.split(","));
+			mail.sendMail(subject, bodyHtml);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+	
+//	/home/topq/main_jenkins/workspace/Automation_Nightly/Logs
+//	/home/topq/dev/runnreNew/runner/log/current
+	public static String copyTheCurrentLogTo(String logDir, String newLogDir) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
+		newLogDir = newLogDir+ File.separator +currentDate;
+		
+		System.out.println("newLogDir : " + newLogDir);
+		//Make a new dir
+		FileUtils.mkdirs(newLogDir);
+		
+		//Copy all the current log dir
+    	File source = new File(logDir);
+    	File desc = new File(newLogDir);
+    	try {
+    	    FileUtils.copyDirectory(source, desc);
+    	} catch (IOException e) {
+    	    e.printStackTrace();
+    	}
+        
+		return currentDate + File.separator + "index.html";
+	}
+	
+	
+	public static String getDateDuration(String dateStart , String dateStop) throws ParseException {
+		try{
+			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+			 
+			Date d1 = null;
+			Date d2 = null;
+		 
+			d1 = format.parse(dateStart);
+			d2 = format.parse(dateStop);
+		 
+			DateTime dt1 = new DateTime(d1);
+			DateTime dt2 = new DateTime(d2);
+		 
+			System.out.print(Days.daysBetween(dt1, dt2).getDays() + " days, ");
+			System.out.print(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
+			System.out.print(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
+			System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
+		 
+			String hours = null, minutes = null, seconeds = null;
+			hours = String.valueOf(Hours.hoursBetween(dt1, dt2).getHours());
+			if(hours.length() == 1) {
+				hours = "0" +hours;
+			}
+			minutes = String.valueOf(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60);
+			if(minutes.length() == 1) {
+				minutes = "0" +minutes;
+			}
+			seconeds = String.valueOf(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60);
+			if(seconeds.length() == 1) {
+				seconeds = "0" +seconeds;
+			}
+			
+			return hours + ":" +minutes + ":" + seconeds;
+		}
+		catch(Exception e) {
+			return "Unknown";
+		}
+		
+	}
+	
+
+	/*	*//**
+	 * Sending email to the wanted persons
+	 * @throws UnsupportedEncodingException 
+	 * *//*
 	public static void sendEmail(String to, final String username, String subject, String bodyHtml, 
 			String fileName , final String password) throws UnsupportedEncodingException {
 
 	    Properties props = new Properties();
+	    props.put("mail.transport.protocol", "smtp");
 	    props.put("mail.smtp.auth", true);
 	    props.put("mail.smtp.starttls.enable", true);
 	    props.put("mail.smtp.host", "smtp.gmail.com");
@@ -438,87 +536,26 @@ public class JsystemReporter {
 	        multipart.addBodyPart(messageBodyPart1); 
  
 	        multipart.addBodyPart(messageBodyPart2);  
-	        
 
 	        message.setContent(multipart);
 	        System.out.println("Sending");
-	        Transport.send(message);
+	        String protocol = "smtp";
+	        props.put("mail." + protocol + ".auth", "true");
+	        Transport t = session.getTransport(protocol);
+	        try {
+	            t.connect(username, password);
+	            t.sendMessage(message, message.getAllRecipients());
+	        } finally {
+	            t.close();
+	        }
+//	        Transport.send(message);
 	        System.out.println("Done");
 
 	    } catch (MessagingException e) {
 	        e.printStackTrace();
+	        e.printStackTrace();
 	    }
-	}
-	
-
-	
-	
-		
-
-//	/home/topq/main_jenkins/workspace/Automation_Nightly/Logs
-//	/home/topq/dev/runnreNew/runner/log/current
-	public static String copyTheCurrentLogTo(String logDir, String newLogDir) {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-		String currentDate = sdf.format(cal.getTime()).replace(" ", "_").replace(":", "_");
-		newLogDir = newLogDir+ File.separator +currentDate;
-		
-		System.out.println("newLogDir : " + newLogDir);
-		//Make a new dir
-		FileUtils.mkdirs(newLogDir);
-		
-		//Copy all the current log dir
-    	File source = new File(logDir);
-    	File desc = new File(newLogDir);
-    	try {
-    	    FileUtils.copyDirectory(source, desc);
-    	} catch (IOException e) {
-    	    e.printStackTrace();
-    	}
-        
-		return currentDate + File.separator + "index.html";
-	}
-	
-	
-	public static String getDateDuration(String dateStart , String dateStop) throws ParseException {
-		
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-		 
-		Date d1 = null;
-		Date d2 = null;
-	 
-		d1 = format.parse(dateStart);
-		d2 = format.parse(dateStop);
-	 
-		DateTime dt1 = new DateTime(d1);
-		DateTime dt2 = new DateTime(d2);
-	 
-		System.out.print(Days.daysBetween(dt1, dt2).getDays() + " days, ");
-		System.out.print(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
-		System.out.print(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
-		System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
-	 
-		String hours = null, minutes = null, seconeds = null;
-		hours = String.valueOf(Hours.hoursBetween(dt1, dt2).getHours());
-		if(hours.length() == 1) {
-			hours = "0" +hours;
-		}
-		minutes = String.valueOf(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60);
-		if(minutes.length() == 1) {
-			minutes = "0" +minutes;
-		}
-		seconeds = String.valueOf(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60);
-		if(seconeds.length() == 1) {
-			seconeds = "0" +seconeds;
-		}
-		
-		return hours + ":" +minutes + ":" + seconeds;
-		
-		
-	}
-	
-
+	}*/
 	
 	
 	

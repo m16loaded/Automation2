@@ -34,14 +34,14 @@
         <antcallback target="t18"/>
         <antcallback target="t19"/>
         <antcallback target="t20"/>
+        <antcallback target="t21"/>
     </target>
     <target name="t0">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="fceb9ba2-c866-4e31-bc59-b7bed623f7c9"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/GetReadyForPriv.xml">
+            <property name="jsystem.uuid" value="f1f043ad-b0ce-4702-ab52-490416786bd8"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t1">
         <jsystem showoutput="true">
@@ -202,5 +202,12 @@
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
         </jsystem>
+    </target>
+    <target name="t21">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/GetReadyForPriv.xml">
+            <property name="jsystem.uuid" value="ae253431-e7fd-4345-9eaa-18a6b72dca56"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
 </project>

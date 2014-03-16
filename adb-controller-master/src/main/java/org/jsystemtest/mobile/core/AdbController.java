@@ -57,7 +57,8 @@ public class AdbController implements IDeviceChangeListener {
 
 		// Init the AndroidDebugBridge object
 		AndroidDebugBridge.init(false);
-		adb = AndroidDebugBridge.createBridge(adbLocation.getAbsolutePath() + File.separator + "adb", true);
+		//adb = AndroidDebugBridge.createBridge(adbLocation.getAbsolutePath() + File.separator + "adb", true);
+		adb = AndroidDebugBridge.createBridge("adb", true);
 		if (adb == null) {
 			throw new IllegalStateException("Failed to create ADB bridge");
 		}
@@ -221,6 +222,7 @@ public class AdbController implements IDeviceChangeListener {
 			} catch (InterruptedException e) {
 				// Not important
 			}
+			
 		}
 		List<USBDevice> foundDevices = new ArrayList<USBDevice>();
 		for (AbstractAndroidDevice device : devices.values()) {

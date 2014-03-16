@@ -1,4 +1,4 @@
-package com.cellrox.infra;
+package com.cellrox.tests;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -12,14 +12,20 @@ import junit.framework.SystemTestCase4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.topq.uiautomator.Selector;
 
+import com.cellrox.infra.CellRoxDevice;
+import com.cellrox.infra.CellRoxDeviceManager;
+import com.cellrox.infra.WebDriverSO;
+import com.cellrox.infra.ImageFlowReporter.ImageFlowHtmlReport;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Persona;
 
 public class TestCase extends SystemTestCase4 {
 	
+	protected boolean devicesReadyForAutomation = true;
 	protected CellRoxDeviceManager devicesMannager;    
 	protected Persona persona;
 	protected File localLocation;
@@ -27,21 +33,26 @@ public class TestCase extends SystemTestCase4 {
 	protected int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;
 	protected boolean deviceEncrypted = true;
 	protected DeviceNumber currentDevice = DeviceNumber.PRIMARY;
-
+	protected ImageFlowHtmlReport imageFlowHtmlReport;
 	protected WebDriver driver;
 	protected WebDriverSO driverSo;
-//	protected WebDriverSystemObject seleniumSystemObject;
-	
 	
 	@Before
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
+			imageFlowHtmlReport = new ImageFlowHtmlReport();
+			
+			if(!devicesReadyForAutomation){
+				report.report("Error the device isn't ready for the automation.",Reporter.FAIL);
+				throw new Exception("The device isn't ready for the automation.");
+			}
 			devicesMannager = (CellRoxDeviceManager) system.getSystemObject("devicesMannager");
+			
 			report.report("Finish the initing of the before test.");
 		}
 		finally {
-//			initTheWebDriver();
+			initTheWebDriver();
 			report.stopLevel();
 		}
 		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
@@ -49,9 +60,18 @@ public class TestCase extends SystemTestCase4 {
 	}
 	
 	
+	public void takeScreenShot(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
+		String localLocation = report.getCurrentTestFolder()+ File.separatorChar + fileName;
+		String screenshoot = devicesMannager.getDevice(deviceNumber).getPersona(persona).takeScreenshot(fileName, (float)1.0, 100);
+		devicesMannager.getDevice(deviceNumber).pullFileFromDevice(persona.getTmpLib()+ fileName, localLocation);
+		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
+	}
 	
-	
-	
+	public void takeScreenShotAndReport(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
+
+		takeScreenShot(fileName, deviceNumber, persona, nameInTheReport);
+		report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
+	}
 	
 	
 	
@@ -61,10 +81,8 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
-			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
-				validateDeviceStatus();
-			}
-//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+
+			
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
@@ -72,6 +90,31 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
+			if (!isPass()) {
+				try{
+					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
+				}
+				catch(Exception e){ }
+				try{
+					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
+				}
+				catch(Exception e){ }
+				
+				report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
+				
+				if(devicesMannager.getRunStatus().equals("full")) {
+					validateDeviceStatus();
+				}
+			}
+			//TODO to remove if i dont find the use
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+//			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+//			Calendar cal = Calendar.getInstance();
+//			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
+//			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
+//			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
+//			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
+//			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
 			report.stopLevel();

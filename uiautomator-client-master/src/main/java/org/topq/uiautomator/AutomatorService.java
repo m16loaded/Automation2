@@ -1379,4 +1379,8 @@ public interface AutomatorService {
 	 * */
 	String excuteCommand(String command) throws Exception;
 	
+	void scrollForward();
+	
+	void scrollBackward();
+	
 }

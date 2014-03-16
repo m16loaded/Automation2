@@ -40,6 +40,7 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.aqua.sysobj.conn.CliCommand;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
+import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 
 public class CellRoxDevice extends SystemObjectImpl {
@@ -68,6 +69,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         private Set<String> processForCheck = new HashSet<String>();
         private long upTime;
         private Map<Persona,Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
+        //this boolean is only for showing the summary data in the Jsystem result sender
+
 
 		boolean online = false;
         
@@ -103,6 +106,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 				initProcessesForCheck();
 				setPsString(getPs());
 			}
+        }
+        
+        public void initAllTheCrashesValidationData() throws Exception {
+			setUpTime(getCurrentUpTime());
+			initProcessesForCheck();
+			setPsString(getPs());
         }
         
         public void initProcessesForCheck() {
@@ -159,14 +168,18 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
         	do {
         		executeCliCommand(cmd);
-        		if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
+        		if(expectedLine == null) {
         			isPass = true;
         		}
+        		else if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
+        			isPass = true;
+        		}
+        		Thread.sleep(1000);
         	}
-        	while((System.currentTimeMillis() - startTime) <timeout);
+        	while(((System.currentTimeMillis() - startTime) <timeout)&&(!isPass));
         	
         	if(!isPass) {
-        		report.report(expectedLine + " wasn't return from the agent from the server.");
+        		report.report(expectedLine + " wasn't return from the agent from the server.",Reporter.FAIL);
         	}
         	
         	cli.disconnect();
@@ -189,7 +202,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	executeCliCommand(cmd);
         	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
         			replace("\n", "").trim();
-        	compareMap.put("Type", var);
+        	compareMap.put("Model Number", var);
         	 //ROM Version
         	cmd = "getprop ro.build.display.id";
         	executeCliCommand(cmd);
@@ -220,6 +233,13 @@ public class CellRoxDevice extends SystemObjectImpl {
     		return compareMap;
     	}
         
+    	   public void executeCommandAdbShellRoot(String cmd) throws Exception {
+           	cli.connect();
+           	executeCliCommand("adb -s "+getDeviceSerial()+" root");
+           	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
+           	executeCliCommand(cmd);
+           }
+    	
         public void executeCommandAdbShell(String cmd) throws Exception {
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
@@ -354,6 +374,21 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.disconnect();
         }
         
+        public boolean validateThatDevicesIsreadyForAutomation() {
+        	boolean isReady = true;
+        	try {
+	        	cli.connect();
+	        	cli.switchToPersona(Persona.CORP);
+	        	cli.switchToHost();
+	        	cli.switchToPersona(Persona.PRIV);
+        	}
+        	catch(Exception e) {
+        		report.report("The device isn't ready for automation, the runs will stop",Reporter.FAIL);
+        		return false;
+        	}
+        	return isReady;
+        }
+        
         /**
          * This function adding to the summary(Jsystem report) the properties
          * */
@@ -424,6 +459,8 @@ public class CellRoxDevice extends SystemObjectImpl {
             	Summary.getInstance().setProperty("IMEI", hardware);
         	}
         	
+        	Summary.getInstance().setProperty("Vellamo_Results", "");
+        	
         	cli.disconnect();
         }
         
@@ -483,12 +520,26 @@ public class CellRoxDevice extends SystemObjectImpl {
 //        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-//          executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+          executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 /*          executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
             executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");*/
             executeCliCommand("");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");
-            executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL uiautomator");
+//          executeCliCommand("adb -s " + getDeviceSerial() + " shell ps | grep nc");
+           // executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");//-x nc"); //TODO kill nc by pid
+            executeCliCommand("pkill -KILL uiautomator");
+            executeCliCommand("ps | grep nc");
+            String [] retStringArr = cli.getTestAgainstObject().toString().split("\n");
+        	String expectedLine = "root\\s*(\\d*)\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\S*\\s*\\S*\\s*\\S\\s*(\\S*)\\s*";
+        	for (String retLine : retStringArr) {
+    			Pattern pattern = Pattern.compile(expectedLine);
+    			Matcher matcher = pattern.matcher(retLine);
+
+    			if (matcher.find()) {
+    				if(matcher.group(2).toString().equals("nc")) {
+    					executeCliCommand("kill -KILL "+ Integer.valueOf(matcher.group(1)));
+    				}
+    			}
+        	}
         	report.report("All the processes are down.");
         	cli.disconnect();
         }
@@ -907,7 +958,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 					report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
 					return;
 				}
-	
+				
 				try {
 					result = device.executeShellCommand("cell list state");
 				} catch (AdbControllerException e) {
@@ -1026,10 +1077,10 @@ public class CellRoxDevice extends SystemObjectImpl {
          * this function just do ps and split it 
          * */
         public String getPs() throws Exception {
-        	cli.setExitTimeout(180*1000);
+        	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps", true , 2*60*1000);
+        	executeCliCommand("ps", true , 4*60*1000);
         	getPsInitPrivCorp(true);
         	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
         }
@@ -1041,47 +1092,83 @@ public class CellRoxDevice extends SystemObjectImpl {
          * initVars param - if false
          * 		- return the map of the processes ids
          * */
-        public Map<Persona,Integer> getPsInitPrivCorp(boolean initVars) throws Exception {
-        	Map<Persona,Integer> mapOfProcessLocal = new HashMap<Persona,Integer>();
-        	personaProcessIdMap.clear();
-        	cli.connect();
-        	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps | grep init");
-        	String [] retStringArr = cli.getTestAgainstObject().toString().split("\n");
-        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
-        	int counterOfPersonas = 0;
-        	for (String retLine : retStringArr) {
-        		Pattern pattern = Pattern.compile(expectedLine);
-        	    Matcher matcher = pattern.matcher(retLine);
-
-        	    if(matcher.find()) {
-        	    	if(counterOfPersonas == 0) {
-        	    		counterOfPersonas++;
-        	    	}
-        	    	else if(counterOfPersonas==1) {
-        	    		
-        	    		if(initVars) {
-        	    			personaProcessIdMap.put(Persona.PRIV,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		else {
-        	    			mapOfProcessLocal.put(Persona.PRIV,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		counterOfPersonas++;
-        	    	}
-        	    	else if(counterOfPersonas==2) {
-        	    		
-        	    		if(initVars) {
-        	    			personaProcessIdMap.put(Persona.CORP,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		else {
-        	    			mapOfProcessLocal.put(Persona.CORP,Integer.valueOf(matcher.group(2)));
-        	    		}
-        	    		counterOfPersonas++;
-        	    	}
-        	    }
-			}
         	
-        	return mapOfProcessLocal;
+	public Map<Persona, Integer> getPsInitPrivCorp(boolean initVars)
+			throws Exception {
+		Map<Persona, Integer> mapOfProcessLocal = new HashMap<Persona, Integer>();
+		personaProcessIdMap.clear();
+		cli.connect();
+		executeCliCommand("adb -s " + deviceSerial + " shell");
+		executeCliCommand("ps | grep /init");
+		String[] retStringArr = cli.getTestAgainstObject().toString()
+				.split("\n");
+		String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
+		int counterOfPersonas = 0;
+		for (String retLine : retStringArr) {
+			Pattern pattern = Pattern.compile(expectedLine);
+			Matcher matcher = pattern.matcher(retLine);
+
+			if (matcher.find()) {
+				if (counterOfPersonas == 0) {
+					counterOfPersonas++;
+				} else if (counterOfPersonas == 1) {
+
+					if (initVars) {
+						personaProcessIdMap.put(Persona.PRIV,
+								Integer.valueOf(matcher.group(2)));
+					} else {
+						mapOfProcessLocal.put(Persona.PRIV,
+								Integer.valueOf(matcher.group(2)));
+					}
+					counterOfPersonas++;
+				} else if (counterOfPersonas == 2) {
+
+					if (initVars) {
+						personaProcessIdMap.put(Persona.CORP,
+								Integer.valueOf(matcher.group(2)));
+					} else {
+						mapOfProcessLocal.put(Persona.CORP,
+								Integer.valueOf(matcher.group(2)));
+					}
+					counterOfPersonas++;
+				}
+			}
+		}
+
+		return mapOfProcessLocal;
+	}
+        
+        /**
+         * This function check or uncheck all the checkboxes in the screen
+         * */
+        public void checkUncheckAllCheckBoxes(Persona persona, State isCheck) throws UiObjectNotFoundException {
+        	
+        	try {
+	        	String object;
+	        	boolean action =false;
+	        	if(isCheck.equals(State.OFF) ) {
+	        		action = true;
+	        	}
+	        	
+	        	while(true){
+		        	try {
+		        		 object = getPersona(persona).getUiObject(new Selector().setClassName("android.widget.CheckBox").setChecked(action).setEnabled(true));
+		        	}
+		        	catch(Exception e) {
+		        		break;
+		        	}
+		        	if(object == null){
+		        		break;
+		        	}
+		        	if(object.isEmpty()) {
+		        		break;
+		        	}
+		        	clickOnSelectorByUi(object, persona);
+		        }
+	        }
+        	catch (Exception e) {
+        		System.out.println("Exception nothing really happened, i waited for it.");
+        	} 
         }
         
         /**
@@ -1271,6 +1358,25 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         public AutomatorService getPersona(Persona persona) {
                 return uiClient.get(persona.ordinal());
+        }
+        
+        public void validateUiautomatorIsUP() throws Exception {
+        	cli.connect();
+            executeCliCommand("adb -s " + getDeviceSerial() + " root");
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+            executeCliCommand("ps | grep uiautomator");
+            String retPs = cli.getTestAgainstObject().toString().replace("ps | grep uiautomator", "");
+            if(retPs.split("uiautomator").length != 3) {
+            	report.report("The uiautomator not connect.");
+            	report.report("About to configure new device for the automation and to connect to the servers.");
+            	configureDeviceForAutomation(true);
+            	connectToServers();
+            	report.report("Now the uiautomator connect.");
+            }
+            else {
+            	report.report("The uiautomator connect.");
+            }
+            
         }
 
         /**
