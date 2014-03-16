@@ -1,4 +1,4 @@
-package com.cellrox.infra;
+package com.cellrox.tests;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -12,9 +12,14 @@ import junit.framework.SystemTestCase4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.topq.uiautomator.Selector;
 
+import com.cellrox.infra.CellRoxDevice;
+import com.cellrox.infra.CellRoxDeviceManager;
+import com.cellrox.infra.WebDriverSO;
+import com.cellrox.infra.ImageFlowReporter.ImageFlowHtmlReport;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Persona;
 
@@ -28,7 +33,7 @@ public class TestCase extends SystemTestCase4 {
 	protected int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;
 	protected boolean deviceEncrypted = true;
 	protected DeviceNumber currentDevice = DeviceNumber.PRIMARY;
-
+	protected ImageFlowHtmlReport imageFlowHtmlReport;
 	protected WebDriver driver;
 	protected WebDriverSO driverSo;
 	
@@ -36,6 +41,8 @@ public class TestCase extends SystemTestCase4 {
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
+			imageFlowHtmlReport = new ImageFlowHtmlReport();
+			
 			if(!devicesReadyForAutomation){
 				report.report("Error the device isn't ready for the automation.",Reporter.FAIL);
 				throw new Exception("The device isn't ready for the automation.");
@@ -53,7 +60,12 @@ public class TestCase extends SystemTestCase4 {
 	}
 	
 	
-	
+	public void takeScreenShot(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
+		String localLocation = report.getCurrentTestFolder()+ File.separatorChar + fileName;
+		String screenshoot = devicesMannager.getDevice(deviceNumber).getPersona(persona).takeScreenshot(fileName, (float)1.0, 100);
+		devicesMannager.getDevice(deviceNumber).pullFileFromDevice(persona.getTmpLib()+ fileName, localLocation);
+		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
+	}
 	
 	
 	
@@ -65,6 +77,8 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
+			
+			
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
@@ -72,9 +86,19 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
-			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
-				validateDeviceStatus();
+			if (!isPass()) {
+				try{
+					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
+					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
+				}
+				catch(Exception e){ }
+				
+				if(devicesMannager.getRunStatus().equals("full")) {
+					validateDeviceStatus();
+				}
 			}
+			//this line is for taking screen shots
+			report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 //			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 //			Calendar cal = Calendar.getInstance();
@@ -96,6 +120,9 @@ public class TestCase extends SystemTestCase4 {
 	 * */
 	private void validateDeviceStatus() throws Exception {
 
+		
+		
+		
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 
 			boolean crashHappened = false;
