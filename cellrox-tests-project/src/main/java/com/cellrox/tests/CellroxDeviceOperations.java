@@ -18,7 +18,6 @@ import org.topq.uiautomator.Selector;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.cellrox.infra.CellRoxDevice;
-import com.cellrox.infra.TestCase;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.LogcatHandler;
