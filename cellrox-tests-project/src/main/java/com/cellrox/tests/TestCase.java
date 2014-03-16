@@ -90,6 +90,7 @@ public class TestCase extends SystemTestCase4 {
 				try{
 					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
 					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
+					report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 				}
 				catch(Exception e){ }
 				
@@ -98,7 +99,7 @@ public class TestCase extends SystemTestCase4 {
 				}
 			}
 			//this line is for taking screen shots
-			report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
+			
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 //			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 //			Calendar cal = Calendar.getInstance();
