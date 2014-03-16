@@ -78,7 +78,7 @@ public class MDMOperation extends TestCase {
 		//wait for 
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV);
 		//init the data of the devices
-		Thread.sleep(5000);
+		Thread.sleep(50000);
 		devicesMannager.getDevice(currentDevice).initAllTheCrashesValidationData();
 //		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
 //		devicesMannager.getDevice(currentDevice).initProcessesForCheck();
