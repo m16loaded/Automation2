@@ -77,7 +77,7 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
-			
+
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
@@ -90,7 +90,6 @@ public class TestCase extends SystemTestCase4 {
 				try{
 					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
 					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
-					report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 				}
 				catch(Exception e){ }
 				
@@ -110,6 +109,7 @@ public class TestCase extends SystemTestCase4 {
 //			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
+			report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 			report.stopLevel();
 		}
 	}
