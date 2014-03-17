@@ -61,6 +61,11 @@ public class JsystemReporter {
 //  				"or.garfunkel@top-q.co.il,",
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
 //  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
+  		args = new String [] {"/home/topq/main_jenkins/workspace/Flo_Automation/cellrox-tests-project/",
+  				"/home/topq/main_jenkins/workspace/Flo_Automation/reports/managerReport.html",
+  				"or.garfunkel@top-q.co.il", "/home/topq/main_jenkins/workspace/Flo_Automation/Logs", 
+  				"http://build.vm.cellrox.com:8080/job/Flo_Automation/ws/Logs/"};
+  		
   		sendEmailFullReport(args);
 	}
 	
@@ -129,14 +134,14 @@ public class JsystemReporter {
 			 * Don't get lost, here I'm beginning to get all the properties, from the properties file(summary file),
 			 * The next step is to make a table with the wanted color that represents the status of the test and the time of it.
 			 * */
-			version = prop.getProperty("Build_display_id");
+			version = prop.getProperty("Build_display_id").split("\n")[0].trim();
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
 			personaCrash = prop.getProperty("Persona_Crash");
 			startTime = prop.getProperty("Start_Time");
 			endTime = prop.getProperty("End_Time");
 			duration = getDateDuration(startTime, endTime);
-			hardware = prop.getProperty("hardware");
+			hardware = prop.getProperty("hardware").split("\n")[0].trim();
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
 			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " ");
@@ -151,8 +156,10 @@ public class JsystemReporter {
 			docHtmlString.append("<p>Duration : "+duration+"</p>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>Hardware : "+hardware+"</p>").append(System.getProperty("line.separator"));
 			if(hardware.equalsIgnoreCase("flo")) {
-				if(!macAdr.isEmpty()){
-					docHtmlString.append("<p>Mac address : "+macAdr+"</p>").append(System.getProperty("line.separator"));
+				if(macAdr!=null) {
+					if(!macAdr.isEmpty()){
+						docHtmlString.append("<p>Mac address : "+macAdr+"</p>").append(System.getProperty("line.separator"));
+					}
 				}
 			}
 			else {
