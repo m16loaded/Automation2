@@ -60,10 +60,8 @@ public class CellroxDeviceOperations extends TestCase {
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private String user, password;
     private boolean vellamoResultShow = false, needForClearTheText = false;
+    
 
-	
-
-	
 
 
 	@Test
