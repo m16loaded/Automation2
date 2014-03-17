@@ -496,7 +496,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		report.startLevel("click here for kmsg logger");
         		cli.connect();
         		//this is a wanted exception!
-        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 210 * 1000 , true);
+        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 * 1000 , true);
         	
         		cli.disconnect();
         	} catch (Exception e) { }
