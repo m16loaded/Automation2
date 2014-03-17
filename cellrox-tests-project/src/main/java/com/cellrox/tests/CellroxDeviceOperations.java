@@ -74,6 +74,7 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).connectToServers();
 		
 		for(int i = 0 ; i < 5 ; i++) {
+			
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
 			sleep(10000);

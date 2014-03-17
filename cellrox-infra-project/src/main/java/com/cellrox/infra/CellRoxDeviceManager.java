@@ -3,11 +3,8 @@ package com.cellrox.infra;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import jsystem.framework.report.ListenerstManager;
-import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
-import junit.framework.TestListener;
 
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.device.USBDevice;
