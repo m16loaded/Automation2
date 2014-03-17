@@ -133,6 +133,7 @@ public class TestCase extends SystemTestCase4 {
 			boolean crashHappened = false;
 			//Step 1 is to check for doa crash
 			try {
+				Thread.sleep(10*1000);
 				device.validateConnectivity();
 			}
 			catch (Exception e) {
@@ -153,6 +154,7 @@ public class TestCase extends SystemTestCase4 {
 				device.printLastKmsg();
 				//here im doning all the thing beside the reboot
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				device.setDeviceAsRoot();
 				device.setUpTime(device.getCurrentUpTime());
                 device.setPsString(device.getPs());
