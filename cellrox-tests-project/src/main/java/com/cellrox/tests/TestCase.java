@@ -30,7 +30,7 @@ public class TestCase extends SystemTestCase4 {
 	protected Persona persona;
 	protected File localLocation;
 	protected String remotefileLocation;
-	protected int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;
+	protected static int doaCrach = 0, personaCrash = 0 , deviceCrash = 0, connectionCrash = 0;
 	protected boolean deviceEncrypted = true;
 	protected DeviceNumber currentDevice = DeviceNumber.PRIMARY;
 	protected ImageFlowHtmlReport imageFlowHtmlReport;
@@ -143,7 +143,7 @@ public class TestCase extends SystemTestCase4 {
 			
 			//Step 2 is to check for device crash by the upTime
 			long knownUpTime = device.getUpTime();
-			if(knownUpTime>device.getUpTime()) {
+			if(knownUpTime > device.getCurrentUpTime()) {
 				crashHappened = true;
 				report.report("Device_Crash", Reporter.FAIL);
 				deviceCrash++;
@@ -168,14 +168,14 @@ public class TestCase extends SystemTestCase4 {
 					sleep(20 * 1000);
 					report.report("Device : " + device.getDeviceSerial());
 					// last_kmsg
+					report.report("About to print the last kmsg.");
 					device.printLastKmsg();
-					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 					
 					//this is the check which persona crashed
 					Map<Persona,Integer> mapPerPrOld = new HashMap<Persona, Integer>();
 					mapPerPrOld = device.getPersonaProcessIdMap();
 					
-					Map<Persona,Integer> mapPerPrNew= new HashMap<Persona, Integer>();
+					Map<Persona,Integer> mapPerPrNew = new HashMap<Persona, Integer>();
 					mapPerPrNew = device.getPersonaProcessIdMap();
 					
 					if(!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
@@ -184,6 +184,8 @@ public class TestCase extends SystemTestCase4 {
 					if(!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
 						report.report("Error, persona CORP crashed.",Reporter.FAIL);
 					}
+					
+					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				}
 				
 			}
