@@ -106,6 +106,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 				setUpTime(getCurrentUpTime());
 				initProcessesForCheck();
 				setPsString(getPs());
+				
 			}
         }
         
@@ -1081,8 +1082,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps", true , 4*60*1000);
         	getPsInitPrivCorp(true);
+        	executeCliCommand("ps", true , 10*60*1000);
         	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
         }
         
