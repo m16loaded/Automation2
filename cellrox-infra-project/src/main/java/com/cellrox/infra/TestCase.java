@@ -99,14 +99,23 @@ public class TestCase extends SystemTestCase4 {
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 
 			boolean crashHappened = false;
+			
 			//Step 1 is to check for doa crash
 			try {
+				System.out.println("Checking this 1 !!!!");
 				device.validateConnectivity();
 			}
 			catch (Exception e) {
-				report.report("Out of connection ", Reporter.FAIL);
-				connectionCrash++;
-				return;
+				try {
+					System.out.println("Checking this 2 !!!!");
+					Thread.sleep(17*1000);
+					device.validateConnectivity();
+				}
+				catch (Exception e1) {
+					report.report("Out of connection ", Reporter.FAIL);
+					connectionCrash++;
+					return;
+				}
 			}
 			
 			//Step 2 is to check for device crash by the upTime
@@ -121,7 +130,9 @@ public class TestCase extends SystemTestCase4 {
 				device.printLastKmsg();
 				//here im doning all the thing beside the reboot
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				device.setDeviceAsRoot();
+				//TODO - to check if there is a need for this in the 
 				device.setUpTime(device.getCurrentUpTime());
                 device.setPsString(device.getPs());
 			}
