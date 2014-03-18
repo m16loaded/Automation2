@@ -5,7 +5,12 @@ public enum Persona {
 	PRIV("priv", "/data/containers/priv/data/local/tmp/"), CORP("corp",
 			"/data/containers/corp/data/local/tmp/"); 
 	String value;
+>>>>>>>>>>>>>>>>>>>> File 1
 	String tmpLib;
+>>>>>>>>>>>>>>>>>>>> File 2
+	String tmpLib;
+>>>>>>>>>>>>>>>>>>>> File 3
+<<<<<<<<<<<<<<<<<<<<
 
 	public String getTmpLib() {
 		return tmpLib;
@@ -17,7 +22,12 @@ public enum Persona {
 
 	private Persona(String value, String tmpLib) {
 		this.value = value;
+>>>>>>>>>>>>>>>>>>>> File 1
 		this.tmpLib = tmpLib;
+>>>>>>>>>>>>>>>>>>>> File 2
+		this.tmpLib = tmpLib;
+>>>>>>>>>>>>>>>>>>>> File 3
+<<<<<<<<<<<<<<<<<<<<
 	}
 
 	public String getValue() {

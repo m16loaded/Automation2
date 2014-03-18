@@ -27,12 +27,12 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     
     public void init() throws Exception {
     	super.init();
-    	    	
+    	
     	
     	report.report("Initing CellRoxDeviceManager");
     	if(!isInit) {
-    		//init test report
-    		Summary.getInstance().clearAllProperties();
+    		
+    		 Summary.getInstance().clearAllProperties();
     		 
 			//adding the start time to summary
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
@@ -43,7 +43,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	    	cellroxDevicesList = new CellRoxDevice[numberOfDevices];
 	
 	    	adbController = AdbController.getInstance();
-	    	report.report("Wait for "+numberOfDevices +" of devices to connect.");
+	    	report.report("Wait for "+numberOfDevices +" to connect.");
 	    	USBDevice[] devices = adbController.waitForDevicesToConnect(numberOfDevices);
 	    	
 	    	//initing each one of the devices

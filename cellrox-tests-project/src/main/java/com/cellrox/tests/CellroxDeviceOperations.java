@@ -845,7 +845,13 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
+>>>>>>>>>>>>>>>>>>>> File 1
 	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "currentDevice,persona,text,needForClearTheText" })
+>>>>>>>>>>>>>>>>>>>> File 2
+	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "currentDevice,persona,text,needForClearTheText" })
+>>>>>>>>>>>>>>>>>>>> File 3
+	@TestProperties(name = "Set text \"${text}\"  on ${persona}", paramsInclude = { "currentDevice,persona,text" })
+<<<<<<<<<<<<<<<<<<<<
 	public void setText() throws UiObjectNotFoundException {
 		if(needForClearTheText) {
 			sleep(400);
@@ -1106,7 +1112,13 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
+>>>>>>>>>>>>>>>>>>>> File 1
 	@TestProperties(name = "Sleep for ${timeout} milliseconeds", paramsInclude = { "currentDevice,timeout" })
+>>>>>>>>>>>>>>>>>>>> File 2
+	@TestProperties(name = "Sleep for ${timeout} milliseconeds", paramsInclude = { "currentDevice,timeout" })
+>>>>>>>>>>>>>>>>>>>> File 3
+	@TestProperties(name = "sleep", paramsInclude = { "currentDevice,timeout" })
+<<<<<<<<<<<<<<<<<<<<
 	public void sleep() throws Exception {
 		sleep(Integer.valueOf(timeout));
 	}
@@ -2395,6 +2407,7 @@ public class CellroxDeviceOperations extends TestCase {
 		this.vellamoResultShow = vellamoResultShow;
 	}
 
+>>>>>>>>>>>>>>>>>>>> File 1
 	public boolean isNeedForClearTheText() {
 		return needForClearTheText;
 	}
@@ -2403,6 +2416,17 @@ public class CellroxDeviceOperations extends TestCase {
 		this.needForClearTheText = needForClearTheText;
 	}
 
+>>>>>>>>>>>>>>>>>>>> File 2
+	public boolean isNeedForClearTheText() {
+		return needForClearTheText;
+	}
+
+	public void setNeedForClearTheText(boolean needForClearTheText) {
+		this.needForClearTheText = needForClearTheText;
+	}
+
+>>>>>>>>>>>>>>>>>>>> File 3
+<<<<<<<<<<<<<<<<<<<<
 
 
 	
