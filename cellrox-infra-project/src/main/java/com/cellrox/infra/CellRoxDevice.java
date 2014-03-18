@@ -38,6 +38,7 @@ import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.aqua.sysobj.conn.CliCommand;
+import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.State;
@@ -1687,22 +1688,56 @@ public class CellRoxDevice extends SystemObjectImpl {
         /**
          * The following functions click on the button by the x y cordinate
          * */
-        public void clickOnSelectorByUi(ObjInfo info, Persona persona) throws UiObjectNotFoundException {
-                int horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
-                int vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+        public void clickOnSelectorByUi(ObjInfo info, Persona persona, Direction dir) throws UiObjectNotFoundException {
+        	int horizon = -9, vertical =-3;
+        	if(dir == null ) { 
+                 horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
+                 vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+        	}
+        	else if(dir.equals(Direction.MIDDLE) ) { 
+                horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
+                vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+        	}
+        	else if(dir.equals(Direction.LEFT) ) { 
+                horizon = info.getVisibleBounds().getLeft();
+                vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+        	}
+        	else if(dir.equals(Direction.RIGHT) ) { 
+                horizon = info.getVisibleBounds().getRight() -1;
+                vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+        	}
                 report.report("About to click point at : " + horizon + "," + vertical);
                 getPersona(persona).click(horizon, vertical);
         }
 
+        /**
+         * The next 4 functions are for clicking on ui object by it location. 
+         * All function are going to the same last function. 
+         * */
         public void clickOnSelectorByUi(String id, Persona persona) throws UiObjectNotFoundException {
+        	clickOnSelectorByUi( id,  persona, Direction.MIDDLE);
+        }
+        public void clickOnSelectorByUi(String id, Persona persona, Direction dir) throws UiObjectNotFoundException {
                 ObjInfo obj = getPersona(persona).objInfo(id);
-                clickOnSelectorByUi(obj, persona);
+                clickOnSelectorByUi(obj, persona, dir);
         }
-
         public void clickOnSelectorByUi(Selector s, Persona persona) throws UiObjectNotFoundException {
-                String id = getPersona(persona).getUiObject(s);
-                clickOnSelectorByUi(id, persona);
+        	clickOnSelectorByUi(s, persona,Direction.MIDDLE);
         }
+        public void clickOnSelectorByUi(Selector s, Persona persona, Direction dir) throws UiObjectNotFoundException {
+                String id = getPersona(persona).getUiObject(s);
+                clickOnSelectorByUi(id, persona, dir);
+        }
+        public void clickOnSelectorByUi(Selector s, Persona persona, Direction dir, int indexOfElement) throws UiObjectNotFoundException {
+        	
+        	ObjInfo [] objs = getPersona(persona).objInfoOfAllInstances(s);
+        	if(indexOfElement >= objs.length) {
+        		report.report("Error, the element : "+ indexOfElement + " isn't exists.", Reporter.FAIL );
+        	}
+        	else {
+        		clickOnSelectorByUi(objs[indexOfElement], persona, dir);
+        	}
+    }
         
     	public void switchPersona(Persona persona) throws Exception {
     		Persona current = getForegroundPersona();
