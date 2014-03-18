@@ -2,7 +2,7 @@ package com.cellrox.infra.enums;
 
 public enum Direction {
 	
-	UP("up"),DOWN("down"),LEFT("left"),RIGHT("right");
+	UP("up"),DOWN("down"),LEFT("left"),RIGHT("right"),MIDDLE("middle");
 	
 	String dir;
 
