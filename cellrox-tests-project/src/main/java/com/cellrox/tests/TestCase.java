@@ -60,18 +60,18 @@ public class TestCase extends SystemTestCase4 {
 	}
 	
 	
-	public void takeScreenShot(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
-		String localLocation = report.getCurrentTestFolder()+ File.separatorChar + fileName;
-		String screenshoot = devicesMannager.getDevice(deviceNumber).getPersona(persona).takeScreenshot(fileName, (float)1.0, 100);
-		devicesMannager.getDevice(deviceNumber).pullFileFromDevice(persona.getTmpLib()+ fileName, localLocation);
-		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
-	}
-	
-	public void takeScreenShotAndReport(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
-
-		takeScreenShot(fileName, deviceNumber, persona, nameInTheReport);
-		report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
-	}
+//	public void takeScreenShot(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
+//		String localLocation = report.getCurrentTestFolder()+ File.separatorChar + fileName;
+//		String screenshoot = devicesMannager.getDevice(deviceNumber).getPersona(persona).takeScreenshot(fileName, (float)1.0, 100);
+//		devicesMannager.getDevice(deviceNumber).pullFileFromDevice(persona.getTmpLib()+ fileName, localLocation);
+//		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
+//	}
+//	
+//	public void takeScreenShotAndReport(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
+//
+//		takeScreenShot(fileName, deviceNumber, persona, nameInTheReport);
+//		report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
+//	}
 	
 	
 	
@@ -91,14 +91,14 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 			if (!isPass()) {
-				try{
-					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
-				}
-				catch(Exception e){ }
-				try{
-					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
-				}
-				catch(Exception e){ }
+//				try{
+//					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
+//				}
+//				catch(Exception e){ }
+//				try{
+//					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
+//				}
+//				catch(Exception e){ }
 				
 				report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 				
