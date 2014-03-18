@@ -63,8 +63,6 @@ public class CellroxDeviceOperations extends TestCase {
 
 	
 
-	
-
 
 	@Test
 	public void orConnectivityTest() throws Exception {
@@ -72,13 +70,13 @@ public class CellroxDeviceOperations extends TestCase {
 //		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).configureDeviceForAutomation(true);
 //		devicesMannager.getDevice(DeviceNumber.SECONDARY).connectToServers();
-//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
 		
 		for(int i = 0 ; i < 5 ; i++) {
-			
+			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Settings"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).openApp("Settings");
 			sleep(10000);
 		}
 
