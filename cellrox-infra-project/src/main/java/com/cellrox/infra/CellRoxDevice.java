@@ -26,7 +26,6 @@ import jsystem.utils.FileUtils;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
-import org.openqa.selenium.remote.html5.AddWebStorage;
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -106,7 +105,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 				setUpTime(getCurrentUpTime());
 				initProcessesForCheck();
 				setPsString(getPs());
-				
 			}
         }
         
@@ -176,7 +174,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         		else if(cli.getTestAgainstObject().toString().contains(expectedLine)) {
         			isPass = true;
         		}
-        		Thread.sleep(1000);
         	}
         	while(((System.currentTimeMillis() - startTime) <timeout)&&(!isPass));
         	
@@ -405,29 +402,29 @@ public class CellRoxDevice extends SystemObjectImpl {
         	//add build sdk version prop
         	executeCliCommand("getprop | fgrep ro.build.version.sdk");
         	String propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "").trim().split("\n")[0];
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("root@flo:/ #", "").replace("]", "").replace("[", "").trim();
+        	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
         	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1].trim());
         
         	//add Build_display_id prop
         	executeCliCommand("getprop | fgrep ro.build.display.id");
         	propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "").trim().split("\n")[0];
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("root@flo:/ #", "").replace("]", "").replace("[", "").trim();
+        	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
         	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1].trim());
         	
         	//add Build_date prop
         	executeCliCommand("getprop | fgrep ro.build.date]");
         	propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "").trim().split("\n")[0];
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("root@flo:/ #", "").replace("]", "").replace("[", "").trim();
+        	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
         	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1].trim());
         	
         	//add hardware prop
         	executeCliCommand("getprop | fgrep ro.hardware]");
         	propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.hardware]", "").trim().split("\n")[0];
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("root@flo:/ #", "").replace("]", "").replace("[", "").trim();
+        	propToParse =propToParse.replace("getprop | fgrep ro.hardware]", "");
+        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
         	hardware = propToParse.split(":")[1].trim();
         	Summary.getInstance().setProperty("hardware", hardware);
         	
@@ -445,7 +442,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 					String [] propLineArr = propLine.split(" ");
 					for (String prop : propLineArr) {
 						if (prop.contains(":")) {
-							Summary.getInstance().setProperty("Mac_address", prop.trim());
+							Summary.getInstance().setProperty("Mac_address", prop);
 							break;
 						}
 					}
@@ -455,7 +452,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		//in this case bring the IMIE
             	executeCliCommand("getprop | fgrep IMEI]");
             	propToParse = cli.getTestAgainstObject().toString();
-            	propToParse =propToParse.replace("getprop | fgrep IMEI]", "").trim().split("\n")[0];
+            	propToParse =propToParse.replace("getprop | fgrep IMEI]", "");
             	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
             	hardware = propToParse.split(":")[1].trim();
             	Summary.getInstance().setProperty("IMEI", hardware);
@@ -496,7 +493,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		report.startLevel("click here for kmsg logger");
         		cli.connect();
         		//this is a wanted exception!
-        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 210 * 1000 , true);
+        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 * 1000 , true);
         	
         		cli.disconnect();
         	} catch (Exception e) { }
@@ -960,7 +957,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 					report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
 					return;
 				}
-				
+	
 				try {
 					result = device.executeShellCommand("cell list state");
 				} catch (AdbControllerException e) {
@@ -1082,8 +1079,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
+        	executeCliCommand("ps", true , 4*60*1000);
         	getPsInitPrivCorp(true);
-        	executeCliCommand("ps", true , 10*60*1000);
         	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
         }
         
@@ -1241,10 +1238,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                 setPortForwarding(privePort, privePort);
                 // connect client to server
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
-                
-    			Selector[] seList =   {new Selector().setTextContains("unfortunately"),new Selector().setTextContains("Unfortunately")};
-    			getPersona(Persona.PRIV).registerClickUiObjectWatcher("Pop-up Watcher", seList, new Selector().setText("Ok"));
-    			getPersona(Persona.PRIV).runWatchers();
         }
         
         /**
@@ -1263,12 +1256,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
                 uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
                 
-    			Selector[] seList =   {new Selector().setTextContains("unfortunately"),new Selector().setTextContains("Unfortunately")};
-    			getPersona(Persona.PRIV).registerClickUiObjectWatcher("Pop-up Watcher", seList, new Selector().setText("Ok"));
-    			getPersona(Persona.PRIV).runWatchers();
-    			
-    			getPersona(Persona.CORP).registerClickUiObjectWatcher("Pop-up Watcher", seList, new Selector().setText("Ok"));
-    			getPersona(Persona.CORP).runWatchers();
                 /* executor = Executors.newFixedThreadPool(1);
                 Runnable worker = new Runnable() {
                         public void run() {

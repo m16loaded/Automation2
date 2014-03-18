@@ -1,4 +1,4 @@
-package com.cellrox.tests;
+package com.cellrox.infra;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -12,14 +12,9 @@ import junit.framework.SystemTestCase4;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.topq.uiautomator.Selector;
 
-import com.cellrox.infra.CellRoxDevice;
-import com.cellrox.infra.CellRoxDeviceManager;
-import com.cellrox.infra.WebDriverSO;
-import com.cellrox.infra.ImageFlowReporter.ImageFlowHtmlReport;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Persona;
 
@@ -30,10 +25,10 @@ public class TestCase extends SystemTestCase4 {
 	protected Persona persona;
 	protected File localLocation;
 	protected String remotefileLocation;
-	protected static int doaCrach = 0, personaCrash = 0 , deviceCrash = 0, connectionCrash = 0;
+	protected int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;
 	protected boolean deviceEncrypted = true;
 	protected DeviceNumber currentDevice = DeviceNumber.PRIMARY;
-	protected ImageFlowHtmlReport imageFlowHtmlReport;
+
 	protected WebDriver driver;
 	protected WebDriverSO driverSo;
 	
@@ -41,8 +36,6 @@ public class TestCase extends SystemTestCase4 {
 	public void init() throws Exception {
 		try {
 			report.startLevel("Before");
-			imageFlowHtmlReport = new ImageFlowHtmlReport();
-			
 			if(!devicesReadyForAutomation){
 				report.report("Error the device isn't ready for the automation.",Reporter.FAIL);
 				throw new Exception("The device isn't ready for the automation.");
@@ -60,18 +53,9 @@ public class TestCase extends SystemTestCase4 {
 	}
 	
 	
-//	public void takeScreenShot(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
-//		String localLocation = report.getCurrentTestFolder()+ File.separatorChar + fileName;
-//		String screenshoot = devicesMannager.getDevice(deviceNumber).getPersona(persona).takeScreenshot(fileName, (float)1.0, 100);
-//		devicesMannager.getDevice(deviceNumber).pullFileFromDevice(persona.getTmpLib()+ fileName, localLocation);
-//		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
-//	}
-//	
-//	public void takeScreenShotAndReport(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
-//
-//		takeScreenShot(fileName, deviceNumber, persona, nameInTheReport);
-//		report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
-//	}
+	
+	
+	
 	
 	
 	
@@ -81,8 +65,6 @@ public class TestCase extends SystemTestCase4 {
 		try {
 
 			report.startLevel("After");
-
-			
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
@@ -90,23 +72,9 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
-			if (!isPass()) {
-//				try{
-//					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
-//				}
-//				catch(Exception e){ }
-//				try{
-//					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
-//				}
-//				catch(Exception e){ }
-				
-				report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
-				
-				if(devicesMannager.getRunStatus().equals("full")) {
-					validateDeviceStatus();
-				}
+			if (!isPass() && devicesMannager.getRunStatus().equals("full")) {
+				validateDeviceStatus();
 			}
-			//TODO to remove if i dont find the use
 //			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 //			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 //			Calendar cal = Calendar.getInstance();
@@ -131,19 +99,28 @@ public class TestCase extends SystemTestCase4 {
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 
 			boolean crashHappened = false;
+			
 			//Step 1 is to check for doa crash
 			try {
+				System.out.println("Checking this 1 !!!!");
 				device.validateConnectivity();
 			}
 			catch (Exception e) {
-				report.report("Out of connection ", Reporter.FAIL);
-				connectionCrash++;
-				return;
+				try {
+					System.out.println("Checking this 2 !!!!");
+					Thread.sleep(17*1000);
+					device.validateConnectivity();
+				}
+				catch (Exception e1) {
+					report.report("Out of connection ", Reporter.FAIL);
+					connectionCrash++;
+					return;
+				}
 			}
 			
 			//Step 2 is to check for device crash by the upTime
 			long knownUpTime = device.getUpTime();
-			if(knownUpTime > device.getCurrentUpTime()) {
+			if(knownUpTime>device.getUpTime()) {
 				crashHappened = true;
 				report.report("Device_Crash", Reporter.FAIL);
 				deviceCrash++;
@@ -153,7 +130,9 @@ public class TestCase extends SystemTestCase4 {
 				device.printLastKmsg();
 				//here im doning all the thing beside the reboot
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				device.setDeviceAsRoot();
+				//TODO - to check if there is a need for this in the 
 				device.setUpTime(device.getCurrentUpTime());
                 device.setPsString(device.getPs());
 			}
@@ -168,14 +147,14 @@ public class TestCase extends SystemTestCase4 {
 					sleep(20 * 1000);
 					report.report("Device : " + device.getDeviceSerial());
 					// last_kmsg
-					report.report("About to print the last kmsg.");
 					device.printLastKmsg();
+					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 					
 					//this is the check which persona crashed
 					Map<Persona,Integer> mapPerPrOld = new HashMap<Persona, Integer>();
 					mapPerPrOld = device.getPersonaProcessIdMap();
 					
-					Map<Persona,Integer> mapPerPrNew = new HashMap<Persona, Integer>();
+					Map<Persona,Integer> mapPerPrNew= new HashMap<Persona, Integer>();
 					mapPerPrNew = device.getPersonaProcessIdMap();
 					
 					if(!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
@@ -184,8 +163,6 @@ public class TestCase extends SystemTestCase4 {
 					if(!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
 						report.report("Error, persona CORP crashed.",Reporter.FAIL);
 					}
-					
-					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
 				}
 				
 			}
