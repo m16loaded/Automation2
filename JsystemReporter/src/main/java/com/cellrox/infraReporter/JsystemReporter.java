@@ -61,10 +61,10 @@ public class JsystemReporter {
 //  				"or.garfunkel@top-q.co.il,",
 //  				"/home/topq/main_jenkins/workspace/Automation_Nightly/Logs",
 //  				"http://build.vm.cellrox.com:8080/job/Automation_Nightly/ws/Logs/"};
-  		args = new String [] {"/home/topq/main_jenkins/workspace/Flo_Automation/cellrox-tests-project/",
-  				"/home/topq/main_jenkins/workspace/Flo_Automation/reports/managerReport.html",
-  				"or.garfunkel@top-q.co.il", "/home/topq/main_jenkins/workspace/Flo_Automation/Logs", 
-  				"http://build.vm.cellrox.com:8080/job/Flo_Automation/ws/Logs/"};
+//  		args = new String [] {"/home/topq/main_jenkins/workspace/Flo_Automation/cellrox-tests-project/",
+//  				"/home/topq/main_jenkins/workspace/Flo_Automation/reports/managerReport.html",
+//  				"or.garfunkel@top-q.co.il", "/home/topq/main_jenkins/workspace/Flo_Automation/Logs", 
+//  				"http://build.vm.cellrox.com:8080/job/Flo_Automation/ws/Logs/"};
   		
   		sendEmailFullReport(args);
 	}
