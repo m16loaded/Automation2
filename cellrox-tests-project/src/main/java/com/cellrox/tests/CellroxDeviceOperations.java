@@ -31,13 +31,13 @@ import com.cellrox.infra.object.LogParserExpression;
 public class CellroxDeviceOperations extends TestCase {
 
 	Selector selector;
-	private String button, text, value;
+	private String button, text, value, selectorClass;
 	private LogParserExpression[] expression;
 	private boolean waitForNewWindow = false, updateVersion = false;
 	private String serverHost, version, adminToken;
 	private File imgFile;
 	private String serverUrl, deviceId;
-	private int index;
+	private int index, indexOfSelector;
 	private String expectedLine, expectedNumber;
 	private String appName;
 	private long interval;
@@ -765,9 +765,22 @@ public class CellroxDeviceOperations extends TestCase {
 	 * The function finds the location of the wanted ui object and click on it in the middle of it location
 	 * */
 	@Test
-	@TestProperties(name = "Click Text \"${text}\" , Class \"${childClassName}\"  By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,text,childClassName" })
+	@TestProperties(name = "Click Text \"${text}\" , Class \"${childClassName}\"  By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,text,childClassName,dir" })
 	public void clickTextAndClassByUiLocation() throws Exception {
-		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText(text).setClassName(childClassName), persona);
+		if(dir== null) {
+			dir = Direction.MIDDLE;
+		}
+		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText(text).setClassName(childClassName), persona, dir);
+	}
+	
+	
+	/**
+	 * The function finds the location of the wanted ui object and click on it
+	 * */
+	@Test
+	@TestProperties(name = "Click Index \"${index}\" , Class \"${selectorClass}\" , Index Of Selector : ${indexOfSelector} By Ui Location on ${persona}", paramsInclude = { "currentDevice,persona,index,selectorClass,dir,indexOfSelector" })
+	public void clickIndexAndClassByUiLocation() throws Exception {
+		devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setIndex(index).setClassName(selectorClass), persona, dir, indexOfSelector);
 	}
 	
 	
@@ -2401,6 +2414,22 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setNeedForClearTheText(boolean needForClearTheText) {
 		this.needForClearTheText = needForClearTheText;
+	}
+
+	public String getSelectorClass() {
+		return selectorClass;
+	}
+
+	public void setSelectorClass(String selectorClass) {
+		this.selectorClass = selectorClass;
+	}
+
+	public int getIndexOfSelector() {
+		return indexOfSelector;
+	}
+
+	public void setIndexOfSelector(int indexOfSelector) {
+		this.indexOfSelector = indexOfSelector;
 	}
 
 
