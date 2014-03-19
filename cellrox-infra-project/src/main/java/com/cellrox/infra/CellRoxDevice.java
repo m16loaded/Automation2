@@ -93,14 +93,10 @@ public class CellRoxDevice extends SystemObjectImpl {
             setDeviceAsRoot();
             isDeviceConnected();
             
-            // validate that syslog is enabled
-            String status = device.getProperty("persist.service.syslogs.enable");
-            // if not enabled enable it...
-            if (status == null) {
-                    report.report("no persist.service.syslogs.enable"/*, report.WARNING*/);
-            } else if (status.equals("0")) {
-                    device.executeShellCommand("setprop persist.service.syslogs.enable 1 ");
-            }
+            //enable the syslogs
+            cli.connect();
+            executeCliCommand("setprop persist.service.syslogs.enable 1");
+            
             //here is our checks uptime and the processes, by this we can check the crashes
 			if (runStatus.equals("full")) {
 				setUpTime(getCurrentUpTime());
