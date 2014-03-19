@@ -234,7 +234,7 @@ public class TestCase extends SystemTestCase4 {
 	 * - STATE_CRASH_RESET<br>
 	 */
 	public void stopSysLogAndValidateInDevice() throws Exception {
-		LogParserExpression[] expressions = new LogParserExpression[14];
+		LogParserExpression[] expressions = new LogParserExpression[13];
 		
 		LogParserExpression expression = new LogParserExpression();
 		expression.setExpression("kernel_panic");
@@ -297,14 +297,9 @@ public class TestCase extends SystemTestCase4 {
 		expressions[11] = expression;
 		
 		expression = new LogParserExpression();
-		expression.setExpression("FATAL EXEPTION");
-		expression.setNiceName("FATAL EXEPTION");
-		expressions[12] = expression;
-		
-		expression = new LogParserExpression();
 		expression.setExpression("fatal exception");
 		expression.setNiceName("fatal exception");
-		expressions[13] = expression;
+		expressions[12] = expression;
 		
 		LogParser logParser = new LogParser(expressions);
 		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
