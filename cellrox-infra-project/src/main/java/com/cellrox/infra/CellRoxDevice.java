@@ -95,7 +95,9 @@ public class CellRoxDevice extends SystemObjectImpl {
             
             //enable the syslogs
             cli.connect();
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
             executeCliCommand("setprop persist.service.syslogs.enable 1");
+            cli.disconnect();
             
             //here is our checks uptime and the processes, by this we can check the crashes
 			if (runStatus.equals("full")) {
