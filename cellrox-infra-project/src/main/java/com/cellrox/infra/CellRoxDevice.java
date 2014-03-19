@@ -1553,6 +1553,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         			findText.analyze();
         			isPass = findText.getStatus();
         			numberOfTries--;
+        			Thread.sleep(1000);
         		}
 
         		if (!isPass) {
