@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import junit.framework.SystemTestCase4;
@@ -22,6 +23,8 @@ import com.cellrox.infra.WebDriverSO;
 import com.cellrox.infra.ImageFlowReporter.ImageFlowHtmlReport;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Persona;
+import com.cellrox.infra.log.LogParser;
+import com.cellrox.infra.object.LogParserExpression;
 
 public class TestCase extends SystemTestCase4 {
 	
@@ -192,6 +195,9 @@ public class TestCase extends SystemTestCase4 {
 			
 			//taking care in a cases of persona crash
 			if(crashHappened) {
+				//check the syslogs
+				stopSysLogAndValidateInDevice();
+				
 				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 				// sleep
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
@@ -214,6 +220,94 @@ public class TestCase extends SystemTestCase4 {
 			}
 
 		}
+	}
+	
+	/**
+	 * This function is validating the data after bringing the data itself from the syslogs files
+	 * For Example: <br>
+	 * - oops\\|kernel panic\\|soft lockup<br>
+	 * - out_of_memory<br>
+	 * - Timed out waiting for /dev/.coldboot_done<br>
+	 * - EGL_BAD_ALLOC<br>
+	 * - persona\\.\\*died\\|cellroxservice\\.\\*died\\|FATAL EXCEPTION<br>
+	 * - AudioFlinger\\.\\*buffer overflow<br>
+	 * - STATE_CRASH_RESET<br>
+	 */
+	public void stopSysLogAndValidateInDevice() throws Exception {
+		LogParserExpression[] expressions = new LogParserExpression[11];
+		
+		LogParserExpression expression = new LogParserExpression();
+		expression.setExpression("kernel panic");
+		expression.setNiceName("kernel panic");
+		expressions[0] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("oops");
+		expression.setNiceName("oops");
+		expressions[1] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("soft lockup");
+		expression.setNiceName("soft lockup");
+		expressions[2] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("out_of_memory");
+		expression.setNiceName("out_of_memory");
+		expressions[3] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("Timed out waiting for");
+		expression.setNiceName("Timed out waiting for");
+		expressions[4] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression(".coldboot_done");
+		expression.setNiceName(".coldboot_done");
+		expressions[5] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("EGL_BAD_ALLOC");
+		expression.setNiceName("EGL_BAD_ALLOC");
+		expressions[6] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("persona died");
+		expression.setNiceName("persona died");
+		expressions[7] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("FATAL EXCEPTION");
+		expression.setNiceName("FATAL EXCEPTION");
+		expressions[8] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("AudioFlinger\\.\\*buffer overflow");
+		expression.setNiceName("AudioFlinger\\.\\*buffer overflow");
+		expressions[9] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("STATE_CRASH_RESET");
+		expression.setNiceName("STATE_CRASH_RESET");
+		expressions[10] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("FATAL_EXEPTION");
+		expression.setNiceName("FATAL_EXEPTION");
+		expressions[11] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("FATAL EXEPTION");
+		expression.setNiceName("FATAL EXEPTION");
+		expressions[12] = expression;
+		
+		expression = new LogParserExpression();
+		expression.setExpression("fatal exception");
+		expression.setNiceName("fatal exception");
+		expressions[13] = expression;
+		
+		LogParser logParser = new LogParser(expressions);
+		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
 	}
 	
 
