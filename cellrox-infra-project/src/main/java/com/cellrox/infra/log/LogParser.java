@@ -9,6 +9,7 @@ import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.scenario.SystemObjectOperation;
 import jsystem.utils.FileUtils;
 
+import com.cellrox.infra.enums.Color;
 import com.cellrox.infra.object.LogParserExpression;
 
 public class LogParser extends SystemObjectOperation {
@@ -31,6 +32,7 @@ public class LogParser extends SystemObjectOperation {
 				countText.analyze();
 				int result = countText.getActualCount();
 				if (result > 0) {
+					expression.setColor(Color.RED);
 					log = log.replace(expression.getExpression(), "<b><font size=\"4\" "+expression.getHtmlColor()+">" + expression.getExpression()
 							+ "</font></b>");
 					report.report(
