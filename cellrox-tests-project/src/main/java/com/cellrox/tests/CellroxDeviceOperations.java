@@ -82,6 +82,30 @@ public class CellroxDeviceOperations extends TestCase {
 
 	}
 	
+	
+    /**
+     * Function open recent applications and removes all of the list 
+     * */
+    @Test
+    @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,priv" )
+    public void closeAllApplications() throws Exception {
+    	
+    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
+    	
+    	for(int i=0; i<20; i++){
+    		try{
+    			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName("android.widget.RelativeLayout"), Direction.LEFT.getDir(), 20);
+    		}
+    		catch(Exception e){
+    			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    			break;
+    		}
+    	}
+    	
+    }
+    
+	
 	/**
 	 * This test validate that both of the persona is exists on the running devices.
 	 * The test was build for 1-2 devices
