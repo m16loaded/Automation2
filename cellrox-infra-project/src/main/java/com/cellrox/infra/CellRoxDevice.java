@@ -250,6 +250,22 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         /**
+         * Return the time as a String
+         * */
+        public String getTheTime() throws Exception {
+        	
+        	cli.connect();
+        	
+        	executeCliCommand("adb -s "+getDeviceSerial()+" shell");
+        	executeCliCommand("date");
+        	String output = cli.getTestAgainstObject().toString().replace("date", "").trim().split(" ")[4];
+        	
+        	cli.disconnect();
+        	
+        	return output;
+        }
+        
+        /**
          * The function get a command and do it in priv and corp, after it the test
          * will verify that there is the same regular expression in both of the
          * personas and check the the wanted groups (etc (\s*),(\d+:\d+),(\S*),(\w*)
@@ -260,7 +276,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         	String [] outputPrivGroupArr = null, outputCorpGroupArr = null;
         	
         	String outputPriv = getPersona(Persona.PRIV).excuteCommand(cmd).trim();
-        	report.report(outputPriv);
         	report.report(outputPriv);
         	String outputCorp = getPersona(Persona.CORP).excuteCommand(cmd).trim();
         	report.report(outputCorp);
@@ -1485,7 +1500,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          */
         public boolean waitForLineInTomcat(String line, long timeout, long interval) throws Exception {
                 final long start = System.currentTimeMillis();
-                while (!getLogcatLastLines(100).contains(line)) {
+                while (!getLogcatLastLines(500).contains(line)) {
                         if (System.currentTimeMillis() - start > timeout) {
                                 report.report("Could not find the line " + line, Reporter.FAIL);
                                 return false;
@@ -1747,6 +1762,16 @@ public class CellRoxDevice extends SystemObjectImpl {
         		clickOnSelectorByUi(objs[indexOfElement], persona, dir);
         	}
     }
+        
+        public void validateWantedPersona(Persona persona) throws Exception {
+    		Persona current = getForegroundPersona();
+    		if (current != persona) {
+    			report.report("Persona " + persona + " isn't in the Foreground", Reporter.FAIL);
+    		} else {
+    			report.report("Persona " + persona + " is in the Foreground");
+    		}
+    		
+        }
         
     	public void switchPersona(Persona persona) throws Exception {
     		Persona current = getForegroundPersona();
