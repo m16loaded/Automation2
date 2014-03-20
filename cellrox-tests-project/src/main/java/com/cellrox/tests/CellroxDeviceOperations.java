@@ -89,7 +89,7 @@ public class CellroxDeviceOperations extends TestCase {
      * Function open recent applications and removes all of the list 
      * */
     @Test
-    @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,persona" )
+    @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,persona")
     public void closeAllApplications() throws Exception {
     	try{
     		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
