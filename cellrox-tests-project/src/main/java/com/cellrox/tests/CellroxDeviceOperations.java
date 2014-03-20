@@ -12,6 +12,7 @@ import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 
+import org.apache.tools.ant.taskdefs.Sleep;
 import org.junit.Test;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -88,16 +89,20 @@ public class CellroxDeviceOperations extends TestCase {
      * Function open recent applications and removes all of the list 
      * */
     @Test
-    @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,priv" )
+    @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,persona" )
     public void closeAllApplications() throws Exception {
     	try{
     		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
     	}
     	catch(Exception e) {}
+    	Thread.sleep(500);
     	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
-    	
+    	Thread.sleep(800);
     	for(int i=0; i<20; i++){
     		try{
+    			if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription("Apps"))) {
+    				break;
+    			}
     			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName("android.widget.RelativeLayout"), Direction.LEFT.getDir(), 20);
     		}
     		catch(Exception e){
@@ -106,10 +111,9 @@ public class CellroxDeviceOperations extends TestCase {
     			break;
 	    		}
 	        	catch(Exception e1) {break;}
-    			
     		}
     	}
-    	
+    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
     }
     
 	
@@ -1026,13 +1030,18 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Print all the network data from ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void printNetworkData() throws Exception {
 		report.startLevel("Click Here for Device Net Configurations ("+persona+")");
-		report.report("********netcfg********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("netcfg"));
-		report.report("********ip route********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip route"));
-		report.report("********netstat********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("netstat"));
-		report.report("********ip rule********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip rule"));
-		report.report("********ip route list table main********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip route list table main"));
-		report.report("********properties********\n" +", net.mobile : " + devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("net.mobile")
+		try{
+			report.report("********netcfg********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("netcfg"));
+			report.report("********ip route********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip route"));
+//			report.report("********netstat********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("netstat"));//TODO to check this one
+			report.report("********ip rule********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip rule"));
+			report.report("********ip route list table main********\n" + devicesMannager.getDevice(currentDevice).getPersona(persona).excuteCommand("ip route list table main"));
+			report.report("********properties********\n" +", net.mobile : " + devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("net.mobile")
 				+", net.wifi : "+ devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("net.wifi") + ", network.wifi : " + devicesMannager.getDevice(currentDevice).getPersona(persona).getProp("network.wifi"));
+		}
+		catch(Exception e) {
+			report.report("Timeout exception fron the server, this is all the data that you will get."); 
+		}
 		report.stopLevel();
 	}
 
@@ -1815,17 +1824,15 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Call to : \"${phoneNumber}\" : ${persona} and answer, the caller : ${currentDevice} .", paramsInclude = { "currentDevice,phoneNumber,persona" })
 	public void callToAnotherPhoneAndAnswer() throws Exception {
 		try{
-//			currentDevice = DeviceNumber.SECONDARY;
-//			phoneNumber = "0523039606";
-//			persona = Persona.PRIV;
 			
 			try {
 				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
 			}
 			catch (Exception e) {}
 			devicesMannager.getDevice(DeviceNumber.PRIMARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(persona).pressKey("home");
 			devicesMannager.getDevice(DeviceNumber.SECONDARY).switchPersona(persona);
-
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(persona).pressKey("home");
 
 			report.startLevel("Calling to : "+ phoneNumber);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
