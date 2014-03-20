@@ -1519,11 +1519,16 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, persona);
 	}
 	
+	/**
+	 * For validating more than one string use the fill the text with ;; seperator
+	 * example text = "a;;b;;c"
+	 * */
 	@Test
 	@TestProperties(name = "Validate  expression in the cli cell command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona,numberOfTimes" })
 	public void validateExpressionCliCommandCellPersona() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, text, regularExpression, persona, numberOfTimes);
+		devicesMannager.getDevice(currentDevice).validateExpressionCliCommandCell(cliCommand, regularExpression, persona, numberOfTimes, text.split(";;"));
 	}
+	
 
 	@Test
 	@TestProperties(name = "download the application: \"${appFullPath}\"", paramsInclude = { "currentDevice,appFullPath" })
@@ -1551,11 +1556,15 @@ public class CellroxDeviceOperations extends TestCase {
 			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
 				if (System.currentTimeMillis() - start > Integer.valueOf(10 * 1000)) {
 					report.report("Could not find UiObject with text EDITORS' CHOICE after " + Integer.valueOf(10 * 1000) / 1000
-							+ " sec.", Reporter.WARNING);
+							+ " sec.");
 					break;
 				}
 				Thread.sleep(1500);
 			}
+			if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Accept"))){
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Accept"));
+			}
+			
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
@@ -2458,6 +2467,5 @@ public class CellroxDeviceOperations extends TestCase {
 
 
 
-	
 
 }
