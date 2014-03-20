@@ -89,8 +89,10 @@ public class CellroxDeviceOperations extends TestCase {
     @Test
     @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,priv" )
     public void closeAllApplications() throws Exception {
-    	
-    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    	try{
+    		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    	}
+    	catch(Exception e) {}
     	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
     	
     	for(int i=0; i<20; i++){
@@ -98,8 +100,12 @@ public class CellroxDeviceOperations extends TestCase {
     			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName("android.widget.RelativeLayout"), Direction.LEFT.getDir(), 20);
     		}
     		catch(Exception e){
-    			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    			try {
+    				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
     			break;
+	    		}
+	        	catch(Exception e1) {break;}
+    			
     		}
     	}
     	
