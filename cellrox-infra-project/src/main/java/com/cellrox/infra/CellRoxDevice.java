@@ -1622,8 +1622,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         }
         
-	public void validateExpressionCliCommandCell(String cliCommand, String expression, boolean isRegularExpression,
-			Persona persona, int numberOfTries) throws Exception {
+	public void validateExpressionCliCommandCell(String cliCommand, boolean isRegularExpression,
+			Persona persona, int numberOfTries, String [] expressions) throws Exception {
 		boolean isPass = false;
 
 		cli.connect();
@@ -1640,17 +1640,27 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("");
 
 		while (numberOfTries > 0 && !isPass) {
-			executeCliCommand(cliCommand);
-			FindText findText = new FindText(expression, isRegularExpression);
-			findText.setTestAgainst(cli.getTestAgainstObject());
-			findText.analyze();
-			isPass = findText.getStatus();
+			for (String expression : expressions) {
+				executeCliCommand(cliCommand);
+				FindText findText = new FindText(expression, isRegularExpression);
+				findText.setTestAgainst(cli.getTestAgainstObject());
+				findText.analyze();
+				if(findText.getStatus()) {
+					isPass = true;
+					break;
+				}
+			}
 			numberOfTries--;
 			Thread.sleep(1000);
+			
 		}
 
 		if (!isPass) {
-			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
+			StringBuilder longExpression = new StringBuilder();
+			for (String expression : expressions) {
+				longExpression.append(expression + ", ");
+			}
+			report.report("Couldn't find the texts : " + longExpression, Reporter.FAIL);
 		}
 		cli.disconnect();
 
