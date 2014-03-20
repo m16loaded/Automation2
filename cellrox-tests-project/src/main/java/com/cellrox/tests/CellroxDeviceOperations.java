@@ -48,6 +48,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private boolean exceptionThrower = true;
 	// all the following string are for general function that use father,son
 	private String fatherClass, fatherDescription, fatherText, fatherIndex, childClass, childDescription, childText, childIndex, childClassName;
+	private String grandfatherClass, grandfatherIndex;
 	private String cliCommand;
 	private boolean regularExpression = false;
 	private String appFullPath;
@@ -792,6 +793,15 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	/**
+	 * The test pass if the wanted persona is the one that is on the screen
+	 * */
+	@Test
+	@TestProperties(name = "Validate that ${persona} is on Foreground ", paramsInclude = { "currentDevice,persona" })
+	public void validateWantedPersona() throws Exception {
+		devicesMannager.getDevice(currentDevice).validateWantedPersona(persona);
+	}
+	
+	/**
 	 * The function finds the location of the wanted ui object and click on it in the middle of it location
 	 * */
 	@Test
@@ -1140,6 +1150,103 @@ public class CellroxDeviceOperations extends TestCase {
 	    else
 	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
 	}
+	
+	
+//	/**
+//	 * 
+//	 * 
+//	 * */
+//	@Test
+//	@TestProperties(name = "",paramsInclude = {"currentDevice,presona"})
+//	public void setTheAlarmClockTwoMinutesForward() throws Exception {
+//		
+//		persona = Persona.PRIV;
+//		devicesMannager.getDevice(currentDevice).connectToServers();
+//		
+//		devicesMannager.getDevice(currentDevice).switchPersona(persona);
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+//		
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Clock");
+//		
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Alarm"));
+//		
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Add alarm"));
+//		
+//		String time = devicesMannager.getDevice(currentDevice).getTheTime();
+//		
+//		//click on the hour
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(0).setText("12"));
+//		//hours
+//		if(Integer.valueOf(time.split(":")[0]) > 13) {
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("PM"));
+//		}
+//		
+//		int val = Integer.valueOf(time.split(":")[0])%12;
+//		if (val == 0) {
+//			val = 12;
+//		}
+//		
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText(String.valueOf(val)));
+//		
+//		///click on the min
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(0).setText("00"));
+//		//mins
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText(String.valueOf((((Integer.valueOf(time.split(":")[1]))%5)+1)*5)));
+//		
+//	}
+	
+	
+	/**
+	 * This test :
+	 * 1. get the return result from a class of the child from the father
+	 * 2. validate that the expectedLine is exist in regex pattern
+	 * 3. validate that the number is smaller that the first group of the pattern
+	 * */
+	@Test
+	@TestProperties(name = "Validate Expression is ${size} with Class \"${childClass}\" than ${expectedLine} from the father", paramsInclude =
+						{ "currentDevice,persona,childClass,childIndex,expectedLine,expectedNumber,fatherClass,fatherIndex,size,grandfatherClass,grandfatherIndex" })
+	public void validateExpressionIsBiggerByClassAndFatherAndGrandfather() throws Exception {
+		
+		//getting the father id
+		Selector grandfather = new Selector().setClassName(grandfatherClass).setIndex(Integer.valueOf(grandfatherIndex));
+		String grandfatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(grandfather);
+		
+		report.report("The grandfather id : " + grandfatherInstance);
+		
+		Selector father = new Selector().setClassName(fatherClass).setIndex(Integer.valueOf(fatherIndex));
+
+		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(grandfatherInstance, father);
+
+//		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona).getUiObject(father);
+		report.report("The father id : " + fatherInstance);
+		
+		report.report("bout to validate expression is smaller than : " +expectedNumber);
+		String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, new Selector().setClassName(childClass).setIndex(Integer.valueOf(childIndex)));
+		
+		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(objectId);
+		report.report("The return result : "+res);
+		Pattern pattern = Pattern.compile(expectedLine);
+	    Matcher matcher = pattern.matcher(res);
+
+	    if(matcher.find()) {
+	        	report.report("Find : " + expectedLine + " in : " +res);
+	        	String number = matcher.group(1);
+	        	boolean isBigger;
+	        	if(size == Size.Bigger) 
+	        		isBigger = Double.valueOf(number) > Double.valueOf(expectedNumber);
+	        	else 
+	        		isBigger = Double.valueOf(number) < Double.valueOf(expectedNumber);
+	        	
+	        	if(isBigger) 
+	        		report.report("The value is smaller than : "+res);
+	        	else 
+	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
+	    }
+	    else
+	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);
+	}
+	
+	
 	
 
 	@Test
@@ -2471,7 +2578,21 @@ public class CellroxDeviceOperations extends TestCase {
 		this.indexOfSelector = indexOfSelector;
 	}
 
+	public String getGrandfatherClass() {
+		return grandfatherClass;
+	}
 
+	public void setGrandfatherClass(String grandfatherClass) {
+		this.grandfatherClass = grandfatherClass;
+	}
+
+	public String getGrandfatherIndex() {
+		return grandfatherIndex;
+	}
+
+	public void setGrandfatherIndex(String grandfatherIndex) {
+		this.grandfatherIndex = grandfatherIndex;
+	}
 
 
 }
