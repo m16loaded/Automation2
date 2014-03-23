@@ -28,6 +28,7 @@
         <antcallback target="t12"/>
         <antcallback target="t13"/>
         <antcallback target="t14"/>
+        <antcallback target="t15"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -119,13 +120,21 @@
     </target>
     <target name="t11">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="1d18f44b-f2fb-46e6-9c4c-cf1274a285ce"/>
+            <sysproperty key="jsystem.uuid" value="92117fcd-bc76-40d5-a691-fe7b228719c1"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByClassName"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByDesc"/>
         </jsystem>
     </target>
     <target name="t12">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="da9c2052-d609-4039-83b6-af184315f61f"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.waitByTextContains"/>
+        </jsystem>
+    </target>
+    <target name="t13">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="b899a2bc-3211-4d07-9516-193eb9dd0313"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -133,7 +142,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.clickByText"/>
         </jsystem>
     </target>
-    <target name="t13">
+    <target name="t14">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="fb769b16-773b-4fb9-9c9e-e2c553eb4324"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -141,7 +150,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
         </jsystem>
     </target>
-    <target name="t14">
+    <target name="t15">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="87b2ccb8-684f-484d-a754-18eebddf1810"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
