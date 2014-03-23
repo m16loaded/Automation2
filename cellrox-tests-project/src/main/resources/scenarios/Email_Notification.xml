@@ -45,6 +45,7 @@
         <antcallback target="t29"/>
         <antcallback target="t30"/>
         <antcallback target="t31"/>
+        <antcallback target="t32"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -272,13 +273,21 @@
     </target>
     <target name="t28">
         <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="dbfdeaa9-dd0b-4015-9d24-35af157a13c3"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.waitByTextContains"/>
+        </jsystem>
+    </target>
+    <target name="t29">
+        <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="59e71f79-dbf1-46e7-bf16-959b31e4ad21"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.waitByText"/>
         </jsystem>
     </target>
-    <target name="t29">
+    <target name="t30">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="fe179310-9d12-44e3-a662-aa9ecf01885f"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -286,7 +295,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.clickByDesc"/>
         </jsystem>
     </target>
-    <target name="t30">
+    <target name="t31">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="e6bbfd2d-dded-4c24-a28c-3c6799b08f31"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -294,7 +303,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
         </jsystem>
     </target>
-    <target name="t31">
+    <target name="t32">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="edfc1776-07b4-49ad-a55d-6747ab7a1a9d"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
