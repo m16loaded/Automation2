@@ -1783,7 +1783,12 @@ public class CellRoxDevice extends SystemObjectImpl {
     			if (current == persona) {
     				report.report("Switch to " + persona);
     			} else {
-    				report.report("Could not Switch to " + persona, Reporter.FAIL);
+    				report.report("Could not Switch to " + persona +" for the first time.");
+    				if (current == persona) {
+        				report.report("Switch to " + persona);
+        			} else {
+        				report.report("Could not Switch to " + persona, Reporter.FAIL);
+        			}
     			}
     		}
     	}
