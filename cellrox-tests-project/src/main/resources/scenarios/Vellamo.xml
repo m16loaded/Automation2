@@ -40,7 +40,7 @@
     </target>
     <target name="t0">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="9233fc47-f2c2-47fd-af73-c526fb029edd"/>
+            <sysproperty key="jsystem.uuid" value="258a7528-a6af-4a09-b316-51c5839b3bf0"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
@@ -48,7 +48,7 @@
     </target>
     <target name="t1">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="2e75e18d-5921-4aa7-be7d-83ccc1520a73"/>
+            <sysproperty key="jsystem.uuid" value="00015b81-c8b3-42a6-8941-f5ac7116aab7"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
