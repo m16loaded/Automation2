@@ -96,7 +96,15 @@ public class CellroxDeviceOperations extends TestCase {
     	}
     	catch(Exception e) {}
     	Thread.sleep(500);
-    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
+    	try {
+    		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
+    	} catch(Exception e){
+    		try {
+        		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
+        	} catch(Exception e1){
+        		report.report("Recent apps button wasn't opened.",Reporter.FAIL);
+        	}	
+    	}
     	Thread.sleep(800);
     	for(int i=0; i<20; i++){
     		try{
