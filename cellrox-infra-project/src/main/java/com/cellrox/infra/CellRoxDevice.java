@@ -1773,22 +1773,33 @@ public class CellRoxDevice extends SystemObjectImpl {
     		
         }
         
+        //TODO - just added the home press in the seconed try - nees to check that this piece isn't making any problems.
     	public void switchPersona(Persona persona) throws Exception {
     		Persona current = getForegroundPersona();
     		if (current == persona) {
     			report.report("Persona " + persona + " is Already in the Foreground");
     		} else {
-    			getPersona(current).click(5, 5);//(5, 5);
+    			getPersona(current).click(5, 5);
     			current = getForegroundPersona();
     			if (current == persona) {
     				report.report("Switch to " + persona);
     			} else {
     				report.report("Could not Switch to " + persona +" for the first time.");
+//    				report.report("About to press home on persona : " +current + ", it might be the reason that the persona couldn't pass.");
+//    				getPersona(current).pressKey("home");
+    				current = getForegroundPersona();
     				if (current == persona) {
-        				report.report("Switch to " + persona);
-        			} else {
-        				report.report("Could not Switch to " + persona, Reporter.FAIL);
-        			}
+    	    			report.report("Persona " + persona + " is in the Foreground");
+    	    		}
+    				else {
+	        			getPersona(current).click(5, 5);
+	        			current = getForegroundPersona();
+	    				if (current == persona) {
+	        				report.report("Switch to " + persona);
+	        			} else {
+	        				report.report("Could not Switch to " + persona, Reporter.FAIL);
+	        			}
+    				}
     			}
     		}
     	}
