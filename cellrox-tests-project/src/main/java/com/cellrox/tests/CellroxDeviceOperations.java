@@ -91,6 +91,11 @@ public class CellroxDeviceOperations extends TestCase {
     @Test
     @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,persona")
     public void closeAllApplications() throws Exception {
+    	closeAllApplicationsFunction();
+    }
+    
+    
+    public void closeAllApplicationsFunction() throws Exception {
     	try{
     		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
     	}
@@ -1402,64 +1407,6 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	
-//	/**
-//	 *	this function making all the first time wizard
-//	 * */
-//	@Test
-//	@TestProperties(name = "First Time Wizard : ${user} , ${password}", paramsInclude = {"currentDevice,persona,user,password"})
-//	public void firstTimeWizard() throws Exception {	
-//		
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Agree"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("SKip"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Start"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("SKip"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Skip anyway"));
-//		
-//		if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("No"))) {
-//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("No"));
-//		}
-//		if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Not now"))) {
-//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Not now"));
-//		}
-//		
-//		
-//		
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google & Location", new Selector[]{new Selector().setText("Google & Location")}
-//			, new Selector().setDescription("Next"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).registerClickUiObjectWatcher("Google services", new Selector[]{new Selector().setText("Google services")}
-//		, new Selector().setDescription("Next"));
-//		devicesMannager.getDevice(currentDevice).getPersona(persona).runWatchers();
-//		
-//		
-//		try {
-//			timeout = "20000";
-//			boolean isExist = false;
-//			final long start = System.currentTimeMillis();
-//			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Yes"))) {
-//				if (System.currentTimeMillis() - start > Integer.valueOf(timeout)) {
-//					report.report("Couldn't find the text 'Yes'.");
-//					isExist=true;
-//				}
-//					Thread.sleep(1500);
-//			}
-//			if(isExist) {
-//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Yes"));
-//				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setText("Email"), user);
-//				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText").setIndex(1), password);
-//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.Button").setIndex(2));
-//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
-//			}
-//			
-//			Thread.sleep(9000);
-//			
-//		}
-//		catch(Exception e) {
-//			
-//		}
-//
-//	}
-	
 	
 	/**
 	 *	this function is passing the email password in the first time wizard if exist.
@@ -1695,11 +1642,16 @@ public class CellroxDeviceOperations extends TestCase {
 			if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Accept"))){
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Accept"));
 			}
-			
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
-			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+			}
+			catch(Exception e) {
+				report.report("First time of open the app store didn't succeed, about to try for the seconed time.");
+				closeAppStoreAndOpenFromBegining(currentDevice, persona, appName, text);
+			}
 			//check if the application already exist
 			
 			boolean isAppExist = false;
@@ -1738,6 +1690,41 @@ public class CellroxDeviceOperations extends TestCase {
 		
 	}
 	
+	/**
+	 * This function was written to reciver from situations of fallings of the app store
+	 * @throws Exception 
+	 * */
+	private void closeAppStoreAndOpenFromBegining(DeviceNumber currentDevice, Persona persona, String appName , String text) throws Exception {
+		
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		
+		closeAllApplications();
+		
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Play Store");
+		long start = System.currentTimeMillis();
+		while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
+			if (System.currentTimeMillis() - start > Integer.valueOf(10 * 1000)) {
+				report.report("Could not find UiObject with text EDITORS' CHOICE after " + Integer.valueOf(10 * 1000) / 1000
+						+ " sec.");
+				break;
+			}
+			Thread.sleep(1500);
+		}
+		if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Accept"))){
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Accept"));
+		}
+		try {
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+		}
+		catch(Exception e) {
+			report.report("Tried to open the play store for the seconed time and still didn't get it", Reporter.FAIL);
+		}
+		
+	}
+	
 	
 	/**
 	 * This test uninstall the wanted application from the Play store
@@ -1766,12 +1753,16 @@ public class CellroxDeviceOperations extends TestCase {
 				}
 				Thread.sleep(1500);
 			}
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
-			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
-			
-			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
-			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
-			
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+			}
+			catch(Exception e) {
+				report.report("First time of open the app store didn't succeed, about to try for the seconed time.");
+				closeAppStoreAndOpenFromBegining(currentDevice, persona, appName, text);
+			}
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("UNINSTALL"));
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
 					
@@ -2395,37 +2386,22 @@ public class CellroxDeviceOperations extends TestCase {
 		return y;
 	}
 
-	/**
-	 * @param y the y to set
-	 */
 	public void setY(String y) {
 		this.y = y;
 	}
 
-	/**
-	 * @return the x
-	 */
 	public String getX() {
 		return x;
 	}
 
-	/**
-	 * @param x the x to set
-	 */
 	public void setX(String x) {
 		this.x = x;
 	}
 
-	/**
-	 * @return the appName
-	 */
 	public String getAppName() {
 		return appName;
 	}
 
-	/**
-	 * @param appName the appName to set
-	 */
 	public void setAppName(String appName) {
 		this.appName = appName;
 	}
@@ -2438,79 +2414,46 @@ public class CellroxDeviceOperations extends TestCase {
 		this.expectedNumber = expectedNumber;
 	}
 
-	/**
-	 * @return the packageName
-	 */
 	public String getPackageName() {
 		return packageName;
 	}
 
-	/**
-	 * @param packageName the packageName to set
-	 */
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
 	}
 
-	/**
-	 * @return the isDeviceEncrypted
-	 */
 	public boolean isDeviceEncrypted() {
 		return deviceEncrypted;
 	}
 
-	/**
-	 * @param isDeviceEncrypted the isDeviceEncrypted to set
-	 */
 	public void setDeviceEncrypted(boolean isDeviceEncrypted) {
 		this.deviceEncrypted = isDeviceEncrypted;
 	}
 
-	/**
-	 * @return the applyUpdateLocation
-	 */
 	public String getApplyUpdateLocation() {
 		return applyUpdateLocation;
 	}
 
-	/**
-	 * @param applyUpdateLocation the applyUpdateLocation to set
-	 */
 	public void setApplyUpdateLocation(String applyUpdateLocation) {
 		this.applyUpdateLocation = applyUpdateLocation;
 	}
 
-	/**
-	 * @return the phoneNumber
-	 */
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	/**
-	 * @param phoneNumber the phoneNumber to set
-	 */
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-	/**
-	 * @return the messageContent
-	 */
 	public String getMessageContent() {
 		return messageContent;
 	}
 
-	/**
-	 * @param messageContent the messageContent to set
-	 */
 	public void setMessageContent(String messageContent) {
 		this.messageContent = messageContent;
 	}
 
-	/**
-	 * @return the size
-	 */
 	public Size getSize() {
 		return size;
 	}
