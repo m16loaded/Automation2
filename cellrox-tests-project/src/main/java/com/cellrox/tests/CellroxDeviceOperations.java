@@ -104,6 +104,7 @@ public class CellroxDeviceOperations extends TestCase {
     				break;
     			}
     			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName("android.widget.RelativeLayout"), Direction.LEFT.getDir(), 20);
+    			Thread.sleep(300);
     		}
     		catch(Exception e){
     			try {
