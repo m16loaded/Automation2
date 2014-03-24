@@ -139,7 +139,9 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		boolean status = false;
 		//first to click on the correct checkbox
 		
-		clickOnTheDeviceCheckBox(imei , macAdr);
+		if(!clickOnTheDeviceCheckBox(imei , macAdr)){
+			report.report("Couldn't find the macAdr : " + macAdr +", or imei : "+imei);
+		}
 		
 		removeBtn.click();
 		
