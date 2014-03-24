@@ -63,9 +63,6 @@ public class MDMOperation extends TestCase {
 		//step 1
 //		localLocation = new File("/home/topq/Desktop/unenroll.zip");
 		final String mobileFileLocation = "/sdcard/unenroll.zip";
-		
-//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-		/*devicesMannager.getDevice(currentDevice).connectToServers();*/
 
 		//push
 		devicesMannager.getDevice(currentDevice).pushFileToDevice(localLocation.getAbsolutePath(), mobileFileLocation);
@@ -305,7 +302,6 @@ public class MDMOperation extends TestCase {
 					report.report("Activation code for : "+ownerName + " found : " + activationCode);
 					return activationCode;
 				} 
-				
 			}
 		}
 		report.report("Activation code for : "+ownerName + "was not found",Reporter.FAIL);
