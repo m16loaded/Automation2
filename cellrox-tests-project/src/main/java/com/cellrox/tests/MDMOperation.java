@@ -29,20 +29,6 @@ public class MDMOperation extends TestCase {
 
 
 
-	/**
-	  * This test is needed for the first run of the webDriver
-	  * */
-	 @Test
-	 @TestProperties(name = "Init Web Driver", paramsInclude = {""})
-	 public void initWebDriver() throws Exception {
-//		System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
-//	    driver = new ChromeDriver();
-//		 initTheWebDriver();
-		 
-		 System.out.println("dfgdfgdf");
-	 }
-	 
-
 
 	/**
 	 * This is step 1 in the activation.
@@ -61,7 +47,6 @@ public class MDMOperation extends TestCase {
 	@TestProperties(name = "Unactivate Device With unenroll.zip", paramsInclude = {"currentDevice,localLocation"})
 	public void unactivateDevice() throws Exception {
 		//step 1
-//		localLocation = new File("/home/topq/Desktop/unenroll.zip");
 		final String mobileFileLocation = "/sdcard/unenroll.zip";
 
 		//push
@@ -103,7 +88,6 @@ public class MDMOperation extends TestCase {
 	@TestProperties(name = "Login To MDM", paramsInclude = {"mdmUser,mdmPassword"})
 	public void loginToMDM() throws Exception {
 		//step2
-//		devicesMannager.getDevice(currentDevice).connectToServers();
 		CellroxMdmLoginPage loginPage = new CellroxMdmLoginPage(driver, siteUrl);
 		loginPage.login(mdmUser.trim(), mdmPassword.trim());
 	}
@@ -117,7 +101,6 @@ public class MDMOperation extends TestCase {
 	@TestProperties(name = "Remove device from MDM device list", paramsInclude = {"mdmPassword"})
 	public void removeDevicefromMdmDeviceList() throws Exception {
 		//step2
-//		devicesMannager.getDevice(currentDevice).connectToServers();
 		
 		CellroxAutomationDevicesAbstractPage automationDevicesPage = new CellroxAutomationDevicesAbstractPage(driver, siteUrl);
 		
@@ -201,7 +184,6 @@ public class MDMOperation extends TestCase {
 		//to get the https://mdm-qa.cellrox.com/automation/devices.json and to get the activation_code
 		//to click add information , to enter to the device, click on the next and than on reboot
 		
-		
 	}
 	
 	/**
@@ -213,10 +195,8 @@ public class MDMOperation extends TestCase {
 	@Test
 	@TestProperties(name = "Validate Activated Persona", paramsInclude = {"ownerName,currentDevice"})
 	public void validateActivatedPersona() throws Exception {
-		//step 4
-//		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-//		devicesMannager.getDevice(currentDevice).connectToServers();
 		
+		//step 4
 		//open 
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).wakeUp();
 		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
@@ -243,7 +223,7 @@ public class MDMOperation extends TestCase {
 		
 		devicesPage.validateDataDeviceDetails(imei, macAdr, compareMap, 10* 60 *1000);
 		
-		//TODO step 4
+		//step 4
 		//to validate there is two personas inside of the phone and
 		//to go to the mdm devices and to click on the device and find the results, max time is 5 min
 	}
@@ -306,32 +286,9 @@ public class MDMOperation extends TestCase {
 		}
 		report.report("Activation code for : "+ownerName + "was not found",Reporter.FAIL);
 		return null;
-		
-		
-//		String activationCode = null;
-//		driver.get(siteUrl + "devices.json");
-//		WebElement we = driver.findElement(By.cssSelector("html>body>pre"));
-//		String json = we.getText();
-//		JSONParser parser = new JSONParser();
-//		Object obj = parser.parse(json);
-//		JSONArray jsonArr = (JSONArray) obj;
-//
-//		for (int i = 0; i < jsonArr.size(); i++) {
-//
-//			JSONObject jsonObject = (JSONObject) jsonArr.get(i);
-//
-//			Boolean active =  (Boolean) jsonObject.get("active");
-//			if (active) {
-//				continue;
-//			}
-//
-//			activationCode = (String) jsonObject.get("activation_code");
-//			report.report("The activation code : " + activationCode);
-//			break;
-//		}
-//
-//		return activationCode;
+
 	}
+	
 	
 	public String getMdmUser() {
 		return mdmUser;
