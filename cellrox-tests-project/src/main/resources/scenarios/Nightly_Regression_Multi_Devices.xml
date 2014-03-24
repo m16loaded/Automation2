@@ -82,15 +82,15 @@
         </jsystem-ant>
     </target>
     <target name="t5">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo.xml">
-            <property name="jsystem.uuid" value="e6d29bfd-91a5-4795-aad5-64ecf86418e1"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Create_Shortcut.xml">
+            <property name="jsystem.uuid" value="5cc23911-cf30-4331-9c11-9361371d2888"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t6">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Create_Shortcut.xml">
-            <property name="jsystem.uuid" value="5cc23911-cf30-4331-9c11-9361371d2888"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo.xml">
+            <property name="jsystem.uuid" value="e6d29bfd-91a5-4795-aad5-64ecf86418e1"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
