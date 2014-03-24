@@ -140,7 +140,7 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		//first to click on the correct checkbox
 		
 		if(!clickOnTheDeviceCheckBox(imei , macAdr)){
-			report.report("Couldn't find the macAdr : " + macAdr +", or imei : "+imei);
+			report.report("Couldn't find the macAdr : " + macAdr +", or imei : "+imei, Reporter.FAIL);
 		}
 		
 		removeBtn.click();
@@ -195,28 +195,28 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		
 	    Thread.sleep(2000);
 		driver.findElement(By.xpath("//*[@value='Apply']")).submit();
-		validateHistoryChanges(imei, macAdr, policy, 5 * 60 * 1000);
+		validateMessagesChanges(imei, macAdr, policy, 5 * 60 * 1000);
 	}
 	
 	
-	public boolean validateHistoryChanges(String imei , String macAdr, String policy, long timeout) throws InterruptedException {
+	public boolean validateMessagesChanges(String imei , String macAdr, String policy, long timeout) throws InterruptedException {
 		
 		long startTime = System.currentTimeMillis();
 		while((System.currentTimeMillis() - startTime) < timeout) {
 			
-			if(validateHistoryChanges(imei, macAdr,  policy)) {
-				report.report("The history is updated in the phone.");
+			if(validateMessagesChanges(imei, macAdr,  policy)) {
+				report.report("The messages is updated in the phone.");
 				return true;
 			}
 			Thread.sleep(1000);
 		}
-		report.report("The history isn't updated in the phone.", Reporter.FAIL);
+		report.report("The messages isn't updated in the phone.", Reporter.FAIL);
 		return true;
 		
 	}
 	
 	
-	public boolean validateHistoryChanges(String imei, String macAdr, String policy) throws InterruptedException {
+	public boolean validateMessagesChanges(String imei, String macAdr, String policy) throws InterruptedException {
 		
 		clickOnTheDeviceImei(imei, macAdr);
 		Thread.sleep(3000);
