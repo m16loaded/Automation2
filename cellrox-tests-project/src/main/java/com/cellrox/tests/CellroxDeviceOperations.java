@@ -12,7 +12,6 @@ import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 
-import org.apache.tools.ant.taskdefs.Sleep;
 import org.junit.Test;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
