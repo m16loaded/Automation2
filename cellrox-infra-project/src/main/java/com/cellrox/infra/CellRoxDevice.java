@@ -65,7 +65,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         //the otaFileLocation is for the jenkins/the local run to know where is the ota file located and what is it name
         private String otaFileLocation;
         private long defaultCliTimeout = 90000;
-//        private long upTime;//TODO to remove this uptime
         private String psString;
         private Set<String> processForCheck = new HashSet<String>();
         private long upTime;
@@ -1783,6 +1782,7 @@ public class CellRoxDevice extends SystemObjectImpl {
     			current = getForegroundPersona();
     			if (current == persona) {
     				report.report("Switch to " + persona);
+    				
     			} else {
     				report.report("Could not Switch to " + persona +" for the first time.");
 //    				report.report("About to press home on persona : " +current + ", it might be the reason that the persona couldn't pass.");
