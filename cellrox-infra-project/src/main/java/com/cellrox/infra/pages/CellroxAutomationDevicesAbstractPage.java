@@ -145,7 +145,7 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		
 		removeBtn.click();
 		
-		Thread.sleep(2000);
+		Thread.sleep(3000);
 		//to check this is a popup
 		List<WebElement> weList = driver.findElements(By.cssSelector("#password"));
 		if(weList.size()>0) {
@@ -155,6 +155,8 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		//to check that im click on the remove
 		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).click();
 		
+		Thread.sleep(3000);
+		driver.get(siteUrl+ "devices");
 		Thread.sleep(3000);
 		weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col4 colt4']/span"));
 		for(int i=0; i<weList.size() ; i++) {
@@ -175,12 +177,12 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 	
 	public void changePolicy(String imei , String macAdr, String policy) throws InterruptedException {
 		
-		
+		Thread.sleep(2000);
 		clickOnTheDeviceCheckBox(imei, macAdr);
 //		clickOnTheDeviceImei(imei, macAdr);
-		Thread.sleep(1000);
-		driver.findElement(By.xpath("//*[@value='CHANGE POLICY']")).click();
 		Thread.sleep(2000);
+		driver.findElement(By.xpath("//*[@value='CHANGE POLICY']")).click();
+		Thread.sleep(5000);
 		
 		WebElement select = driver.findElement(By.id("devicePolicies"));
 	    List<WebElement> options = select.findElements(By.tagName("option"));

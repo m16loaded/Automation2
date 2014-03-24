@@ -128,7 +128,7 @@ public class MDMOperation extends TestCase {
 		String imei = (String) Summary.getInstance().getProperty("IMEI");
 		String macAdr = (String) Summary.getInstance().getProperty("Mac Adress");
 		
-		
+		Thread.sleep(4000);
 		automationDevicesPage.removeDeviceFromMdm(imei, macAdr, mdmPassword);
 
 		// to check the imei of the device and find the correct device, to click the check box
@@ -267,7 +267,7 @@ public class MDMOperation extends TestCase {
 		
 		String imei = (String) Summary.getInstance().getProperty("IMEI");
 		String macAdr = (String) Summary.getInstance().getProperty("Mac Adress");
-		
+		Thread.sleep(3000);
 		devicesPage.changePolicy(imei, macAdr, policy);
 		
 		//while checking the history there is a need to refresh the page
