@@ -1,14 +1,12 @@
 package com.cellrox.tests;
 
+import java.util.List;
 import java.util.Map;
 
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -153,8 +151,6 @@ public class MDMOperation extends TestCase {
 	@TestProperties(name = "Enroll Owner", paramsInclude = {"ownerName,currentDevice"})
 	public void enrollOwner() throws Exception {
 		
-		//step 3
-
 		CellroxOwnerAbstractPage ownerPage = new CellroxOwnerAbstractPage(driver, siteUrl);
 		
 		//click on the owers tab and then click on the correct owner checkbox
@@ -288,33 +284,57 @@ public class MDMOperation extends TestCase {
 
 	/**
 	 * The function gets the owner and return activation code
+	 * @throws InterruptedException 
 	 * */
-	public String getTheActivationCode(String ownerName) throws ParseException {
+	public String getTheActivationCode(String ownerName) throws ParseException, InterruptedException {
 
-		String activationCode = null;
-		driver.get(siteUrl + "devices.json");
-		WebElement we = driver.findElement(By.cssSelector("html>body>pre"));
-		String json = we.getText();
-
-		JSONParser parser = new JSONParser();
-		Object obj = parser.parse(json);
-		JSONArray jsonArr = (JSONArray) obj;
-
-		for (int i = 0; i < jsonArr.size(); i++) {
-
-			JSONObject jsonObject = (JSONObject) jsonArr.get(i);
-
-			Boolean active =  (Boolean) jsonObject.get("active");
-			if (active) {
-				continue;
+		
+		driver.get(siteUrl +"devices");
+		Thread.sleep(3000);
+		//this list is for all the names
+		List<WebElement> weListOwnerNames  = driver.findElements(By.xpath("//div[3]/div/span"));
+		List<WebElement> weListIdImeiActivationCode  = driver.findElements(By.xpath("//div[5]/div/span"));
+		
+		for(int i=0 ; i < weListOwnerNames.size() ; i++) {
+			
+			if(weListOwnerNames.get(i).getText().trim().equals(ownerName)) {
+				//if this is true we find the correct line
+				String activationCode =weListIdImeiActivationCode.get(i).getText();
+				if(activationCode.contains("Activation token:")) {
+					activationCode = activationCode.replace("Activation token:", "").trim();
+					report.report("Activation code for : "+ownerName + " found : " + activationCode);
+					return activationCode;
+				} 
+				
 			}
-
-			activationCode = (String) jsonObject.get("activation_code");
-			report.report("The activation code : " + activationCode);
-			break;
 		}
-
-		return activationCode;
+		report.report("Activation code for : "+ownerName + "was not found",Reporter.FAIL);
+		return null;
+		
+		
+//		String activationCode = null;
+//		driver.get(siteUrl + "devices.json");
+//		WebElement we = driver.findElement(By.cssSelector("html>body>pre"));
+//		String json = we.getText();
+//		JSONParser parser = new JSONParser();
+//		Object obj = parser.parse(json);
+//		JSONArray jsonArr = (JSONArray) obj;
+//
+//		for (int i = 0; i < jsonArr.size(); i++) {
+//
+//			JSONObject jsonObject = (JSONObject) jsonArr.get(i);
+//
+//			Boolean active =  (Boolean) jsonObject.get("active");
+//			if (active) {
+//				continue;
+//			}
+//
+//			activationCode = (String) jsonObject.get("activation_code");
+//			report.report("The activation code : " + activationCode);
+//			break;
+//		}
+//
+//		return activationCode;
 	}
 	
 	public String getMdmUser() {
