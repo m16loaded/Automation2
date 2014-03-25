@@ -205,12 +205,12 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		while((System.currentTimeMillis() - startTime) < timeout) {
 			
 			if(validateMessagesChanges(imei, macAdr,  policy)) {
-				report.report("The messages is updated in the phone.");
+				report.report("The messages tab is updated in the phone after : "+timeout+" milliseconeds.");
 				return true;
 			}
 			Thread.sleep(1000);
 		}
-		report.report("The messages isn't updated in the phone.", Reporter.FAIL);
+		report.report("The messages tab isn't updated in the phone after : "+timeout+" milliseconeds.", Reporter.FAIL);
 		return true;
 		
 	}

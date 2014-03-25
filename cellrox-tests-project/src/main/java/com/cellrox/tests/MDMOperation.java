@@ -57,7 +57,7 @@ public class MDMOperation extends TestCase {
 		//reboot recovery
 		devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot recovery");
 		//wait for 
-		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, false, Persona.PRIV);
 		//init the data of the devices
 		Thread.sleep(40000);
 		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
@@ -175,8 +175,8 @@ public class MDMOperation extends TestCase {
 			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("Error")),Reporter.FAIL);
 			report.report("The device fail to activate.", Reporter.FAIL);
 		}
-		
-		devicesMannager.getDevice(currentDevice).rebootDevice(true, Persona.PRIV , Persona.CORP);
+		//TODO device encrypted for priv after change
+		devicesMannager.getDevice(currentDevice).rebootDevice(true, false, Persona.PRIV , Persona.CORP);
 
 		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();

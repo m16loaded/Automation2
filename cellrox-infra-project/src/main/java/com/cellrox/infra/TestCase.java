@@ -27,6 +27,7 @@ public class TestCase extends SystemTestCase4 {
 	protected String remotefileLocation;
 	protected int doaCrach = 0, personaCrash = 0, deviceCrash = 0, connectionCrash = 0;
 	protected boolean deviceEncrypted = true;
+	protected boolean deviceEncryptedPriv = false;
 	protected DeviceNumber currentDevice = DeviceNumber.PRIMARY;
 
 	protected WebDriver driver;
@@ -129,8 +130,8 @@ public class TestCase extends SystemTestCase4 {
 				// last_kmsg
 				device.printLastKmsg();
 				//here im doning all the thing beside the reboot
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
-				device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+				device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				device.setDeviceAsRoot();
 				//TODO - to check if there is a need for this in the 
 				device.setUpTime(device.getCurrentUpTime());
@@ -148,7 +149,7 @@ public class TestCase extends SystemTestCase4 {
 					report.report("Device : " + device.getDeviceSerial());
 					// last_kmsg
 					device.printLastKmsg();
-					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+					device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 					
 					//this is the check which persona crashed
 					Map<Persona,Integer> mapPerPrOld = new HashMap<Persona, Integer>();
@@ -171,7 +172,7 @@ public class TestCase extends SystemTestCase4 {
 			if(crashHappened) {
 				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 				// sleep
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				// configure
 				device.configureDeviceForAutomation(true);
 				// connect
@@ -292,6 +293,30 @@ public class TestCase extends SystemTestCase4 {
 
 	public void setDriver(WebDriver driver) {
 		this.driver = driver;
+	}
+
+
+
+
+
+
+
+
+
+	public boolean isDeviceEncryptedPriv() {
+		return deviceEncryptedPriv;
+	}
+
+
+
+
+
+
+
+
+
+	public void setDeviceEncryptedPriv(boolean deviceEncryptedPriv) {
+		this.deviceEncryptedPriv = deviceEncryptedPriv;
 	}
 	
 

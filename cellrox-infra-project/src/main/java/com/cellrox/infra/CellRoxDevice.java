@@ -769,11 +769,11 @@ public class CellRoxDevice extends SystemObjectImpl {
          * if adb rejects the command
          * @throws IOException
          */
-        public void rebootDevice(boolean isEncrypted, Persona... personas) throws Exception {
-                rebootDevice(5 * 60 * 1000, isEncrypted, personas);
+        public void rebootDevice(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+                rebootDevice(5 * 60 * 1000, isEncrypted,isEncryptedPriv, personas);
         }
 
-        public void rebootDevice(int timeout, boolean isEncrypted, Persona... personas) throws Exception {
+        public void rebootDevice(int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
                 long currentTime = System.currentTimeMillis();
                 try {
                         sync();
@@ -782,7 +782,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                         Thread.sleep(5000);
                 } catch (Exception e) { }
                 
-                validateDeviceIsOnline(currentTime, timeout, isEncrypted, personas);
+                validateDeviceIsOnline(currentTime, timeout, isEncrypted, isEncryptedPriv,  personas);
                 setDeviceAsRoot();
                 upTime = getCurrentUpTime();
                 setPsString(getPs());
@@ -804,12 +804,12 @@ public class CellRoxDevice extends SystemObjectImpl {
          * if adb rejects the command
          * @throws IOException
          */
-        public boolean rebootRecoveryDevice(boolean isEncrypted, Persona... personas) throws Exception {
+        public boolean rebootRecoveryDevice(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
                 sync();
                 device.executeShellCommand("reboot recovery");
                 report.report("reboot recovery command was sent");
                 Thread.sleep(1000);
-                boolean isUp = validateDeviceIsOnline(isEncrypted, personas);
+                boolean isUp = validateDeviceIsOnline(isEncrypted, isEncryptedPriv, personas);
 //              device = adbController.waitForDeviceToConnect(getDeviceSerial());
                 upTime = getCurrentUpTime();
                 setPsString(getPs());
@@ -825,16 +825,17 @@ public class CellRoxDevice extends SystemObjectImpl {
                return device.executeShellCommand(shellCommand);
         }
 
-        public boolean validateDeviceIsOnline(boolean isEncrypted, Persona... personas) throws Exception {
-                return validateDeviceIsOnline(System.currentTimeMillis(), 10 * 60 * 1000, isEncrypted, personas);
+        public boolean validateDeviceIsOnline(boolean isEncrypted,boolean isEncryptedPriv, Persona... personas) throws Exception {
+                return validateDeviceIsOnline(System.currentTimeMillis(), 10 * 60 * 1000, isEncrypted, isEncryptedPriv, personas);
         }
 
-        public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, Persona... personas) throws Exception {
+        //TODO to add isEncryptedPriv do something
+        public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
                 validateDeviceIsOffline(personas);
                 Thread.sleep(2000);
                 device = adbController.waitForDeviceToConnect(getDeviceSerial());
                 if(isEncrypted) {
-                        validateEncryptedPersonasAreOnline(beginTime, timeout, personas);
+                        validateEncryptedCorpPersonasAreOnline(beginTime, timeout, personas);
                         Thread.sleep(3000);
                         clickOnEncryptedDeviceAfterReboot();
                         return validatePersonasAreOnline(beginTime, timeout, personas);
@@ -878,6 +879,49 @@ public class CellRoxDevice extends SystemObjectImpl {
                 cli.disconnect();
         }
 
+        /**
+         * This function tries to make the device root, if it can't, perform reboot and try again
+         * @throws Exception 
+         * */
+        public void validateDeviceCanBeRoot(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+        	
+        	cli.connect();
+            Thread.sleep(2000);
+            executeCliCommand("adb -s " + getDeviceSerial() + " root");
+            String rootAnswer = cli.getTestAgainstObject().toString();
+            if(!rootAnswer.contains("adbd cannot run as root in production builds")) {
+            	report.report("Device : "+ this.getDeviceSerial()+ " is root now.");
+            }
+            else {
+            	report("adbd cannot run as root in production builds for : "+this.getDeviceSerial()+" , going to reboot.",Reporter.WARNING);
+            	rebootDevice(isEncrypted, isEncryptedPriv, personas);
+            	configureDeviceForAutomation(true);
+            	connectToServers();
+            	Persona persona = Persona.CORP;
+            	getPersona(persona).wakeUp();
+            	switchPersona(persona);
+        		getPersona(persona).click(new Selector().setText("1"));
+        		getPersona(persona).click(new Selector().setText("1"));
+        		getPersona(persona).click(new Selector().setText("1"));
+        		getPersona(persona).click(new Selector().setText("1"));
+        		getPersona(persona).click(new Selector().setDescription("Enter"));
+        		getPersona(persona).pressKey("home");
+        		
+        		switchPersona(Persona.PRIV);
+        		cli.connect();
+                Thread.sleep(2000);
+                executeCliCommand("adb -s " + getDeviceSerial() + " root");
+                rootAnswer = cli.getTestAgainstObject().toString();
+                if(rootAnswer.contains("adbd cannot run as root in production builds")) {
+                	report.report("Device : "+ this.getDeviceSerial()+ " is not root for the seconed time- check this, the tests are going to fall.",Reporter.FAIL);
+                }
+            }
+            
+        	
+        }
+        
+        
+        
         /**
          * validate the device is online by first waiting for the requested
          * persona(s) to shutdown
@@ -960,7 +1004,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @param personas
          * @throws Exception
          */
-		public void validateEncryptedPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+		public void validateEncryptedCorpPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 			boolean online = false;
 			String result = null;
 			while (online != true) {

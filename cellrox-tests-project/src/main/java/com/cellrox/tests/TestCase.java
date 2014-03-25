@@ -6,14 +6,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import junit.framework.SystemTestCase4;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.topq.uiautomator.Selector;
 
@@ -35,6 +33,7 @@ public class TestCase extends SystemTestCase4 {
 	protected String remotefileLocation;
 	protected static int doaCrach = 0, personaCrash = 0 , deviceCrash = 0, connectionCrash = 0;
 	protected boolean deviceEncrypted = true;
+	protected boolean deviceEncryptedPriv = false;
 	protected DeviceNumber currentDevice = DeviceNumber.PRIMARY;
 	protected ImageFlowHtmlReport imageFlowHtmlReport;
 	protected WebDriver driver;
@@ -155,7 +154,7 @@ public class TestCase extends SystemTestCase4 {
 				// last_kmsg
 				device.printLastKmsg();
 				//here im doning all the thing beside the reboot
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				device.setDeviceAsRoot();
 				device.setUpTime(device.getCurrentUpTime());
                 device.setPsString(device.getPs());
@@ -188,7 +187,7 @@ public class TestCase extends SystemTestCase4 {
 						report.report("Error, persona CORP crashed.",Reporter.FAIL);
 					}
 					
-					device.rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+					device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				}
 				
 			}
@@ -200,7 +199,7 @@ public class TestCase extends SystemTestCase4 {
 				
 				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 				// sleep
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				// configure
 				device.configureDeviceForAutomation(true);
 				// connect
@@ -404,6 +403,14 @@ public class TestCase extends SystemTestCase4 {
 
 	public void setDriver(WebDriver driver) {
 		this.driver = driver;
+	}
+
+	public boolean isDeviceEncryptedPriv() {
+		return deviceEncryptedPriv;
+	}
+
+	public void setDeviceEncryptedPriv(boolean deviceEncryptedPriv) {
+		this.deviceEncryptedPriv = deviceEncryptedPriv;
 	}
 	
 

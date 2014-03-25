@@ -433,7 +433,16 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Wait Until Device is Online", paramsInclude = {"currentDevice"})
 	public void validateDeviceIsOnline() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false,false, Persona.PRIV, Persona.CORP);
+	}
+	
+	/**
+	 * This test is validating that the device can run as root, if not it will reboot.
+	 * */
+	@Test
+	@TestProperties(paramsInclude = {"deviceEncrypted, deviceEncryptedPriv"})
+	public void validateDeviceCanBeRoot() throws Exception {
+		devicesMannager.getDevice(currentDevice).validateDeviceCanBeRoot(deviceEncrypted, deviceEncryptedPriv,Persona.PRIV, Persona.CORP);
 	}
 
 	@Test
@@ -733,21 +742,21 @@ public class CellroxDeviceOperations extends TestCase {
 
 	
 	@Test
-	@TestProperties(name = "Reboot Device", paramsInclude = {"deviceEncrypted"})
+	@TestProperties(name = "Reboot Device", paramsInclude = {"deviceEncrypted,deviceEncryptedPriv"})
 	public void rebootDevice() throws Exception {
-		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 	}
 	
 	
 	@Test
-	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "currentDevice,timeout, deviceEncrypted" })
+	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "currentDevice,timeout, deviceEncrypted,deviceEncryptedPriv" })
 	public void rebootDeviceTimout() throws Exception {
-		devicesMannager.getDevice(currentDevice).rebootDevice(Integer.valueOf(timeout), deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(Integer.valueOf(timeout), deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 	}
 
 	
 	@Test
-	@TestProperties(name = "Reboot Recovery", paramsInclude = { "currentDevice,updateVersion, deviceEncrypted" })
+	@TestProperties(name = "Reboot Recovery", paramsInclude = { "currentDevice,updateVersion, deviceEncrypted, deviceEncryptedPriv" })
 	public void rebootRecovery() throws Exception {
 		
 		if (updateVersion) {
@@ -756,10 +765,10 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
 			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /cache/recovery/command");
 		}
-		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted,Persona.PRIV, Persona.CORP);
+		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 		//here i check if the p
 		if(!isUp) {
-			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 		}
 		Thread.sleep(2000);
 	}
@@ -1354,7 +1363,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted" })
+	@TestProperties(name = "Factory Data Reset", paramsInclude = { "currentDevice,persona,deviceEncrypted,deviceEncryptedPriv" })
 	public void factoryDataReset() throws Exception {
 		
 		// devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
@@ -1390,7 +1399,7 @@ public class CellroxDeviceOperations extends TestCase {
 		report.report("Erase everything");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
-		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 		devicesMannager.getDevice(currentDevice).setDataAfterReboot();
 	}
 	
@@ -1978,7 +1987,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	@Test
-	@TestProperties(name = "Validate doa", paramsInclude = { "currentDevice" })
+	@TestProperties(name = "Validate doa", paramsInclude = { "currentDevice,deviceEncrypted,deviceEncryptedPriv" })
 	public void validateDoa() throws Exception {
 		try {
 			 devicesMannager.getDevice(currentDevice).validateDoaCrash();
@@ -1990,10 +1999,10 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("Device : " + devicesMannager.getDevice(currentDevice).getDeviceSerial());
 			// last_kmsg
 			devicesMannager.getDevice(currentDevice).printLastKmsg();
-			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, Persona.PRIV, Persona.CORP);
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 			report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 			// sleep
-			devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, Persona.PRIV, Persona.CORP);
+			devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 			// configure
 			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 			// connect
