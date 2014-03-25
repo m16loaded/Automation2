@@ -903,8 +903,8 @@ public class CellroxDeviceOperations extends TestCase {
 					if(!((devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Connect"))) &&
 							(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Forget"))) &&
 							(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Cancel"))))) {
-						devicesMannager.getDevice(currentDevice).getPersona(persona).setText(
-								new Selector().setClassName("android.widget.EditText").setIndex(1), wifiPassword);
+						
+						devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText").setIndex(1), wifiPassword);
 						devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 					}
 						
