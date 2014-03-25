@@ -793,6 +793,31 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	
+	
+	/**
+	 * This function is mainly used to click on the currect wifi network
+	 * @throws Exception 
+	 */
+	@Test
+	@TestProperties(name ="Click On Son Text ${childText} By Father Class ${fatherClass}", paramsInclude = { "currentDevice,persona,fatherClass,childText"})
+	public void clickOnSonTextByFatherClass() throws Exception {
+//		childText = "cellrox-tplink";
+//		fatherClass="android.widget.LinearLayout";
+//		persona = Persona.PRIV;
+//		devicesMannager.getDevice(currentDevice).connectToServers();
+		try {
+			String id = devicesMannager.getDevice(currentDevice).getPersona(persona).childByText(new Selector().setScrollable(true),
+					new Selector().setClassName(fatherClass), childText, true);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(id, 20000);
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(id, persona);
+		}
+		catch (Exception e) {
+			report.report("Couldn't find "+childText +Reporter.FAIL);
+			return;
+		}
+	}
+	
+	
 	/**
 	 * The function finds the location of the wanted ui object and click on it in the middle of it location
 	 * */
@@ -874,9 +899,15 @@ public class CellroxDeviceOperations extends TestCase {
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Forget"));
 			} else {
 				try {
-					devicesMannager.getDevice(currentDevice).getPersona(persona).setText(
-							new Selector().setClassName("android.widget.EditText").setIndex(1), wifiPassword);
-					devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+					
+					if(!((devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Connect"))) &&
+							(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Forget"))) &&
+							(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Cancel"))))) {
+						devicesMannager.getDevice(currentDevice).getPersona(persona).setText(
+								new Selector().setClassName("android.widget.EditText").setIndex(1), wifiPassword);
+						devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+					}
+						
 					devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Connect"));
 				} catch (Exception e) {
 					devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Connect"));
