@@ -506,7 +506,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         		report.startLevel("click here for kmsg logger");
         		cli.connect();
         		//this is a wanted exception!
-        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 * 1000 , true);
+        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 * 1000 , true, 2);
         	
         		cli.disconnect();
         	} catch (Exception e) { }
@@ -1740,16 +1740,32 @@ public class CellRoxDevice extends SystemObjectImpl {
         	executeCliCommand(Command, silent , defaultCliTimeout);
         }
         private void executeCliCommand(String Command, boolean silent, long timeout) throws Exception {
-        	executeCliCommand(Command, silent , defaultCliTimeout, false);
+        	executeCliCommand(Command, silent , defaultCliTimeout, false , 2);
         }
         
-        private void executeCliCommand(String Command, boolean silent, long timeout, boolean ignoreErrors) throws Exception {
+        private void executeCliCommand(String Command, boolean silent, long timeout, boolean ignoreErrors, int numOfTries) throws Exception {
                 CliCommand cmd = new CliCommand(Command);
                 cmd.setSilent(silent);
                 cmd.setAddEnter(true);
                 cmd.setTimeout(timeout);
                 cmd.setIgnoreErrors(ignoreErrors);
                 cli.handleCliCommand(Command, cmd);
+                //this part is for checking if the adb is down, if so it will restart the connection
+                if(cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) {
+                	if(numOfTries > 1) {
+	                    cmd = new CliCommand("adb kill-server");
+	                    cmd.setSilent(silent);
+	                    cmd.setAddEnter(true);
+	                    cmd.setTimeout(timeout);
+	                    cmd.setIgnoreErrors(ignoreErrors);
+	                    cli.handleCliCommand(Command, cmd);
+	                    //making the reconnect
+	                    configureDeviceForAutomation(true);
+	                    connectToServers();
+	                    //doing the command again
+	                    executeCliCommand(Command, silent, timeout, ignoreErrors, 1);
+                	}
+                }
         }
 
         /**
