@@ -47,7 +47,28 @@ public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 			}
 		}
 		if(!isChecked) {
-			report.report("Click wasn't happened on the checkbox of the owner!", Reporter.FAIL);
+			report.report("Click wasn't happened on the checkbox of the owner!", Reporter.WARNING);
+			Thread.sleep(3000);
+			weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col1 colt1']/span")); 
+			weList2 = driver.findElements(By.cssSelector(".ngSelectionCheckbox")); 
+			
+			isChecked = false;
+			
+			for(int i=0; i<weList.size() ; i++) {
+				WebElement webElement = weList.get(i);
+				String imeiElement = "";
+				imeiElement = webElement.getText();
+				if(imeiElement.trim().equals(ownerName)) {
+					//the wanted element is founded
+					weList2.get(i).click();
+					report.report("Clicking the owner.");
+					isChecked = true;
+					break;
+				}
+			}
+			if(!isChecked) {
+				report.report("Click wasn't happened on the checkbox of the owner for the seconed time!", Reporter.FAIL);
+			}
 		}
 		
 		Thread.sleep(3000);
