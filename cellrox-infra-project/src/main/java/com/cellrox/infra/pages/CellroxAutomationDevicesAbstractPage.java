@@ -49,6 +49,9 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		
 	}
 	
+	/**
+	 * The function chack for the MAC adrress/IMEI and click on the correct checkbox.
+	 * */
 	public boolean clickOnTheDeviceCheckBox(String imei , String macAdr) {
 		boolean status = false;
 		List<WebElement> weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col4 colt4']/span")); 
@@ -179,7 +182,6 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		
 		Thread.sleep(2000);
 		clickOnTheDeviceCheckBox(imei, macAdr);
-//		clickOnTheDeviceImei(imei, macAdr);
 		Thread.sleep(2000);
 		driver.findElement(By.xpath("//*[@value='CHANGE POLICY']")).click();
 		Thread.sleep(5000);
@@ -240,9 +242,6 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 		driver.findElement(By.xpath("//div[1]/div[1]/ul/li[5]/a")).click();
 		return true;
 	}
-	
-	
-	
 	
 	
 

@@ -13,7 +13,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.topq.uiautomator.Selector;
 
-import com.cellrox.infra.TestCase;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.pages.CellroxAutomationDevicesAbstractPage;
 import com.cellrox.infra.pages.CellroxMdmLoginPage;

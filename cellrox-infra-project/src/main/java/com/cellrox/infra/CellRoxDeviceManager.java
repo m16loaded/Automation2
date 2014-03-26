@@ -20,7 +20,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     private int numberOfDevices = 2;
     private static boolean isInit = false;
     private String user, password;
-    //the runStatus String is for the wqanting for the run etc : full/debug
+    //the runStatus String is for the checking the end of the run falling reason, etc : full/debug
     private String runStatus = "debug";
     
     private AdbController adbController;

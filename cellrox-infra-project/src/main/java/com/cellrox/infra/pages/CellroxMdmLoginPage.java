@@ -35,18 +35,18 @@ public class CellroxMdmLoginPage extends CellRoxAbstractPage {
 	public CellRoxMgmMainPage login(String username, String pass) throws Exception {
 		
 		report.report("Login to MDM.");
-		Thread.sleep(1000);//5000);
+		Thread.sleep(1000);
 		PageFactory.initElements(driver, this);
 		user.clear();
 		Thread.sleep(1000);
 		user.sendKeys(username);
-		Thread.sleep(1000);//5000);
+		Thread.sleep(1000);
 		password.clear();
 		Thread.sleep(1000);
 		password.sendKeys(pass);
-		Thread.sleep(1000);//8000);
+		Thread.sleep(1000);
 		loginBtn.submit();
-		Thread.sleep(2000);//8000);
+		Thread.sleep(2000);
 		
 		return new CellRoxMgmMainPage(driver);
 	}
