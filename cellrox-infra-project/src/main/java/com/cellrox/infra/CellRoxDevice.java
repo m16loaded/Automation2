@@ -154,6 +154,10 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         
+        /**
+         * This function send command to the agent and check that the expectedLine returned.<br>
+         * The function will return the command till the timeout.
+         * */
         public void validateInAgent(String cmd, String expectedLine, int timeout) throws Exception {
         	
         	boolean isPass = false;
@@ -212,20 +216,18 @@ public class CellRoxDevice extends SystemObjectImpl {
         	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
         			replace("\n", "").trim();
         	compareMap.put("Android Version", var);
-//        	 //ID/IMEI
+        	 //ID/IMEI
         	cmd = "getprop ril.IMEI";
         	executeCliCommand(cmd);
         	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
         			replace("\n", "").trim();
         	compareMap.put("ID/IMEI", var);
-//        	 //Kernel Version
+        	 //Kernel Version
         	cmd = "uname -r";
         	executeCliCommand(cmd);
         	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
         			replace("\n", "").trim();
         	compareMap.put("Kernel Version", var);
-        	
-    		
     		
     		return compareMap;
     	}
@@ -322,7 +324,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         /**
-         * This function use the get logs to returns the logs to the wanted location
+         * This function use the get logs to returns the logs to the wanted location.
          * */
         public void getTheLogs(LogcatHandler loggerType, String logLocation) throws Exception {
         	cli.connect();
@@ -335,7 +337,10 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
         }
         
-        
+        /**
+         * This function is for saving the uptime.<br>
+         * The uptime is used for checking if there is a device crash. 
+         * */
         public long getCurrentUpTime() throws Exception {
         	String upTime = "";
         	String retAns = executeHostShellCommand("uptime");
@@ -363,11 +368,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         	if(!cli.getTestAgainstObject().toString().contains(getDeviceSerial())) {
         		throw new Exception("no connection, the device" +getDeviceSerial() +" isn't online.");
         	}
-//        	executeCliCommand("adb -s "+getDeviceSerial() +" shell");
-//        	executeCliCommand("cell list state");
-//        	if(!((cli.getTestAgainstObject().toString().contains("priv (3)"))&&(cli.getTestAgainstObject().toString().contains("corp (3)")))) {
-//        		throw new Exception("DOA, the device" +getDeviceSerial() +" isn't online.");
-//        	}
         	cli.disconnect();
         }
         
@@ -402,7 +402,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         /**
-         * This function adding to the summary(Jsystem report) the properties
+         * This function adding to the summary(Jsystem report) the properties.
          * */
         public void addToTheSummarySystemProp() throws Exception {
         	
@@ -518,7 +518,6 @@ public class CellRoxDevice extends SystemObjectImpl {
         }
         
         
-        
         /**
          * This function kills all the automation running processes:
          * 	1. pkill uiautomator
@@ -529,15 +528,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         public void killAllAutomaionProcesses() throws Exception {
         	
         	report.report("Killing all the automation processes.");
-//        	String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
         	cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-          executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-/*          executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == nc ]; then kill -KILL $i; fi; done");
-            executeCliCommand("cd /proc; for i in [0-9]*; do if [ \"$(cat $i/comm)\" == uiautomator ]; then kill -KILL $i; fi; done");*/
-            executeCliCommand("");
-//          executeCliCommand("adb -s " + getDeviceSerial() + " shell ps | grep nc");
-           // executeCliCommand("adb -s " + getDeviceSerial() + " shell pkill -KILL nc");//-x nc"); //TODO kill nc by pid
+            executeCliCommand("adb -s " + getDeviceSerial() + " shell");
             executeCliCommand("pkill -KILL uiautomator");
             executeCliCommand("ps | grep nc");
             String [] retStringArr = cli.getTestAgainstObject().toString().split("\n");
@@ -582,70 +575,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         /**
          * This function will configure a device with all the pipes needed for port
          * forwarding between the host and the cells
-         *
-         * @param privPort
-         * @param corpPort
-         * @throws Exception
          */
-        @Deprecated
-        public void configureDeviceForAutomationOld(boolean runServer) throws Exception {
-                
-        		killAllAutomaionProcesses();
-        	
-                report.startLevel("Configure Device For Automation");
-                
-                cli.connect();
-                executeCliCommand("adb -s " + getDeviceSerial() + " root");
-                executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-                executeCliCommand("rm /data/containers/priv/data/data/noipin_priv");
-                executeCliCommand("rm /data/containers/priv/data/data/noipout_priv");
-                executeCliCommand("rm /data/containers/corp/data/data/noipin_corp");
-                executeCliCommand("rm /data/containers/corp/data/data/noipout_corp");
-                executeCliCommand("mkfifo /data/containers/priv/data/data/noipin_priv");
-                executeCliCommand("mkfifo /data/containers/priv/data/data/noipout_priv");
-                executeCliCommand("mkfifo /data/containers/corp/data/data/noipin_corp");
-                executeCliCommand("mkfifo /data/containers/corp/data/data/noipout_corp");
-                Thread.sleep(200);
-                cli.switchToPersona(Persona.PRIV);
-                /**
-                 * For QA mode this line will open a mock server
-                 * executeShellCommand(String
-                 * .format("busybox nc -l -p %d -e /system/bin/sh&",privPort));
-                 */
-                Thread.sleep(200);
-                if (runServer) {
-                        executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
-                }
-                executeCliCommand("while (true) do busybox nc localhost 9008 < /data/data/noipin_priv > /data/data/noipout_priv;done &");
-                cli.switchToHost();
-                executeCliCommand("adb -s " + getDeviceSerial() + " root");
-                cli.switchToPersona(Persona.CORP);
-                /**
-                 * For QA mode this line will open a mock server
-                 * executeShellCommand(String
-                 * .format("busybox nc -l -p %d -e /system/bin/sh&",corpPort));
-                 */
-                Thread.sleep(200);
-                if (runServer) {
-                        executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
-                }
-                executeCliCommand("while (true) do busybox nc localhost 9008 < /data/data/noipin_corp > /data/data/noipout_corp;done &");
-                cli.switchToHost();
-                executeCliCommand("adb -s " + getDeviceSerial() + " root");
-                Thread.sleep(200);
-                executeCliCommand(String
-                                .format("while (true) do busybox nc -l -p %d > /data/containers/priv/data/data/noipin_priv < /data/containers/priv/data/data/noipout_priv;done &",
-                                                getPrivePort()));
-                Thread.sleep(200);
-                executeCliCommand(String
-                                .format("while (true) do busybox nc -l -p %d > /data/containers/corp/data/data/noipin_corp < /data/containers/corp/data/data/noipout_corp;done &",
-                                                getCorpPort()));
-        
-                report.stopLevel();
-                cli.disconnect();
-        }
-        
-        
         public void configureDeviceForAutomation(boolean runServer) throws Exception {
             
     		killAllAutomaionProcesses();
@@ -658,11 +588,6 @@ public class CellRoxDevice extends SystemObjectImpl {
             
             Thread.sleep(200);
             cli.switchToPersona(Persona.PRIV);
-            /**
-             * For QA mode this line will open a mock server
-             * executeShellCommand(String
-             * .format("busybox nc -l -p %d -e /system/bin/sh&",privPort));
-             */
             Thread.sleep(200);
             if (runServer) {
             	executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
@@ -680,11 +605,6 @@ public class CellRoxDevice extends SystemObjectImpl {
             
             cli.switchToHost();
             cli.switchToPersona(Persona.CORP);
-            /**
-             * For QA mode this line will open a mock server
-             * executeShellCommand(String
-             * .format("busybox nc -l -p %d -e /system/bin/sh&",corpPort));
-             */
             Thread.sleep(200);
             if (runServer) {
             	executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
@@ -719,11 +639,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		Thread.sleep(200);
 		cli.switchToPersona(Persona.PRIV);
-		/**
-		 * For QA mode this line will open a mock server
-		 * executeShellCommand(String
-		 * .format("busybox nc -l -p %d -e /system/bin/sh&",privPort));
-		 */
 		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
@@ -874,7 +789,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 executeCliCommand("input keyevent 8");
                 Thread.sleep(1000);
                 executeCliCommand("");
-                executeCliCommand("input keyevent 66");//this is the enter
+                executeCliCommand("input keyevent 66");//Enter
                 Thread.sleep(1000);
                 cli.disconnect();
         }
@@ -1312,27 +1227,6 @@ public class CellRoxDevice extends SystemObjectImpl {
                 // connect client to server
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
                 uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
-                
-                /* executor = Executors.newFixedThreadPool(1);
-                Runnable worker = new Runnable() {
-                        public void run() {
-                                while (isrun) {
-                                        try {
-                                                for (AutomatorService client : uiClient) {
-                                                        client.count(new Selector());
-                                                }
-                                                Thread.sleep(500);
-                                        } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                        }
-                                }
-                        }
-                };
-                executor.execute(worker);
-                report.report("Keep Alive");
-                Thread.sleep(2000);
-                executor.shutdown();*/
-
         }
 
         /**
@@ -1751,8 +1645,9 @@ public class CellRoxDevice extends SystemObjectImpl {
                 cmd.setIgnoreErrors(ignoreErrors);
                 cli.handleCliCommand(Command, cmd);
                 //this part is for checking if the adb is down, if so it will restart the connection
-                if(cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) {
+                if(cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { //looking for 'error: protocol fault (no status)' and reconnect if it exists
                 	if(numOfTries > 1) {
+                		cli.connect();
 	                    cmd = new CliCommand("adb kill-server");
 	                    cmd.setSilent(silent);
 	                    cmd.setAddEnter(true);
@@ -1832,7 +1727,10 @@ public class CellRoxDevice extends SystemObjectImpl {
     		
         }
         
-        //TODO - just added the home press in the seconed try - nees to check that this piece isn't making any problems.
+        /**
+         * The switch persona function is switching to the wanted persona.
+         * If there is an error the function will try to switch one more time.
+         * */
     	public void switchPersona(Persona persona) throws Exception {
     		Persona current = getForegroundPersona();
     		if (current == persona) {
@@ -1845,8 +1743,6 @@ public class CellRoxDevice extends SystemObjectImpl {
     				
     			} else {
     				report.report("Could not Switch to " + persona +" for the first time.");
-//    				report.report("About to press home on persona : " +current + ", it might be the reason that the persona couldn't pass.");
-//    				getPersona(current).pressKey("home");
     				current = getForegroundPersona();
     				if (current == persona) {
     	    			report.report("Persona " + persona + " is in the Foreground");

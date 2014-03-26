@@ -129,14 +129,6 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setPrompt("> ");
 		prompts.add(p);
 		
-		
-
-		
-	/*	p = new Prompt();
-		p.setCommandEnd(true);
-		p.setPrompt("Console opened. Press enter if you don't see a prompt.");
-		prompts.add(p);*/
-		
 		p = new Prompt();
 		p.setCommandEnd(true);
 		p.setPrompt("INSTRUMENTATION_CODE: 0");
@@ -159,7 +151,7 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 
 		p = new Prompt();
 		p.setPrompt("Password: ");
-		p.setStringToSend("1q2w3e4r");//getPassword());
+		p.setStringToSend("1q2w3e4r");
 		p.setAddEnter(true);
 		prompts.add(p);
 		
@@ -168,8 +160,7 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		p.setPrompt(".zip\\s*");
 		p.setRegularExpression(true);
 		prompts.add(p);
-		
-		
+
 		
 		return prompts.toArray(new Prompt[prompts.size()]);
 

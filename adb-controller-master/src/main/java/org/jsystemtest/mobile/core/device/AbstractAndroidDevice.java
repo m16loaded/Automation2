@@ -14,7 +14,6 @@ import org.jsystemtest.mobile.core.ConnectionException;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AndroidDebugBridge;
-import com.android.ddmlib.FileListingService.FileEntry;
 import com.android.ddmlib.FileListingService;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.IShellOutputReceiver;

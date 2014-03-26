@@ -57,7 +57,6 @@ public class AdbController implements IDeviceChangeListener {
 
 		// Init the AndroidDebugBridge object
 		AndroidDebugBridge.init(false);
-		//adb = AndroidDebugBridge.createBridge(adbLocation.getAbsolutePath() + File.separator + "adb", true);
 		adb = AndroidDebugBridge.createBridge("adb", true);
 		if (adb == null) {
 			throw new IllegalStateException("Failed to create ADB bridge");
@@ -144,7 +143,6 @@ public class AdbController implements IDeviceChangeListener {
 		}
 
 		try {
-			// String[] extensions = { "exe" };
 			Collection<File> files = FileUtils.listFiles(root, null, true);
 			for (Iterator<File> iterator = files.iterator(); iterator.hasNext();) {
 				File file = (File) iterator.next();
