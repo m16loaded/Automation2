@@ -1751,7 +1751,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 cmd.setIgnoreErrors(ignoreErrors);
                 cli.handleCliCommand(Command, cmd);
                 //this part is for checking if the adb is down, if so it will restart the connection
-                if(cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)") || cli.getTestAgainstObject().toString().contains("error: device not found")) {
+                if(cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) {
                 	if(numOfTries > 1) {
 	                    cmd = new CliCommand("adb kill-server");
 	                    cmd.setSilent(silent);
