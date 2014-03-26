@@ -5,7 +5,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+/**
+ * This class is or taking a screenshots.
+ * This class now isn't in use.
+ * This class left here for future use.
+ * */
 public class ImageFlowHtmlReport {
 
 	private static final String SIMPLE_TITLE_FORMAT = "<p>%s</p>";
@@ -17,7 +21,6 @@ public class ImageFlowHtmlReport {
 	private String cssLocation;
 	private String cssUiLocation;
 	private String widgetIconLocation;
-
 	StringBuilder htmlBody;
 
 	public ImageFlowHtmlReport() throws URISyntaxException {

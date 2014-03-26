@@ -65,24 +65,8 @@ public class CellroxDeviceOperations extends TestCase {
     private boolean screenStatus;
 	private boolean elementAttributeStatus;
 	private ElementAttributes elementAttributes = ElementAttributes.ENABLED;
+
 	
-
-
-	@Test
-	public void orConnectivityTest() throws Exception {
-		
-		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-		devicesMannager.getDevice(currentDevice).connectToServers();
-		
-		for(int i = 0 ; i < 20 ; i++) {
-			System.out.println(i+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("home");
-			sleep(1000);
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).openNotification();
-			sleep(1000);
-		}
-
-	}
 	
 	
     /**
@@ -92,42 +76,6 @@ public class CellroxDeviceOperations extends TestCase {
     @TestProperties(name ="Close all applications" ,paramsInclude = "currentDevice,persona")
     public void closeAllApplications() throws Exception {
     	closeAllApplicationsFunction();
-    }
-    
-    
-    public void closeAllApplicationsFunction() throws Exception {
-    	try{
-    		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
-    	}
-    	catch(Exception e) {}
-    	Thread.sleep(500);
-    	try {
-    		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
-    	} catch(Exception e){
-    		try {
-        		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
-        	} catch(Exception e1){
-        		report.report("Recent apps button wasn't opened.",Reporter.FAIL);
-        	}	
-    	}
-    	Thread.sleep(800);
-    	for(int i=0; i<20; i++){
-    		try{
-    			if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription("Apps"))) {
-    				break;
-    			}
-    			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName("android.widget.RelativeLayout"), Direction.LEFT.getDir(), 20);
-    			Thread.sleep(300);
-    		}
-    		catch(Exception e){
-    			try {
-    				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
-    			break;
-	    		}
-	        	catch(Exception e1) {break;}
-    		}
-    	}
-    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
     }
     
 	
@@ -140,7 +88,6 @@ public class CellroxDeviceOperations extends TestCase {
 	public void validateThatDevicesIsreadyForAutomation() {
 		
 		if(devicesMannager.getDevice(DeviceNumber.PRIMARY).validateThatDevicesIsreadyForAutomation()) {
-			
 			devicesReadyForAutomation = false;
 			return;
 		}
@@ -650,6 +597,9 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(persona);
 	}
 
+	/**
+	 * Swipe by Class Name to the Given Direction.
+	 * */
 	@Test
 	@TestProperties(name = " Swipe by Class Name on ${persona}", paramsInclude = { "currentDevice,persona,dir,text" })
 	public void swipeByClassName() throws Exception {
@@ -1678,6 +1628,7 @@ public class CellroxDeviceOperations extends TestCase {
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
 				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setTextContains(text), 10*1000);
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
 			}
 			catch(Exception e) {
@@ -1749,6 +1700,7 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setTextContains(text), 10*1000);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
 		}
 		catch(Exception e) {
@@ -2018,7 +1970,7 @@ public class CellroxDeviceOperations extends TestCase {
 	
 	
 	/**
-	 * TSet the up time and the proccesses id
+	 * Set the up time and the processes id
 	 * */
 	@Test
 	@TestProperties(name = "Init All Validation Crashes Data" , paramsInclude = {""})
@@ -2028,6 +1980,9 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 	
+	/**
+	 * The test validate that the device have 2 personas.
+	 * */
 	@Test
 	@TestProperties(name = "Validate doa", paramsInclude = { "currentDevice,deviceEncrypted,deviceEncryptedPriv" })
 	public void validateDoa() throws Exception {
@@ -2066,7 +2021,7 @@ public class CellroxDeviceOperations extends TestCase {
 			catch(Exception e1) {
 				doaCrach++;
 				Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
-				report.report("Doa Crash",report.FAIL);
+				report.report("Doa Crash",Reporter.FAIL);
 			}
 		}
 		
@@ -2081,10 +2036,44 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).checkUncheckAllCheckBoxes(persona, onOff);
 	}
 	
-
 	
-	
+    private void closeAllApplicationsFunction() throws Exception {
+    	try{
+    		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    	}
+    	catch(Exception e) {}
+    	Thread.sleep(500);
+    	try {
+    		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
+    	} catch(Exception e){
+    		try {
+        		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("recent");
+        	} catch(Exception e1){
+        		report.report("Recent apps button wasn't opened.",Reporter.FAIL);
+        	}	
+    	}
+    	Thread.sleep(800);
+    	for(int i=0; i<20; i++){
+    		try{
+    			if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription("Apps"))) {
+    				break;
+    			}
+    			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(new Selector().setClassName("android.widget.RelativeLayout"), Direction.LEFT.getDir(), 20);
+    			Thread.sleep(300);
+    		}
+    		catch(Exception e){
+    			try {
+    				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    			break;
+	    		}
+	        	catch(Exception e1) {break;}
+    		}
+    	}
+    	devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+    }
+    
 
+    
 	public String getButton() {
 		return button;
 	}
@@ -2357,32 +2346,18 @@ public class CellroxDeviceOperations extends TestCase {
 		this.regularExpression = regularExpression;
 	}
 
-	/**
-	 * @return the appFullPath
-	 */
 	public String getAppFullPath() {
 		return appFullPath;
 	}
 
-	/**
-	 * @param appFullPath
-	 *            the appFullPath to set
-	 */
 	public void setAppFullPath(String appFullPath) {
 		this.appFullPath = appFullPath;
 	}
 
-	/**
-	 * @return the onOff
-	 */
 	public State getOnOff() {
 		return onOff;
 	}
 
-	/**
-	 * @param onOff
-	 *            the onOff to set
-	 */
 	public void setOnOff(State onOff) {
 		this.onOff = onOff;
 	}
@@ -2404,9 +2379,6 @@ public class CellroxDeviceOperations extends TestCase {
 		this.expectedValue = expectedValue;
 	}
 
-	/**
-	 * @return the y
-	 */
 	public String getY() {
 		return y;
 	}
@@ -2483,9 +2455,6 @@ public class CellroxDeviceOperations extends TestCase {
 		return size;
 	}
 
-	/**
-	 * @param size the size to set
-	 */
 	public void setSize(Size size) {
 		this.size = size;
 	}

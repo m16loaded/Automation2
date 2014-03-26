@@ -8,7 +8,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 
@@ -24,7 +23,9 @@ public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 
 	}
 	
-	
+	/**
+	 * 	Select The Correct Owner And Enroll.
+	 * */
 	public void selectTheCorrectOwnerAndEnroll(String ownerName) throws InterruptedException {
 		
 		Thread.sleep(3000);
@@ -52,8 +53,6 @@ public class CellroxOwnerAbstractPage extends CellRoxAbstractPage {
 		Thread.sleep(3000);
 		driver.findElement(By.cssSelector(".btn.btn-large.dropdown-toggle.ng-scope")).click();
 		driver.findElement(By.xpath("//*[text()= 'ACTIVATE']")).click();
-//		PageFactory.initElements(driver, this);
-//		enrollBtn.click();
 		Thread.sleep(2000);
 		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).submit();
 		Thread.sleep(5000);
