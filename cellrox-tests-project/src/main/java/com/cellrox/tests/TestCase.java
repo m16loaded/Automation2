@@ -57,23 +57,9 @@ public class TestCase extends SystemTestCase4 {
 			initTheWebDriver();
 			report.stopLevel();
 		}
-		// devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
-		// devicesMannager.getDevice(currentDevice).connectToServers();
 	}
 	
-	
-//	public void takeScreenShot(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
-//		String localLocation = report.getCurrentTestFolder()+ File.separatorChar + fileName;
-//		String screenshoot = devicesMannager.getDevice(deviceNumber).getPersona(persona).takeScreenshot(fileName, (float)1.0, 100);
-//		devicesMannager.getDevice(deviceNumber).pullFileFromDevice(persona.getTmpLib()+ fileName, localLocation);
-//		imageFlowHtmlReport.addTitledImage(nameInTheReport, new File(localLocation));
-//	}
-//	
-//	public void takeScreenShotAndReport(String fileName , DeviceNumber deviceNumber, Persona persona, String nameInTheReport) throws Exception {
-//
-//		takeScreenShot(fileName, deviceNumber, persona, nameInTheReport);
-//		report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
-//	}
+
 	
 	
 	
@@ -93,30 +79,13 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 			if (!isPass()) {
-//				try{
-//					takeScreenShot("FailPriv.jpg", DeviceNumber.PRIMARY, persona.PRIV, "Error - priv screenshot");
-//				}
-//				catch(Exception e){ }
-//				try{
-//					takeScreenShot("FailCorp.jpg", DeviceNumber.PRIMARY, persona.CORP, "Error - corp screenshot");
-//				}
-//				catch(Exception e){ }
 				
-				report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
+//				report.report("screen flow", imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false, true, false, false);
 				
 				if(devicesMannager.getRunStatus().equals("full")) {
 					validateDeviceStatus();
 				}
 			}
-			//TODO to remove if i dont find the use
-//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-//			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-//			Calendar cal = Calendar.getInstance();
-//			Summary.getInstance().setProperty("End_Time", sdf.format(cal.getTime()));
-//			Summary.getInstance().setProperty("No_Connection", String.valueOf(connectionCrash));
-//			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
-//			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
-//			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
 		}
 		finally {
 			report.stopLevel();
@@ -309,8 +278,6 @@ public class TestCase extends SystemTestCase4 {
 		
 		driverSo = (WebDriverSO) system.getSystemObject("webDriver");
     	driver= driverSo.getDriver();
-//    	System.setProperty("webdriver.chrome.driver","/home/topq/dev/chromedriver");
-//    	driver = new ChromeDriver();
 	}
 	
 	
