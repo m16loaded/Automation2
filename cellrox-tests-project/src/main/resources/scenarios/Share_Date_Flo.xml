@@ -19,10 +19,10 @@
         <antcallback target="t3"/>
         <antcallback target="t4"/>
         <antcallback return="ElementAttributeStatus" target="t5"/>
-        <echo message="Check condition &quot;${ElementAttributeStatus}&quot; EQUALS &quot;true&quot;"/>
+        <echo message="Check condition &quot;${ElementAttributeStatus}&quot; EQUALS &quot;false&quot;"/>
         <if>
             <!--#Jsystem#-->
-            <jsystemscriptcondition fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.c3f69df8-0404-419c-9844-dc8f8ae9966f" language="javascript" params="str &lt;SEP&gt; ${ElementAttributeStatus} &lt;SEP&gt; EQUALS &lt;SEP&gt; true &lt;SEP&gt; false" parentName="${jsystem.parent.name}.${ant.project.name}" src="ifScriptCondition.js" value="false"/>
+            <jsystemscriptcondition fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.c3f69df8-0404-419c-9844-dc8f8ae9966f" language="javascript" params="str &lt;SEP&gt; ${ElementAttributeStatus} &lt;SEP&gt; EQUALS &lt;SEP&gt; false &lt;SEP&gt; false" parentName="${jsystem.parent.name}.${ant.project.name}" src="ifScriptCondition.js" value="false"/>
             <then>
                 <antcallback target="t6"/>
             </then>
@@ -46,10 +46,10 @@
         <antcallback target="t20"/>
         <antcallback target="t21"/>
         <antcallback return="ElementAttributeStatus" target="t22"/>
-        <echo message="Check condition &quot;${ElementAttributeStatus}&quot; EQUALS &quot;false&quot;"/>
+        <echo message="Check condition &quot;${ElementAttributeStatus}&quot; EQUALS &quot;true&quot;"/>
         <if>
             <!--#Jsystem#-->
-            <jsystemscriptcondition fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.751e5c66-f397-4bb5-b35d-8a052e2cfbaf" language="javascript" params="str &lt;SEP&gt; ${ElementAttributeStatus} &lt;SEP&gt; EQUALS &lt;SEP&gt; false &lt;SEP&gt; false" parentName="${jsystem.parent.name}.${ant.project.name}" src="ifScriptCondition.js" value="false"/>
+            <jsystemscriptcondition fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.751e5c66-f397-4bb5-b35d-8a052e2cfbaf" language="javascript" params="str &lt;SEP&gt; ${ElementAttributeStatus} &lt;SEP&gt; EQUALS &lt;SEP&gt; true &lt;SEP&gt; false" parentName="${jsystem.parent.name}.${ant.project.name}" src="ifScriptCondition.js" value="false"/>
             <then>
                 <antcallback target="t23"/>
             </then>
