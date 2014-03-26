@@ -20,6 +20,7 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
+import com.cellrox.infra.enums.ElementAttributes;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.Size;
@@ -62,7 +63,8 @@ public class CellroxDeviceOperations extends TestCase {
 	private String user, password;
     private boolean vellamoResultShow = false, needForClearTheText = false;
     private boolean screenStatus;
-
+	private boolean elementAttributeStatus;
+	private ElementAttributes elementAttributes = ElementAttributes.ENABLED;
 	
 
 
@@ -724,6 +726,33 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Get Screen Status", paramsInclude = {"currentDevice"} , returnParam = {"screenStatus"})
 	public void getTheScreenStatus() throws Exception {
 		screenStatus = devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).isScreenOn(); 
+	}
+	
+	/**
+	 * This test return the status of the element attribute.<br>
+	 * This test return boolean parameter : elementAttributeStatus.<br>
+	 * The parameter can be used later in the scenario as &{ElementAttributeStatus).
+	 * */
+	@Test
+	@TestProperties(name = "Get The Element Attribute ${elementAttributes} of${text} ,on ${persona}", paramsInclude = {"currentDevice,persona,text,elementAttributes"} , returnParam = {"elementAttributeStatus"})
+	public void getTheElementAttribute() throws Exception {
+		
+		ObjInfo objInfo = devicesMannager.getDevice(currentDevice).getPersona(persona).objInfo(new Selector().setText(text)); 
+		
+		switch (elementAttributes) {
+		case ENABLED:
+			elementAttributeStatus = objInfo.isEnabled();
+			break;
+			
+		case CLICKABLE:
+			elementAttributeStatus = objInfo.isClickable();
+			break;
+
+		default:
+			break;
+		}
+		
+		
 	}
 
 	
@@ -2549,13 +2578,28 @@ public class CellroxDeviceOperations extends TestCase {
 		this.grandfatherIndex = grandfatherIndex;
 	}
 
-
 	public void setScreenStatus(boolean screenStatus) {
 		this.screenStatus = screenStatus;
 	}
 	
 	public boolean isScreenStatus() {
 		return screenStatus;
+	}
+
+	public boolean isElementAttributeStatus() {
+		return elementAttributeStatus;
+	}
+
+	public void setElementAttributeStatus(boolean elementAttributeStatus) {
+		this.elementAttributeStatus = elementAttributeStatus;
+	}
+
+	public ElementAttributes getElementAttributes() {
+		return elementAttributes;
+	}
+
+	public void setElementAttributes(ElementAttributes elementAttributes) {
+		this.elementAttributes = elementAttributes;
 	}
 
 
