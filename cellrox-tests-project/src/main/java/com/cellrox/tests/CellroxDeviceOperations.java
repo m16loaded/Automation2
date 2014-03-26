@@ -61,6 +61,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private String user, password;
     private boolean vellamoResultShow = false, needForClearTheText = false;
+    private boolean screenStatus;
 
 	
 
@@ -155,7 +156,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * This function validate that the insert state is the correct one with the screen
 	 * */
 	@Test	
-	@TestProperties(name ="Validate the Screen is ${onOff}" ,paramsInclude = "currentDevicem,persona,onOff" )
+	@TestProperties(name ="Validate the Screen is ${onOff}" ,paramsInclude = "currentDevicem,persona,onOff")
 	public void validateScreenIsOn() throws RemoteException {
 		
 		boolean isOn = devicesMannager.getDevice(currentDevice).getPersona(persona).isScreenOn();
@@ -711,6 +712,18 @@ public class CellroxDeviceOperations extends TestCase {
 		catch(Exception e) {
 			report.report("Error in the waking up.");
 		}
+	}
+	
+	
+	/**
+	 * This test return the status of the screen.<br>
+	 * This test return boolean parameter : ScreenStatus.<br>
+	 * The parameter can be used later in the scenario as &{ScreenStatus).
+	 * */
+	@Test
+	@TestProperties(name = "Get Screen Status", paramsInclude = {"currentDevice"} , returnParam = {"screenStatus"})
+	public void getTheScreenStatus() throws Exception {
+		screenStatus = devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).isScreenOn(); 
 	}
 
 	
@@ -2534,6 +2547,15 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setGrandfatherIndex(String grandfatherIndex) {
 		this.grandfatherIndex = grandfatherIndex;
+	}
+
+
+	public void setScreenStatus(boolean screenStatus) {
+		this.screenStatus = screenStatus;
+	}
+	
+	public boolean isScreenStatus() {
+		return screenStatus;
 	}
 
 
