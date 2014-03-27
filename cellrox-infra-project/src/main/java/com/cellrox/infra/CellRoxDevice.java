@@ -344,8 +344,10 @@ public class CellRoxDevice extends SystemObjectImpl {
         public long getCurrentUpTime() throws Exception {
         	String upTime = "";
         	String retAns = executeHostShellCommand("uptime");
+        	
         	upTime = retAns.toString().replace("uptime", "").replace("shell@mako:/ $", "").replace("root@mako:/ #", "").trim();
         	
+        	report.report("Current up time : "+ upTime);
         	
         	String upTimeTry = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
         	if (upTimeTry.contains("days")) {
@@ -405,7 +407,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This function adding to the summary(Jsystem report) the properties.
          * */
         public void addToTheSummarySystemProp() throws Exception {
-        	
+        	report.startLevel("Get Device Properties");
         	String hardware = null;
         	
         	cli.connect();
@@ -474,6 +476,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	Summary.getInstance().setProperty("Vellamo_Results", "");
         	
         	cli.disconnect();
+        	report.stopLevel();
         }
         
         /**
@@ -501,19 +504,20 @@ public class CellRoxDevice extends SystemObjectImpl {
          * @throws IOException 
          * */
         public void printLastKmsg() throws IOException{
-        	
         	try {
-        		report.startLevel("click here for kmsg logger");
-        		cli.connect();
-        		//this is a wanted exception!
-        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 * 1000 , true, 2);
-        	
-        		cli.disconnect();
+            	pullFileFromDevice("/proc/last_kmsg", report.getCurrentTestFolder() + "/last_kmsg.txt");
+        		report.addLink("Click Here for Last Kmsg Log", "last_kmsg.txt");
+//            	report.startLevel("click here for kmsg logger");
+//        		cli.connect();
+//        		//this is a wanted exception!
+//        		executeCliCommand("adb -s "+ getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 * 1000 , true, 2);
+//        	
+//        		cli.disconnect();
         	} catch (Exception e) { }
-        	finally {
-        		report.report(cli.getTestAgainstObject().toString());
-        		report.stopLevel();
-        	}
+//        	finally {
+//        		report.report(cli.getTestAgainstObject().toString());
+//        		report.stopLevel();
+//        	}
         	
         }
         
@@ -577,10 +581,10 @@ public class CellRoxDevice extends SystemObjectImpl {
          * forwarding between the host and the cells
          */
         public void configureDeviceForAutomation(boolean runServer) throws Exception {
-            
+            report.startLevel("Configure Device For Automation");
+
     		killAllAutomaionProcesses();
     	
-            report.startLevel("Configure Device For Automation");
             
             cli.connect();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
@@ -746,9 +750,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 
         //TODO to add isEncryptedPriv do something
         public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
-                validateDeviceIsOffline(personas);
+               // validateDeviceIsOffline(personas);
                 Thread.sleep(2000);
                 device = adbController.waitForDeviceToConnect(getDeviceSerial());
+                //if the corp is encrypted we should wait until the "cell list state" is 3 for Priv and 2 for Corp
+                //then we should enter the Corp password and validate both personas' state is 3
                 if(isEncrypted) {
                         validateEncryptedCorpPersonasAreOnline(beginTime, timeout, personas);
                         Thread.sleep(3000);
@@ -756,6 +762,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                         return validatePersonasAreOnline(beginTime, timeout, personas);
                 }
                 else {
+                	//if the Corp persona is not encrypted - just wait until both personas' state is 3
                 	return validatePersonasAreOnline(beginTime, timeout, personas);
                 }
         }
@@ -765,6 +772,7 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This connection is made by the adb connection;
          * */
         public void clickOnEncryptedDeviceAfterReboot() throws Exception {
+        	report.startLevel("Loging to Encrypted Corp");
                 cli.connect();
                 Thread.sleep(2000);
                 executeCliCommand("adb -s " + getDeviceSerial() + " root");
@@ -792,6 +800,7 @@ public class CellRoxDevice extends SystemObjectImpl {
                 executeCliCommand("input keyevent 66");//Enter
                 Thread.sleep(1000);
                 cli.disconnect();
+                report.stopLevel();
         }
 
         /**
@@ -861,7 +870,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 
                                         if (found == 0) {
                                                 offline = true;
-                                        } else {
+                                        } else if (found==personas.length) {
                                                 found = 0;
                                         }
                                 }
@@ -882,14 +891,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public boolean validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 		String result = null;
 		int found = 0;
+		report.startLevel("Validating Device is Online");
+		report.setSilent(true);
 		while (online != true) {
 
 			if (timeout < System.currentTimeMillis() - beginTime) {
+				report.stopLevel();
 				report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
 				return false;
 			}
 			try {
 				result = device.executeShellCommand("cell list state");
+				report.report(result);
 			} catch (AdbControllerException e) {
 				continue;
 			}
@@ -907,6 +920,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 				found = 0;
 			}
 		}
+		report.setSilent(false);
+		report.stopLevel();
 		report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
 				+ " seconds.");
 		Thread.sleep(7000);
@@ -922,16 +937,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 		public void validateEncryptedCorpPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 			boolean online = false;
 			String result = null;
+			report.startLevel("Validating Device with Encrypted Corp Persona is Online");
+			report.setSilent(true);
 			while (online != true) {
 	
 				Thread.sleep(800);
 				if (timeout < System.currentTimeMillis() - beginTime) {
+					report.stopLevel();
 					report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
 					return;
 				}
 	
 				try {
 					result = device.executeShellCommand("cell list state");
+					report.report(result);
 				} catch (AdbControllerException e) {
 					continue;
 				}
@@ -943,7 +962,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 					break;
 				}
 			}
-			report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
+			report.setSilent(false);
+			report.stopLevel();
+			report.report("device is online, it took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000
 					+ " seconds.");
 			Thread.sleep(2000);
 		}
@@ -1044,16 +1065,29 @@ public class CellRoxDevice extends SystemObjectImpl {
                 device.setPortForwarding(localPort, remotePort);
         }
 
-        /**
-         * this function just do ps and split it 
-         * */
+       
         public String getPs() throws Exception {
+        	return getPs(true);
+        }
+        
+        /**
+         * this function return the current process list (by using "ps") as string<br>
+         * this function will alsp parse the process id of the personas and save them into an array mapOfProcessLocal<br>
+         * initVars param - if true
+         * 		- add to the personaProcessIdMap the process ids
+         * initVars param - if false
+         * 		- return the map of the processes ids
+         * */
+        public String getPs(boolean isInit) throws Exception {
         	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps", true , 4*60*1000);
-        	getPsInitPrivCorp(true);
-        	return cli.getTestAgainstObject().toString().split("com.android.phone")[0];
+        	executeCliCommand("ps > tmp/ps.txt", true , 4*60*1000);
+        	pullFileFromDevice("tmp/ps.txt", report.getCurrentTestFolder()+"/ps.txt");
+        	report.addLink("Click Here for PS List", "ps.txt");
+        	getPsInitPrivCorp(isInit);
+        	String psList = FileUtils.read(report.getCurrentTestFolder()+"/ps.txt");
+        	return psList.toString().split("com.android.phone")[0];
         }
         
         /**
@@ -1066,6 +1100,7 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
 	public Map<Persona, Integer> getPsInitPrivCorp(boolean initVars)
 			throws Exception {
+		report.startLevel("Getting Personas PID");
 		Map<Persona, Integer> mapOfProcessLocal = new HashMap<Persona, Integer>();
 		personaProcessIdMap.clear();
 		cli.connect();
@@ -1083,29 +1118,27 @@ public class CellRoxDevice extends SystemObjectImpl {
 				if (counterOfPersonas == 0) {
 					counterOfPersonas++;
 				} else if (counterOfPersonas == 1) {
-
+					int privPid = Integer.valueOf(matcher.group(2));
+					report.report("Priv PID: "+privPid);
 					if (initVars) {
-						personaProcessIdMap.put(Persona.PRIV,
-								Integer.valueOf(matcher.group(2)));
+						personaProcessIdMap.put(Persona.PRIV,privPid);
 					} else {
-						mapOfProcessLocal.put(Persona.PRIV,
-								Integer.valueOf(matcher.group(2)));
+						mapOfProcessLocal.put(Persona.PRIV,privPid);
 					}
 					counterOfPersonas++;
 				} else if (counterOfPersonas == 2) {
-
+					int corpPid = Integer.valueOf(matcher.group(2));
+					report.report("Corp PID: "+corpPid);
 					if (initVars) {
-						personaProcessIdMap.put(Persona.CORP,
-								Integer.valueOf(matcher.group(2)));
+						personaProcessIdMap.put(Persona.CORP,corpPid);
 					} else {
-						mapOfProcessLocal.put(Persona.CORP,
-								Integer.valueOf(matcher.group(2)));
+						mapOfProcessLocal.put(Persona.CORP,corpPid);
 					}
 					counterOfPersonas++;
 				}
 			}
 		}
-
+		report.stopLevel();
 		return mapOfProcessLocal;
 	}
         
@@ -1278,9 +1311,10 @@ public class CellRoxDevice extends SystemObjectImpl {
          * The function get logs of the entire run from /data/agent/syslogs
          * @throws Exception
          */
-        public void getLogsOfRun(LogParser parser) throws Exception {
+        public void getLogsOfRun(LogParser parser, boolean kmsgSearch,boolean logcatSearch) throws Exception {
                 String userHome = System.getProperty("user.home");
                 // get the files
+                
                 device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
                 device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
                 device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
@@ -1288,7 +1322,16 @@ public class CellRoxDevice extends SystemObjectImpl {
                 File kmsg = new File(userHome + "/system_kmsg.txt");
                 File radioLogcat = new File(userHome + "/system_logcat-radio.txt");
                 // set logs to validate
-                parser.setLogs(logcat, radioLogcat, kmsg);
+                
+                if(kmsgSearch &&logcatSearch) {
+                	parser.setLogs(logcat, kmsg);
+                }
+                else if(kmsgSearch) {
+                	parser.setLogs(kmsg);
+                }
+                else {
+                	parser.setLogs(logcat);
+                }
                 parser.validateLogs();
                 // delete all logs locally
                 logcat.delete();

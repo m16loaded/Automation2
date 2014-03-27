@@ -6,12 +6,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
 import junit.framework.SystemTestCase4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.topq.uiautomator.Selector;
 
@@ -92,6 +94,31 @@ public class TestCase extends SystemTestCase4 {
 		}
 	}
 	
+	/**
+	 * <b><h1>THIS BOOLEAN IS FOR DEBUG USE ONLY!!!!!</h1></b>
+	 */
+	public boolean debugFailureSleep = false;
+	public boolean isDebugFailureSleep() {
+		return debugFailureSleep;
+	}
+	
+	public void setDebugFailureSleep(boolean debugFailureSleep) {
+		this.debugFailureSleep = debugFailureSleep;
+	}
+	/**
+	 * <b><h1>THIS FUNCTION IS FOR DEBUG USE ONLY!!!!!</h1></b>
+	 */
+	@Test
+	@TestProperties(paramsInclude={"debugFailureSleep"})
+	public void sleepAndFail() throws Exception{
+		
+		if (debugFailureSleep){
+		//sleep for a minute
+		sleep(60*1000);
+		}
+		//fail the test
+		report.report("FAIL",report.FAIL);
+	}
 	
 	/**
 	 * This function runs only in case of fails in the tests and check if
@@ -101,7 +128,8 @@ public class TestCase extends SystemTestCase4 {
 
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 
-			boolean crashHappened = false;
+			boolean deviceCrashDetected = false;
+			boolean personaCrashDetected = false;
 			//Step 1 is to check for doa crash
 			try {
 				device.validateConnectivity();
@@ -115,38 +143,44 @@ public class TestCase extends SystemTestCase4 {
 			//Step 2 is to check for device crash by the upTime
 			long knownUpTime = device.getUpTime();
 			if(knownUpTime > device.getCurrentUpTime()) {
-				crashHappened = true;
+				report.report("The known upTime is : " +knownUpTime);
+				deviceCrashDetected = true;
 				report.report("Device_Crash", Reporter.FAIL);
 				deviceCrash++;
 				sleep(20 * 1000);
 				report.report("Device : " + device.getDeviceSerial());
 				// last_kmsg
-				device.printLastKmsg();
+				
 				//here im doning all the thing beside the reboot
 				device.validateDeviceIsOnline(System.currentTimeMillis(), 5*60*1000, deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				device.setDeviceAsRoot();
 				device.setUpTime(device.getCurrentUpTime());
                 device.setPsString(device.getPs());
+                
+                
 			}
 			
-			//Step 3 is to check for personas crash
-			String str2 = device.getPs();
-			if(!crashHappened) {
+			//Step 3 is to check for persona crash
+			if(!deviceCrashDetected) {
+				String str2 = device.getPs(false);
 				if(!device.isPsDiff(device.getPsString(), str2)) {
-					crashHappened = true;
+					personaCrashDetected = true;
 					report.report("Persona_Crash", Reporter.FAIL);
 					personaCrash++;
 					sleep(20 * 1000);
 					report.report("Device : " + device.getDeviceSerial());
-					// last_kmsg
+					// print last_kmsg before reboot
 					report.report("About to print the last kmsg.");
-					device.printLastKmsg();
 					
-					//this is the check which persona crashed
+					
+					//validating which persona was crashed 
+					//getting the "old" PIDs
 					Map<Persona,Integer> mapPerPrOld = new HashMap<Persona, Integer>();
 					mapPerPrOld = device.getPersonaProcessIdMap();
 					
+					//getting the "new" PIDs
 					Map<Persona,Integer> mapPerPrNew = new HashMap<Persona, Integer>();
+					device.getPs(true);
 					mapPerPrNew = device.getPersonaProcessIdMap();
 					
 					if(!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
@@ -155,20 +189,21 @@ public class TestCase extends SystemTestCase4 {
 					if(!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
 						report.report("Error, persona CORP crashed.",Reporter.FAIL);
 					}
-					
+					report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 					device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				}
 				
 			}
 			
-			//taking care in a cases of persona crash
-			if(crashHappened) {
+			//if a crash is been detected - get all logs, validate device is online, configure device and connect to uiautomator server
+			//wake up the device and enter corp's password, then, return to Priv
+			if(deviceCrashDetected || personaCrashDetected) {
+				//Last kmessage
+				device.printLastKmsg();
 				//check the syslogs
 				stopSysLogAndValidateInDevice();
-				
-				report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 				// sleep
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+				//device.validateDeviceIsOnline(System.currentTimeMillis(), 5* 60 *1000 , deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				// configure
 				device.configureDeviceForAutomation(true);
 				// connect
@@ -202,7 +237,9 @@ public class TestCase extends SystemTestCase4 {
 	 * - STATE_CRASH_RESET<br>
 	 */
 	public void stopSysLogAndValidateInDevice() throws Exception {
-		LogParserExpression[] expressions = new LogParserExpression[13];
+		
+		//checking the kmsg
+		LogParserExpression[] expressions = new LogParserExpression[11];
 		
 		LogParserExpression expression = new LogParserExpression();
 		expression.setExpression("kernel_panic");
@@ -259,18 +296,28 @@ public class TestCase extends SystemTestCase4 {
 		expression.setNiceName("STATE_CRASH_RESET");
 		expressions[10] = expression;
 		
+		LogParser logParser = new LogParser(expressions);
+		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser, true, false);
+		
+		
+		//checking the logcat
+		expressions = new LogParserExpression[2];
+		expression = new LogParserExpression();
+		
 		expression = new LogParserExpression();
 		expression.setExpression("FATAL_EXEPTION");
 		expression.setNiceName("FATAL_EXEPTION");
-		expressions[11] = expression;
+		expressions[0] = expression;
 		
 		expression = new LogParserExpression();
 		expression.setExpression("fatal exception");
 		expression.setNiceName("fatal exception");
-		expressions[12] = expression;
+		expressions[1] = expression;
 		
-		LogParser logParser = new LogParser(expressions);
-		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
+		logParser = new LogParser(expressions);
+		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser, false, true);
+		
+		
 	}
 	
 

@@ -67,7 +67,25 @@ public class CellroxDeviceOperations extends TestCase {
 	private ElementAttributes elementAttributes = ElementAttributes.ENABLED;
 
 	
-	
+	/**
+	 *	Validate that the automation servers are alive.
+	 * 	If the automation servers are answering ping, if not it will try
+	 * */
+	@Test
+	@TestProperties(name ="Before Test Configure Connect Validation." , paramsInclude = {"currentDevice"})
+	public void beforeTestConfigureConnectValidation() throws Exception {
+		report.report("Validate that the automation servers are alive.");
+		try {
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).ping();
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).ping();
+		}
+		catch(Exception e) {
+			report.report("Error with the automation servers, about to configure and connect.");
+			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+			devicesMannager.getDevice(currentDevice).connectToServers();
+			
+		}
+	}
 	
     /**
      * Function open recent applications and removes all of the list 
@@ -1535,7 +1553,7 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Stop and Validate Syslogs", paramsInclude = { "currentDevice,expression" })
 	public void stopSysLogAndValidate() throws Exception {
 		LogParser logParser = new LogParser(expression);
-		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser);
+		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser,true, true);
 	}
 
 	/**
