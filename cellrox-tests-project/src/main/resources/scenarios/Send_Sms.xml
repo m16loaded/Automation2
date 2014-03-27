@@ -16,8 +16,26 @@
         <antcallback target="t0"/>
         <antcallback target="t1"/>
         <antcallback target="t2"/>
+        <antcallback target="t3"/>
+        <antcallback target="t4"/>
     </target>
     <target name="t0">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="be7f912b-5876-4679-8735-418e2356ebb0"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
+        </jsystem>
+    </target>
+    <target name="t1">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="3661c3fa-e60a-4920-8cec-797eb6803436"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
+        </jsystem>
+    </target>
+    <target name="t2">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="a7a6c13a-111b-411f-bdf2-9418b880b1d8"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -25,7 +43,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sendSms"/>
         </jsystem>
     </target>
-    <target name="t1">
+    <target name="t3">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="5c4711d9-7bee-4bcb-985e-c5b30ebdd927"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -33,7 +51,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
         </jsystem>
     </target>
-    <target name="t2">
+    <target name="t4">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="1d2ec0a8-dec2-4a1a-8cc9-82a28ca3ceb5"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
