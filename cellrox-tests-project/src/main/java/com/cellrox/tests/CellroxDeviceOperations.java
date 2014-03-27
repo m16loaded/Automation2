@@ -83,7 +83,6 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("Error with the automation servers, about to configure and connect.");
 			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 			devicesMannager.getDevice(currentDevice).connectToServers();
-			
 		}
 	}
 	

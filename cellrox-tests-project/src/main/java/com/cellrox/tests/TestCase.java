@@ -114,7 +114,7 @@ public class TestCase extends SystemTestCase4 {
 		
 		if (debugFailureSleep){
 		//sleep for a minute
-		sleep(60*1000);
+			sleep(60*1000);
 		}
 		//fail the test
 		report.report("FAIL",report.FAIL);
@@ -182,11 +182,18 @@ public class TestCase extends SystemTestCase4 {
 					Map<Persona,Integer> mapPerPrNew = new HashMap<Persona, Integer>();
 					device.getPs(true);
 					mapPerPrNew = device.getPersonaProcessIdMap();
-					
-					if(!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
+					try{
+						if(!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
+							report.report("Error, persona Priv crashed.",Reporter.FAIL);
+						}
+					}catch (Exception e) {
 						report.report("Error, persona Priv crashed.",Reporter.FAIL);
 					}
-					if(!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
+					try {
+						if(!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
+							report.report("Error, persona CORP crashed.",Reporter.FAIL);
+						}
+					}catch (Exception e) {
 						report.report("Error, persona CORP crashed.",Reporter.FAIL);
 					}
 					report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
@@ -218,8 +225,6 @@ public class TestCase extends SystemTestCase4 {
 				device.getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
 				device.getPersona(Persona.PRIV).wakeUp();
 				device.switchPersona(Persona.PRIV);
-				device.unlockBySwipe(Persona.PRIV);
-				
 			}
 
 		}

@@ -1100,11 +1100,26 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
 	public Map<Persona, Integer> getPsInitPrivCorp(boolean initVars)
 			throws Exception {
+		int privId = -2,corpId =-2;
 		report.startLevel("Getting Personas PID");
 		Map<Persona, Integer> mapOfProcessLocal = new HashMap<Persona, Integer>();
-		personaProcessIdMap.clear();
+		if(initVars) {
+			personaProcessIdMap.clear();
+		}
 		cli.connect();
 		executeCliCommand("adb -s " + deviceSerial + " shell");
+		
+		executeCliCommand("cell list");
+		String []retAnswerArr = cli.getTestAgainstObject().toString().trim().split("\n");
+		for (String retAnswer : retAnswerArr) {
+			if (retAnswer.contains("priv")) {
+				privId = Integer.valueOf(retAnswer.replace("priv", "").replace("(", "").replace(")", "").trim());
+			}
+			if (retAnswer.contains("corp")) {
+				corpId = Integer.valueOf(retAnswer.replace("corp", "").replace("(", "").replace(")", "").trim());
+			}
+		}
+		
 		executeCliCommand("ps | grep /init");
 		String[] retStringArr = cli.getTestAgainstObject().toString()
 				.split("\n");
@@ -1115,27 +1130,48 @@ public class CellRoxDevice extends SystemObjectImpl {
 			Matcher matcher = pattern.matcher(retLine);
 
 			if (matcher.find()) {
-				if (counterOfPersonas == 0) {
-					counterOfPersonas++;
-				} else if (counterOfPersonas == 1) {
-					int privPid = Integer.valueOf(matcher.group(2));
-					report.report("Priv PID: "+privPid);
+				
+				int localId = Integer.valueOf(matcher.group(1));
+				
+				if(localId == privId) {
+					report.report("Priv PID: "+localId);
 					if (initVars) {
-						personaProcessIdMap.put(Persona.PRIV,privPid);
+						personaProcessIdMap.put(Persona.PRIV,localId);
 					} else {
-						mapOfProcessLocal.put(Persona.PRIV,privPid);
+						mapOfProcessLocal.put(Persona.PRIV,localId);
 					}
-					counterOfPersonas++;
-				} else if (counterOfPersonas == 2) {
-					int corpPid = Integer.valueOf(matcher.group(2));
-					report.report("Corp PID: "+corpPid);
-					if (initVars) {
-						personaProcessIdMap.put(Persona.CORP,corpPid);
-					} else {
-						mapOfProcessLocal.put(Persona.CORP,corpPid);
-					}
-					counterOfPersonas++;
 				}
+				else if(localId == corpId) {
+					System.out.println("");
+					report.report("Corp PID: "+localId);
+					if (initVars) {
+						personaProcessIdMap.put(Persona.CORP,localId);
+					} else {
+						mapOfProcessLocal.put(Persona.CORP,localId);
+					}
+				}
+//				
+//				if (counterOfPersonas == 0) {
+//					counterOfPersonas++;
+//				} else if (counterOfPersonas == 1) {
+//					int privPid = Integer.valueOf(matcher.group(2));
+//					report.report("Priv PID: "+privPid);
+//					if (initVars) {
+//						personaProcessIdMap.put(Persona.PRIV,privPid);
+//					} else {
+//						mapOfProcessLocal.put(Persona.PRIV,privPid);
+//					}
+//					counterOfPersonas++;
+//				} else if (counterOfPersonas == 2) {
+//					int corpPid = Integer.valueOf(matcher.group(2));
+//					report.report("Corp PID: "+corpPid);
+//					if (initVars) {
+//						personaProcessIdMap.put(Persona.CORP,corpPid);
+//					} else {
+//						mapOfProcessLocal.put(Persona.CORP,corpPid);
+//					}
+//					counterOfPersonas++;
+//				}
 			}
 		}
 		report.stopLevel();
