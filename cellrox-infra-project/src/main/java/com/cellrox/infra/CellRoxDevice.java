@@ -1082,9 +1082,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps > tmp/ps.txt", true , 4*60*1000);
-        	pullFileFromDevice("tmp/ps.txt", report.getCurrentTestFolder()+"/ps.txt");
-        	report.addLink("Click Here for PS List", "ps.txt");
+//        	executeCliCommand("ps > tmp/ps.txt", true , 4*60*1000);
+//        	pullFileFromDevice("tmp/ps.txt", report.getCurrentTestFolder()+"/ps.txt");
+//        	report.addLink("Click Here for PS List", "ps.txt");
         	getPsInitPrivCorp(isInit);
         	String psList = FileUtils.read(report.getCurrentTestFolder()+"/ps.txt");
         	return psList.toString().split("com.android.phone")[0];
@@ -1150,28 +1150,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 						mapOfProcessLocal.put(Persona.CORP,localId);
 					}
 				}
-//				
-//				if (counterOfPersonas == 0) {
-//					counterOfPersonas++;
-//				} else if (counterOfPersonas == 1) {
-//					int privPid = Integer.valueOf(matcher.group(2));
-//					report.report("Priv PID: "+privPid);
-//					if (initVars) {
-//						personaProcessIdMap.put(Persona.PRIV,privPid);
-//					} else {
-//						mapOfProcessLocal.put(Persona.PRIV,privPid);
-//					}
-//					counterOfPersonas++;
-//				} else if (counterOfPersonas == 2) {
-//					int corpPid = Integer.valueOf(matcher.group(2));
-//					report.report("Corp PID: "+corpPid);
-//					if (initVars) {
-//						personaProcessIdMap.put(Persona.CORP,corpPid);
-//					} else {
-//						mapOfProcessLocal.put(Persona.CORP,corpPid);
-//					}
-//					counterOfPersonas++;
-//				}
 			}
 		}
 		report.stopLevel();
@@ -1213,8 +1191,9 @@ public class CellRoxDevice extends SystemObjectImpl {
         
         /**
          * This function checks for known differences unless it have a known diffrences.
+         * @throws IOException 
          * */
-        public boolean isPsDiff(String ps1, String ps2) {
+        public boolean isPsDiff(String ps1, String ps2) throws IOException {
         	
         	String pid1 = null,pid2 = null,pname1 = null,pname2 = null;
         	Map<String,String> map1 = new HashMap<String, String>();
@@ -1251,18 +1230,28 @@ public class CellRoxDevice extends SystemObjectImpl {
     			return true;
     		}
     		else {
-    			report.report("Maps aren't equal :");
+    			report.startLevel("Process Diffrencess");
+    			report.report("The Following processes could not be found:");
     			for (Entry<String, String> entery : map1.entrySet()) {
     				if(!map2.containsKey(entery.getKey())) {
-    					report.report(entery.getKey() +","+entery.getValue()+" wasn't found equaly in both of the maps.");
+    					report.report(entery.getKey() +","+entery.getValue());
     				}
 				}
-    			report.report("Map 1 : "+map1.toString());
-    			report.report("Map 2 : "+map2.toString());
+    			report.report("Map 1 - Before Fail : ");
+    			printMap(map1);
+    			report.report("Map 2 - After Fail : " );
+    			printMap(map2);
+    			report.stopLevel();
     			return false;
     		}
     		
         }     
+        
+        private void printMap(Map<String,String> map){
+        	for (String key : map.keySet()){
+        		report.report(map.get(key)+" - "+key);
+        	}
+        }
         
         /**
          * Open logcat termianl that print it all the logcat
