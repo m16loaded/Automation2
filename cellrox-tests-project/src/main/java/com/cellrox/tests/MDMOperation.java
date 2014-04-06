@@ -43,18 +43,30 @@ public class MDMOperation extends TestCase {
 	 * 
 	 * */
 	@Test
-	@TestProperties(name = "Unactivate Device With unenroll.zip", paramsInclude = {"currentDevice,localLocation"})
+	@TestProperties(name = "Unactivate Device With unenroll.zip", paramsInclude = {"currentDevice"})
+	  //@TestProperties(name = "Unactivate Device With unenroll.zip", paramsInclude = {"currentDevice,localLocation"})
 	public void unactivateDevice() throws Exception {
 		//step 1
-		final String mobileFileLocation = "/sdcard/unenroll.zip";
+		  //final String mobileFileLocation = "/sdcard/unenroll.zip";
 
 		//push
-		devicesMannager.getDevice(currentDevice).pushFileToDevice(localLocation.getAbsolutePath(), mobileFileLocation);
+		  //devicesMannager.getDevice(currentDevice).pushFileToDevice(localLocation.getAbsolutePath(), mobileFileLocation);
 		//the two lines
-		devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
-		devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + mobileFileLocation + "'>> /cache/recovery/command");
+		  //devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
+		  //devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + mobileFileLocation + "'>> /cache/recovery/command");
 		//reboot recovery
-		devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot recovery");
+		  //devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot recovery");
+		
+		//Added - unEnroll by commands
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("setprop persist.cellrox.enrolled 0");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("setprop persist.service.agent.enable 0");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("pconfig set corp general secondary false");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("rm /data/agent/agent_cache.conf");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("rm /data/agent/agent.conf");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("rm /data/agent/.agent.db");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("sync");
+		devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot");
+		
 		//wait for 
 		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, false, Persona.PRIV);
 		//init the data of the devices
