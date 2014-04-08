@@ -1082,8 +1082,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         	cli.setExitTimeout(240*1000);
         	cli.connect();
         	executeCliCommand("adb -s " + deviceSerial + " shell");
-        	executeCliCommand("ps > tmp/ps.txt", true , 4*60*1000);
-        	pullFileFromDevice("tmp/ps.txt", report.getCurrentTestFolder()+"/ps.txt");
+        	executeCliCommand("ps > /data/local/tmp/ps.txt", true , 4*60*1000);
+        	pullFileFromDevice("/data/local/tmp/ps.txt", report.getCurrentTestFolder()+"/ps.txt");
         	report.addLink("Click Here for PS List", "ps.txt");
         	getPsInitPrivCorp(isInit);
         	String psList = FileUtils.read(report.getCurrentTestFolder()+"/ps.txt");
