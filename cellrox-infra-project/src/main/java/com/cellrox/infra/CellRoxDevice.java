@@ -595,34 +595,34 @@ public class CellRoxDevice extends SystemObjectImpl {
             Thread.sleep(200);
             if (runServer) {
             	executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
-            	executeCliCommand("rm /tmp/local_pipe");
-            	executeCliCommand("mkfifo /tmp/local_pipe");
+            	executeCliCommand("rm /data/local/tmp/local_pipe");
+            	executeCliCommand("mkfifo /data/local/tmp/local_pipe");
             	executeCliCommand("rm /data/unix_soc");
-            	executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/tmp/local_pipe) &"); 
+            	executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &"); 
             }
             
             cli.switchToHost();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-            executeCliCommand("rm /tmp/local_pipe");
-            executeCliCommand("mkfifo /tmp/local_pipe");
-            executeCliCommand("nc -lk "+privePort+" < /tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/tmp/local_pipe &");
+            executeCliCommand("rm /data/local/tmp/local_pipe");
+            executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+            executeCliCommand("nc -lk "+privePort+" < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
             
             cli.switchToHost();
             cli.switchToPersona(Persona.CORP);
             Thread.sleep(200);
             if (runServer) {
             	executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
-            	executeCliCommand("rm /tmp/local_pipe");
-            	executeCliCommand("mkfifo /tmp/local_pipe");
+            	executeCliCommand("rm /data/local/tmp/local_pipe");
+            	executeCliCommand("mkfifo /data/local/tmp/local_pipe");
             	executeCliCommand("rm /data/unix_soc");
-            	executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/tmp/local_pipe) &"); 
+            	executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &"); 
             }
             
             cli.switchToHost();
             executeCliCommand("adb -s " + getDeviceSerial() + " root");
-            executeCliCommand("rm /tmp/local_pipe");
-            executeCliCommand("mkfifo /tmp/local_pipe");
-            executeCliCommand("nc -lk "+corpPort+" < /tmp/local_pipe  | nc -U /data/containers/corp/data/unix_soc >/tmp/local_pipe &");
+            executeCliCommand("rm /data/local/tmp/local_pipe");
+            executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+            executeCliCommand("nc -lk "+corpPort+" < /data/local/tmp/local_pipe  | nc -U /data/containers/corp/data/unix_soc >/data/local/tmp/local_pipe &");
             
             report.stopLevel();
             cli.disconnect();
@@ -646,18 +646,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
-			executeCliCommand("rm /tmp/local_pipe");
-			executeCliCommand("mkfifo /tmp/local_pipe");
+			executeCliCommand("rm /data/local/tmp/local_pipe");
+			executeCliCommand("mkfifo /data/local/tmp/local_pipe");
 			executeCliCommand("rm /data/unix_soc");
-			executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/tmp/local_pipe) &");
+			executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
 
 		cli.switchToHost();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
-		executeCliCommand("rm /tmp/local_pipe");
-		executeCliCommand("mkfifo /tmp/local_pipe");
+		executeCliCommand("rm /data/local/tmp/local_pipe");
+		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
 		executeCliCommand("nc -lk " + privePort
-				+ " < /tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/tmp/local_pipe &");
+				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
 
 		report.stopLevel();
 		cli.disconnect();
