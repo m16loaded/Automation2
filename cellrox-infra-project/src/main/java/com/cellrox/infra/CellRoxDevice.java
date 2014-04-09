@@ -649,7 +649,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 			executeCliCommand("rm /data/local/tmp/local_pipe");
 			executeCliCommand("mkfifo /data/local/tmp/local_pipe");
 			executeCliCommand("rm /data/unix_soc");
-			executeCliCommand("(nc -lkU /data/unix_soc </tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
+			executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
 
 		cli.switchToHost();
