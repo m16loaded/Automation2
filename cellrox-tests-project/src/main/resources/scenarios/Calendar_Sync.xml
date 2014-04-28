@@ -55,7 +55,6 @@
         <antcallback target="t39"/>
         <antcallback target="t40"/>
         <antcallback target="t41"/>
-        <antcallback target="t42"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -391,14 +390,6 @@
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
-        </jsystem>
-    </target>
-    <target name="t42">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="4fdf6d81-c657-4190-9d7b-ccb1a65d030b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
     </target>
 </project>
