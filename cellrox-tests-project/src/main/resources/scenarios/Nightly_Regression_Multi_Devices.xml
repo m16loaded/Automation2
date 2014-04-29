@@ -125,15 +125,15 @@
         </jsystem-ant>
     </target>
     <target name="t11">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Add_Account_Disabled.xml">
-            <property name="jsystem.uuid" value="dcc17b05-3645-472e-a84e-3952fed4c06e"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Reset_Data_Disabled.xml">
+            <property name="jsystem.uuid" value="4d024dd9-4556-4128-8680-85f477aae862"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t12">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Reset_Data_Disabled.xml">
-            <property name="jsystem.uuid" value="4d024dd9-4556-4128-8680-85f477aae862"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Add_Account_Disabled.xml">
+            <property name="jsystem.uuid" value="dcc17b05-3645-472e-a84e-3952fed4c06e"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
