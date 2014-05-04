@@ -201,35 +201,42 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
         	cmd = "getprop ro.hardware";//Type
         	executeCliCommand(cmd);
-        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
-        			replace("\n", "").trim();
+        	var = getPropFromCli(cli.getTestAgainstObject().toString());
         	compareMap.put("Model Number", var);
         	 //ROM Version
         	cmd = "getprop ro.build.display.id";
         	executeCliCommand(cmd);
-        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
-        			replace("\n", "").trim();
+        	var = getPropFromCli(cli.getTestAgainstObject().toString());
         	compareMap.put("ROM Version", var);
         	//Android Version
         	cmd = "getprop ro.build.version.release";
         	executeCliCommand(cmd);
-        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
-        			replace("\n", "").trim();
+        	var = getPropFromCli(cli.getTestAgainstObject().toString());
         	compareMap.put("Android Version", var);
         	 //ID/IMEI
         	cmd = "getprop ril.IMEI";
         	executeCliCommand(cmd);
-        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
-        			replace("\n", "").trim();
+        	var = getPropFromCli(cli.getTestAgainstObject().toString());
         	compareMap.put("ID/IMEI", var);
         	 //Kernel Version
         	cmd = "uname -r";
         	executeCliCommand(cmd);
-        	var = cli.getTestAgainstObject().toString().replace(cmd, "").replace("root@mako:/ #", "").
-        			replace("\n", "").trim();
+        	var = getPropFromCli(cli.getTestAgainstObject().toString());
         	compareMap.put("Kernel Version", var);
     		
     		return compareMap;
+    	}
+    	
+    	private String getPropFromCli(String propToParse){
+    		String prop = null;
+    		Pattern p = Pattern.compile("\\[.*\\]:\\s*\\[(.*)\\]");
+    		Matcher m = p.matcher(propToParse);
+    		
+    		while (m.find()){
+    			prop = m.group(1);
+    		}
+    		return prop;
+    		
     	}
         
     	   public void executeCommandAdbShellRoot(String cmd) throws Exception {
@@ -407,8 +414,9 @@ public class CellRoxDevice extends SystemObjectImpl {
          * This function adding to the summary(Jsystem report) the properties.
          * */
         public void addToTheSummarySystemProp() throws Exception {
-        	report.startLevel("Get Device Properties");
+        	String prop = null;
         	String hardware = null;
+        	report.startLevel("Get Device Properties");
         	
         	cli.connect();
         	executeCliCommand("adb -s "+getDeviceSerial() +" root");
@@ -416,38 +424,28 @@ public class CellRoxDevice extends SystemObjectImpl {
         	
         	//add build sdk version prop
         	executeCliCommand("getprop | fgrep ro.build.version.sdk");
-        	String propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.build.version.sdk", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	Summary.getInstance().setProperty("Build_sdk_version", propToParse.split(":")[1].trim());
+        	prop = getPropFromCli(cli.getTestAgainstObject().toString());
+        	Summary.getInstance().setProperty("Build_sdk_version", prop);//propToParse.split(":")[1].trim());
         
         	//add Build_display_id prop
         	executeCliCommand("getprop | fgrep ro.build.display.id");
-        	propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.build.display.id", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	Summary.getInstance().setProperty("Build_display_id", propToParse.split(":")[1].trim());
+        	prop = getPropFromCli(cli.getTestAgainstObject().toString());
+        	Summary.getInstance().setProperty("Build_display_id", prop);//propToParse.split(":")[1].trim());
         	
         	//add Build_date prop
         	executeCliCommand("getprop | fgrep ro.build.date]");
-        	propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.build.date]", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	Summary.getInstance().setProperty("Build_date", propToParse.split(":")[1].trim());
+        	prop = getPropFromCli(cli.getTestAgainstObject().toString());
+        	Summary.getInstance().setProperty("Build_date", prop);//propToParse.split(":")[1].trim());
         	
         	//add hardware prop
-        	executeCliCommand("getprop | fgrep ro.hardware]");
-        	propToParse = cli.getTestAgainstObject().toString();
-        	propToParse =propToParse.replace("getprop | fgrep ro.hardware]", "");
-        	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-        	hardware = propToParse.split(":")[1].trim();
-        	Summary.getInstance().setProperty("hardware", hardware);
+        	prop = getPropFromCli(cli.getTestAgainstObject().toString());
+        	Summary.getInstance().setProperty("hardware", prop);
         	
         	//add IMEI or MAC address to prop
-        	if(hardware.trim().equalsIgnoreCase("Flo")) {
+        	if(prop.trim().equalsIgnoreCase("Flo")) {
         		//in this case bring the mac address
         		executeCliCommand("netcfg | grep wlan0");
-        		propToParse = cli.getTestAgainstObject().toString();
+        		String propToParse = cli.getTestAgainstObject().toString();
         		propToParse =propToParse.replace("netcfg | grep wlan0", "");
         		String [] propToParseArr = propToParse.split("\n");
         		for (String propLine : propToParseArr) {
@@ -455,7 +453,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 						continue;
 					}
 					String [] propLineArr = propLine.split(" ");
-					for (String prop : propLineArr) {
+					for (String lanProp : propLineArr) {
 						if (prop.contains(":")) {
 							Summary.getInstance().setProperty("Mac_address", prop);
 							break;
@@ -466,11 +464,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         	else {
         		//in this case bring the IMIE
             	executeCliCommand("getprop | fgrep IMEI]");
-            	propToParse = cli.getTestAgainstObject().toString();
-            	propToParse =propToParse.replace("getprop | fgrep IMEI]", "");
-            	propToParse =propToParse.replace("root@mako:/ #", "").replace("]", "").replace("[", "").trim();
-            	hardware = propToParse.split(":")[1].trim();
-            	Summary.getInstance().setProperty("IMEI", hardware);
+            	prop = getPropFromCli(cli.getTestAgainstObject().toString());
+            	Summary.getInstance().setProperty("IMEI", prop);
         	}
         	
         	Summary.getInstance().setProperty("Vellamo_Results", "");

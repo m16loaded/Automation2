@@ -1127,8 +1127,6 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Validate Expression is ${size} with Class \"${text}\" than ${expectedLine}", paramsInclude = { "currentDevice,persona,text,index,expectedLine,expectedNumber,size,vellamoResultShow" })
 	public void validateExpressionIsSmallerByClass() throws Exception {
-		
-		
 		report.report("About to validate expression is "+size.toString()+" than : " +expectedNumber);
 		String res = devicesMannager.getDevice(currentDevice).getPersona(persona).getText((new Selector().setClassName(text).setIndex(index)));
 		report.report("The return result : "+res);
@@ -1140,23 +1138,15 @@ public class CellroxDeviceOperations extends TestCase {
 	        	String number = matcher.group(1);
 	        	boolean isTrue;
 	        	if(size == Size.Smaller)  {
-	        		isTrue = Double.valueOf(number) < Double.valueOf(expectedNumber);
+	        		if (Double.valueOf(number) < Double.valueOf(expectedNumber)){
+		        		report.report("The value "+number+" is Smaller than : "+expectedNumber+" as Excpected");
+	        		}else{
+	        			report.report("The value "+number+" isn't Smaller than "+expectedNumber, Reporter.FAIL);
+	        		}
 	        	}
-	        	else  {
-	        		isTrue = Double.valueOf(number) > Double.valueOf(expectedNumber);
-	        		
 	        		if(vellamoResultShow) {
 	        			Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results")+number + "\\");
 	        		}
-	        	}
-
-	        		
-	        	if(isTrue) { 
-	        		report.report("The value is "+size.toString()+" than : "+res);
-	        	}
-	        	else { 
-	        		report.report("The value isn't "+ size.toString() +" than the value in : "+res, Reporter.FAIL);
-	        	}
 	    }
 	    else
 	        report.report("Couldnt find : " + res + " in : " +res ,Reporter.FAIL);
@@ -1284,16 +1274,30 @@ public class CellroxDeviceOperations extends TestCase {
 	    if(matcher.find()) {
 	        	report.report("Find : " + expectedLine + " in : " +res);
 	        	String number = matcher.group(1);
-	        	boolean isBigger;
-	        	if(size == Size.Bigger) 
-	        		isBigger = Double.valueOf(number) > Double.valueOf(expectedNumber);
-	        	else 
-	        		isBigger = Double.valueOf(number) < Double.valueOf(expectedNumber);
-	        	
-	        	if(isBigger) 
-	        		report.report("The value is smaller than : "+res);
-	        	else 
-	        		report.report("The value isn't smaller than : "+res, Reporter.FAIL);
+	        	switch(size){
+	        	case Bigger:
+	        		if (Double.valueOf(number) > Double.valueOf(expectedNumber)){
+	        			report.report("The value "+res+" is Bigger than "+expectedNumber+" as Expected");
+	        		}else{
+	        			report.report("The value "+res+" isn't bigger than "+expectedNumber, Reporter.FAIL);
+	        		}
+	        	break;
+	        	case Smaller:
+	        		if (Double.valueOf(number) < Double.valueOf(expectedNumber)){
+	        			report.report("The value "+res+" is Smaller than "+expectedNumber+" as Expected");
+	        		}else{
+	        			report.report("The value "+res+" isn't Smaller than "+expectedNumber, Reporter.FAIL);
+	        		}
+	        		break;
+	        	case Equals:
+	        		if (Double.valueOf(number).equals(Double.valueOf(expectedNumber))){
+	        			report.report("The value "+res+" is Equals to "+expectedNumber+" as Expected");
+	        		}else{
+	        			report.report("The value "+res+" isn't Equals to "+expectedNumber, Reporter.FAIL);
+	        		}
+	        		break;
+	        		
+	        	}
 	    }
 	    else
 	        report.report("Couldnt find : " + expectedLine + " in : " +res ,Reporter.FAIL);

@@ -2,7 +2,7 @@ package com.cellrox.infra.enums;
 
 public enum Size {
 	
-	Bigger("Bigger"),Smaller("Smaller");
+	Bigger("Bigger"),Smaller("Smaller"),Equals("Equals");
 	
 	String size;
 
