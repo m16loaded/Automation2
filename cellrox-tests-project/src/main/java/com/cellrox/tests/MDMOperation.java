@@ -157,15 +157,19 @@ public class MDMOperation extends TestCase {
 		
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(0)
 				, activationCode.substring(0, 4));
+		sleep(500);
 		
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(2)
 				, activationCode.substring(4, 8));
+		sleep(500);
 		
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(4)
 				, activationCode.substring(8, 12));
+		sleep(500);
 		
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).setText(new Selector().setClassName("android.widget.EditText").setIndex(3)
 				, "p.cellrox.com");
+		sleep(500);
 		
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
 		Thread.sleep(400);
