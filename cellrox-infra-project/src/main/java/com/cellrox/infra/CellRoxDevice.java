@@ -449,19 +449,11 @@ public class CellRoxDevice extends SystemObjectImpl {
         		executeCliCommand("netcfg | grep wlan0");
         		String propToParse = cli.getTestAgainstObject().toString();
         		propToParse =propToParse.replace("netcfg | grep wlan0", "");
-        		String [] propToParseArr = propToParse.split("\n");
-        		for (String propLine : propToParseArr) {
-					if(!propLine.startsWith("wlan0")) {
-						continue;
-					}
-					String [] propLineArr = propLine.split(" ");
-					for (String lanProp : propLineArr) {
-						if (prop.contains(":")) {
-							Summary.getInstance().setProperty("Mac_address", prop);
-							break;
-						}
-					}
-				}
+        		Pattern p = Pattern.compile("wlan0\\s*UP\\s*(\\d*\\.\\d*\\.\\d*\\.\\d*.\\d*)\\s*(\\S*)\\s*(.*)");
+        		Matcher m =p.matcher(propToParse);
+        		if (m.find()){
+        			Summary.getInstance().setProperty("MAC_Address", m.group(1));
+        		}
         	}
         	else {
         		//in this case bring the IMIE
