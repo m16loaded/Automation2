@@ -438,6 +438,8 @@ public class CellRoxDevice extends SystemObjectImpl {
         	Summary.getInstance().setProperty("Build_date", prop);//propToParse.split(":")[1].trim());
         	
         	//add hardware prop
+        	executeCliCommand("getprop | fgrep ro.hardware]");
+
         	prop = getPropFromCli(cli.getTestAgainstObject().toString());
         	Summary.getInstance().setProperty("hardware", prop);
         	
