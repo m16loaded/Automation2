@@ -23,6 +23,7 @@ import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.utils.FileUtils;
 
+import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
@@ -1273,12 +1274,21 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// addding watcher for unxpected stopped application on priv
 		uiClient.get(Persona.PRIV.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP",
 				new Selector[] { new Selector().setTextContains("Unfortunately") }, new Selector().setText("OK"));
-		uiClient.get(Persona.PRIV.ordinal()).runWatchers();
-
+		
 		// addding watcher for unxpected stopped application on corp
 		uiClient.get(Persona.CORP.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP",
 				new Selector[] { new Selector().setTextContains("Unfortunately") }, new Selector().setText("OK"));
+		
+		//adding launcher selection watcher for priv
+		uiClient.get(Persona.PRIV.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION", new Selector[]{new Selector().setText("Select a home app")}, new Selector[]{new Selector().setTextMatches("Launcher"),new Selector().setText("Always")});
+		
+		//adding launcher selection watcher for corp
+		uiClient.get(Persona.CORP.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION", new Selector[]{new Selector().setText("Select a home app")}, new Selector[]{new Selector().setText("Launcher").setIndex(1),new Selector().setText("Always")});
+
+		uiClient.get(Persona.PRIV.ordinal()).runWatchers();
 		uiClient.get(Persona.CORP.ordinal()).runWatchers();
+
+		
 	}
 
 	/**

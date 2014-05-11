@@ -1383,4 +1383,18 @@ public interface AutomatorService {
 	
 	void scrollBackward();
 	
+	/**
+	 * Register a ClickMultiUiObjectWatcher
+	 * 
+	 * @param name
+	 *            Watcher name
+	 * @param conditions
+	 *            If all UiObject in the conditions match, the watcher should be
+	 *            triggered.
+	 * @param targets
+	 *            The target UiObjects should be clicked if all conditions match.
+	 */
+	
+	public void registerClickMultiUiObjectWatcher(String name, Selector[] conditions, Selector[] targets);
+	
 }

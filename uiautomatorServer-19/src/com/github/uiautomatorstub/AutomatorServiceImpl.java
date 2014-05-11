@@ -23,6 +23,7 @@ import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
+import com.github.uiautomatorstub.watcher.ClickMultiUiObjectsWatcher;
 import com.github.uiautomatorstub.watcher.ClickUiObjectWatcher;
 import com.github.uiautomatorstub.watcher.PressKeysWatcher;
 
@@ -368,6 +369,40 @@ public class AutomatorServiceImpl implements AutomatorService {
 				selectors[i] = conditions[i].toUiSelector();
 			}
 			UiDevice.getInstance().registerWatcher(name, new ClickUiObjectWatcher(selectors, target.toUiSelector()));
+			watchers.add(name);
+		}
+	}
+	
+	/**
+	 * Register a ClickMultiUiObjectWatcher
+	 * 
+	 * @param name
+	 *            Watcher name
+	 * @param conditions
+	 *            If all UiObject in the conditions match, the watcher should be
+	 *            triggered.
+	 * @param targets
+	 *            The target UiObjects should be clicked if all conditions match.
+	 */
+	@Override
+	public void registerClickMultiUiObjectWatcher(String name, Selector[] conditions, Selector[] targets) {
+		synchronized (watchers) {
+			if (watchers.contains(name)) {
+				UiDevice.getInstance().removeWatcher(name);
+				watchers.remove(name);
+			}
+
+			UiSelector[] selectors = new UiSelector[conditions.length];
+			for (int i = 0; i < conditions.length; i++) {
+				selectors[i] = conditions[i].toUiSelector();
+			}
+			
+			UiSelector[] clickableTargets = new UiSelector[targets.length];
+			for (int i = 0; i < targets.length; i++) {
+				clickableTargets[i] = targets[i].toUiSelector();
+			}
+			
+			UiDevice.getInstance().registerWatcher(name, new ClickMultiUiObjectsWatcher(selectors, clickableTargets));
 			watchers.add(name);
 		}
 	}
