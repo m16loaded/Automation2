@@ -1,5 +1,8 @@
 package com.github.uiautomatorstub.watcher;
 
+import java.io.File;
+
+import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
@@ -26,6 +29,7 @@ public class ClickUiObjectWatcher extends SelectorWatcher {
         Log.d("ClickUiObjectWatcher triggered!");
         if (target != null) {
             try {
+                UiDevice.getInstance().takeScreenshot(new File("/data/local/tmp/wathcer.png"));
                 new UiObject(target).click();
             } catch (UiObjectNotFoundException e) {
                 Log.d(e.getMessage());

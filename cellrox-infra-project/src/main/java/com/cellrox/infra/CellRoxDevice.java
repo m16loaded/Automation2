@@ -1274,6 +1274,18 @@ public class CellRoxDevice extends SystemObjectImpl {
                 // connect client to server
                 uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
                 uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
+                addWatchers();
+                
+        }
+        
+        private void addWatchers() throws Exception{
+        	// addding watcher for unxpected stopped application on priv
+        	uiClient.get(Persona.PRIV.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP", new Selector[]{new Selector().setTextContains("Unfortunately")}, new Selector().setText("OK"));
+        	uiClient.get(Persona.PRIV.ordinal()).runWatchers();
+        	
+        	// addding watcher for unxpected stopped application on corp
+        	uiClient.get(Persona.CORP.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP", new Selector[]{new Selector().setTextContains("Unfortunately")}, new Selector().setText("OK"));
+        	uiClient.get(Persona.CORP.ordinal()).runWatchers();
         }
 
         /**

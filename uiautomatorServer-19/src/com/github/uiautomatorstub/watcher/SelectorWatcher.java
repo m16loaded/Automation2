@@ -12,7 +12,7 @@ import com.android.uiautomator.core.UiWatcher;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class SelectorWatcher implements UiWatcher {
-    private UiSelector[] conditions = null;
+    protected UiSelector[] conditions = null;
 
     public SelectorWatcher(UiSelector[] conditions) {
         this.conditions = conditions;
