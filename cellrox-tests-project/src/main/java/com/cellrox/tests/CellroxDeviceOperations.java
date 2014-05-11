@@ -425,7 +425,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 	
 	@Test
-	@TestProperties(name = "Click on x,y on ${persona}", paramsInclude = { "currentDevice,x,y,persona" })
+	@TestProperties(name = "Click on ${x},${y} on ${persona}", paramsInclude = { "currentDevice,x,y,persona" })
 	public void clickByCordinate() {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(Integer.valueOf(x), Integer.valueOf(y));
 	}
@@ -679,7 +679,7 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
 		}
 		catch(Exception e) {
-			report.report("Error in the waking up.");
+			report.report("Error waking up "+devicesMannager.getDevice(currentDevice).getForegroundPersona(),report.FAIL);
 		}
 	}
 	

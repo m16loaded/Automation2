@@ -15,8 +15,25 @@
     <target name="execute scenario">
         <antcallback target="t0"/>
         <antcallback target="t1"/>
+        <antcallback target="t2"/>
+        <antcallback target="t3"/>
     </target>
     <target name="t0">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/SetDisplaySleepTime.xml">
+            <property name="jsystem.uuid" value="bc8ad4fd-6687-4789-b71f-d52cf891a550"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t1">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="2efcd45f-62df-4cea-84bb-32d20b9a86ec"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.clickByCordinate"/>
+        </jsystem>
+    </target>
+    <target name="t2">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="3d704a88-6e75-4ba4-bdb5-ea4ad74decbb"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -24,7 +41,7 @@
             <test name="com.cellrox.tests.MDMOperation.enrollOwner"/>
         </jsystem>
     </target>
-    <target name="t1">
+    <target name="t3">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="bb42d85f-5f17-461c-9b09-00e3e7a10143"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
