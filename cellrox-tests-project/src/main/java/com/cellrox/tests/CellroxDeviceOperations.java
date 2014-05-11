@@ -1816,6 +1816,7 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
 		}
 		finally{
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 			report.stopLevel();
 		}
 		
@@ -1863,7 +1864,7 @@ public class CellroxDeviceOperations extends TestCase {
 				Thread.sleep(7000);
 			}
 			else {
-				report.report("There was no incoming call.");
+				report.report("There was no incoming call on "+devicesMannager.getDevice(secDevice).getDeviceSerial() + " ("+secDevice+")",report.FAIL);
 			}
 			report.report("hangup");
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
