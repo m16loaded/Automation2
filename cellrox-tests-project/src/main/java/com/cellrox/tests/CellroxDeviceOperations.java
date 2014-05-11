@@ -65,6 +65,8 @@ public class CellroxDeviceOperations extends TestCase {
     private boolean screenStatus;
 	private boolean elementAttributeStatus;
 	private ElementAttributes elementAttributes = ElementAttributes.ENABLED;
+	private String localFilename;
+	private String remoteFilepath;
 
 	
 	/**
@@ -122,7 +124,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * This function validate that the insert state is the correct one with the screen
 	 * */
 	@Test	
-	@TestProperties(name ="Validate the Screen is ${onOff}" ,paramsInclude = "currentDevicem,persona,onOff")
+	@TestProperties(name ="Validate the Screen is ${onOff}" ,paramsInclude = "currentDevice,persona,onOff")
 	public void validateScreenIsOn() throws RemoteException {
 		
 		boolean isOn = devicesMannager.getDevice(currentDevice).getPersona(persona).isScreenOn();
@@ -148,6 +150,38 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 	
+	
+	
+	/**
+	 * This function will pull a file from the device to a local file<br>
+	 * The function will fail if the file does not exists
+	 * */
+	@Test	
+	@TestProperties(name ="Pull File from Device" ,paramsInclude = "currentDevice,remoteFilepath, localFilename")
+	public void pullFileFromDevice() throws RemoteException {
+		try {
+			devicesMannager.getDevice(currentDevice).pullFileFromDevice(remoteFilepath, localFilename);
+		} catch (Exception e) {
+			report.report(e.getMessage(),report.FAIL);
+		}
+	}
+	
+	public String getLocalFilename() {
+		return localFilename;
+	}
+
+	public void setLocalFilename(String localFilename) {
+		this.localFilename = localFilename;
+	}
+
+	public String getRemoteFilepath() {
+		return remoteFilepath;
+	}
+
+	public void setRemoteFilepath(String remoteFilepath) {
+		this.remoteFilepath = remoteFilepath;
+	}
+
 	/**
 	 * send to the agent DB the command and validate the returned answer.
 	 * */
@@ -162,7 +196,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * This function validate that the ui object is exist in the screen by description and if not the function fails. 
 	 * */
 	@Test
-	@TestProperties(name = "Validate UiObject Exist By Description ${text}", paramsInclude = "currentDevicem,persona,text")
+	@TestProperties(name = "Validate UiObject Exist By Description ${text}", paramsInclude = "currentDevice,persona,text")
 	public void validateUiObjectExistByDescription() throws Exception{
 		if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setDescription(text))) {
 			report.report("The uiobject is found.");
@@ -184,7 +218,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * This function validate that the ui object is exist in the screen by text and if not the function fails. 
 	 * */
 	@Test
-	@TestProperties(name = "Validate UiObject Exist By Text ${text}", paramsInclude = "currentDevicem,persona,text")
+	@TestProperties(name = "Validate UiObject Exist By Text ${text}", paramsInclude = "currentDevice,persona,text")
 	public void validateUiObjectExistByText() throws Exception{
 		if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText(text))) {
 			report.report("The uiobject is found.");
@@ -202,7 +236,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * 	2.	validate that the command output text is exists on the screen 
 	 * */
 	@Test
-	@TestProperties(name = "Validate Cli Command Output Exists On The Screen ${text}", paramsInclude = "currentDevicem,persona,text")
+	@TestProperties(name = "Validate Cli Command Output Exists On The Screen ${text}", paramsInclude = "currentDevice,persona,text")
 	public void validateCliCommandOutputExistsOnTheScreen() throws Exception{
 		devicesMannager.getDevice(currentDevice).validateCliCommandOutputExistsOnTheScreen(text, persona);
 	}

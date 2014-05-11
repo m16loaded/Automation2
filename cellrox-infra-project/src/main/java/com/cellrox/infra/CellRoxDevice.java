@@ -1036,7 +1036,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		try {
 			device.pullFileFromDevice(remoteFilepath, localFilename);
 		} catch (Exception e) {
-			throw new Exception("Error while pulling the file " + remoteFilepath + " to " + localFilename + "\n");
+			throw new Exception("Error while pulling the file " + remoteFilepath + " to " + localFilename + "\n"+e.getMessage());
 		}
 	}
 
@@ -1274,21 +1274,24 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// addding watcher for unxpected stopped application on priv
 		uiClient.get(Persona.PRIV.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP",
 				new Selector[] { new Selector().setTextContains("Unfortunately") }, new Selector().setText("OK"));
-		
+
 		// addding watcher for unxpected stopped application on corp
 		uiClient.get(Persona.CORP.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP",
 				new Selector[] { new Selector().setTextContains("Unfortunately") }, new Selector().setText("OK"));
-		
-		//adding launcher selection watcher for priv
-		uiClient.get(Persona.PRIV.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION", new Selector[]{new Selector().setText("Select a home app")}, new Selector[]{new Selector().setTextMatches("Launcher"),new Selector().setText("Always")});
-		
-		//adding launcher selection watcher for corp
-		uiClient.get(Persona.CORP.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION", new Selector[]{new Selector().setText("Select a home app")}, new Selector[]{new Selector().setText("Launcher").setIndex(1),new Selector().setText("Always")});
+
+		// adding launcher selection watcher for priv
+		uiClient.get(Persona.PRIV.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION",
+				new Selector[] { new Selector().setText("Select a home app") },
+				new Selector[] { new Selector().setTextMatches("Launcher"), new Selector().setText("Always") });
+
+		// adding launcher selection watcher for corp
+		uiClient.get(Persona.CORP.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION",
+				new Selector[] { new Selector().setText("Select a home app") },
+				new Selector[] { new Selector().setText("Launcher").setIndex(1), new Selector().setText("Always") });
 
 		uiClient.get(Persona.PRIV.ordinal()).runWatchers();
 		uiClient.get(Persona.CORP.ordinal()).runWatchers();
 
-		
 	}
 
 	/**
@@ -1408,12 +1411,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void setDeviceAsRoot() throws Exception {
 
 		String retString = "";
-		final int numberOfRootAttempts = 3;
+		final int numberOfRootAttempts = 5;
 		cli.connect();
 		for (int i = 0; i < numberOfRootAttempts; i++) {
 			executeCliCommand("adb -s " + getDeviceSerial() + " root", true);
 			retString = cli.getTestAgainstObject().toString();
-			if (retString.contains("error: device unauthorized.")) {
+			if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found") || retString.contains("adbd cannot run as root in production builds")) {
 				executeCliCommand("adb -s " + getDeviceSerial() + " kill-server");
 			} else {
 				if (retString.contains("?????")) {
@@ -1424,9 +1427,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 				}
 			}
 		}
-		if (retString.contains("error: device unauthorized.")) {
+		if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found") || retString.contains("adbd cannot run as root in production builds")) {
 			cli.disconnect();
-			throw new Exception("error: device unauthorized, couldn't make adb root.");
+			throw new Exception("adb error, couldn't make adb root.");
 		}
 		Thread.sleep(2000);
 		cli.disconnect();
@@ -1713,18 +1716,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.handleCliCommand(Command, cmd);
 		// this part is for checking if the adb is down, if so it will restart
 		// the connection
-		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { // looking
-																									// for
-																									// 'error:
-																									// protocol
-																									// fault
-																									// (no
-																									// status)'
-																									// and
-																									// reconnect
-																									// if
-																									// it
-																									// exists
+		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { //TODO if offline etc. status repets - add here the retrys
 			if (numOfTries > 1) {
 				cli.connect();
 				cmd = new CliCommand("adb kill-server");
