@@ -50,6 +50,7 @@
         <antcallback target="t34"/>
         <antcallback target="t35"/>
         <antcallback target="t36"/>
+        <antcallback target="t37"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead.xml">
@@ -299,13 +300,20 @@
         </jsystem-ant>
     </target>
     <target name="t35">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Configure_and_Connect.xml">
+            <property name="jsystem.uuid" value="b7544038-a14c-4087-b917-e64f0cf5a644"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t36">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Factory_Data_Settings_First_Wizard_New.xml">
             <property name="jsystem.uuid" value="8a6a50e9-c84e-41a2-a609-01b94bc0c1c8"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t36">
+    <target name="t37">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
             <property name="jsystem.uuid" value="d310d307-5566-4db1-8a86-f439f74cf753"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
