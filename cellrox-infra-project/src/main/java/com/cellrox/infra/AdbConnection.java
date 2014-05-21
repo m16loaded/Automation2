@@ -141,6 +141,13 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 		
 		p = new Prompt();
 		p.setCommandEnd(true);
+		p.setAddEnter(true);
+		p.setPrompt("Killed");
+		prompts.add(p);
+		
+		
+		p = new Prompt();
+		p.setCommandEnd(true);
 		p.setPrompt("nc: bind: Address already in use");
 		prompts.add(p);
 		
