@@ -2,6 +2,7 @@ package com.cellrox.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -451,10 +452,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 			executeCliCommand("netcfg | grep wlan0");
 			String propToParse = cli.getTestAgainstObject().toString();
 			propToParse = propToParse.replace("netcfg | grep wlan0", "");
-			Pattern p = Pattern.compile("wlan0\\s*UP\\s*(\\d*\\.\\d*\\.\\d*\\.\\d*.\\d*)\\s*(\\S*)\\s*(.*)");
+			Pattern p = Pattern.compile("[^\\.]wlan0\\s*UP\\s*(\\d*\\.\\d*\\.\\d*\\.\\d*.\\d*)\\s*(\\S*)\\s*(.*)");
 			Matcher m = p.matcher(propToParse);
 			if (m.find()) {
-				Summary.getInstance().setProperty("MAC_Address", m.group(1));
+				String macAddress = m.group(3);
+				Summary.getInstance().setProperty("MAC_Address", macAddress);
+				// calculate the IMEI from the MAC Address
+				macAddress = macAddress.replace(":", "");
+				long imei =new BigInteger(macAddress, 16).longValue();
+				Summary.getInstance().setProperty("IMEI", ""+imei);
 			}
 		} else {
 			// in this case bring the IMIE
@@ -740,6 +746,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
 		// validateDeviceIsOffline(personas);
 		Thread.sleep(2000);
+		cli.connect();
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		// executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		// if the corp is encrypted we should wait until the "cell list state"
