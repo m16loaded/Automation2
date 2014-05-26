@@ -745,10 +745,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 	// TODO to add isEncryptedPriv do something
 	public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
 		// validateDeviceIsOffline(personas);
-		Thread.sleep(2000);
+		Thread.sleep(60000);
+		
+		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
-		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		// executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		// if the corp is encrypted we should wait until the "cell list state"
 		// is 3 for Priv and 2 for Corp
