@@ -27,6 +27,7 @@ import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
+import org.python.modules.thread;
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -740,7 +741,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// validateDeviceIsOffline(personas);
 		Thread.sleep(2000);
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
-//		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		// executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		// if the corp is encrypted we should wait until the "cell list state"
 		// is 3 for Priv and 2 for Corp
 		// then we should enter the Corp password and validate both personas'
@@ -923,6 +924,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public void validateEncryptedCorpPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+		Thread.sleep(60000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		boolean online = false;
 		String result = null;
@@ -1038,7 +1040,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		try {
 			device.pullFileFromDevice(remoteFilepath, localFilename);
 		} catch (Exception e) {
-			throw new Exception("Error while pulling the file " + remoteFilepath + " to " + localFilename + "\n"+e.getMessage());
+			throw new Exception("Error while pulling the file " + remoteFilepath + " to " + localFilename + "\n" + e.getMessage());
 		}
 	}
 
@@ -1418,7 +1420,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		for (int i = 0; i < numberOfRootAttempts; i++) {
 			executeCliCommand("adb -s " + getDeviceSerial() + " root", true);
 			retString = cli.getTestAgainstObject().toString();
-			if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found") || retString.contains("adbd cannot run as root in production builds")) {
+			if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found")
+					|| retString.contains("adbd cannot run as root in production builds")) {
 				executeCliCommand("adb -s " + getDeviceSerial() + " kill-server");
 			} else {
 				if (retString.contains("?????")) {
@@ -1429,7 +1432,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 				}
 			}
 		}
-		if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found") || retString.contains("adbd cannot run as root in production builds")) {
+		if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found")
+				|| retString.contains("adbd cannot run as root in production builds")) {
 			cli.disconnect();
 			throw new Exception("adb error, couldn't make adb root.");
 		}
@@ -1718,7 +1722,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.handleCliCommand(Command, cmd);
 		// this part is for checking if the adb is down, if so it will restart
 		// the connection
-		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { //TODO if offline etc. status repets - add here the retrys
+		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { // TODO
+																									// if
+																									// offline
+																									// etc.
+																									// status
+																									// repets
+																									// -
+																									// add
+																									// here
+																									// the
+																									// retrys
 			if (numOfTries > 1) {
 				cli.connect();
 				cmd = new CliCommand("adb kill-server");
