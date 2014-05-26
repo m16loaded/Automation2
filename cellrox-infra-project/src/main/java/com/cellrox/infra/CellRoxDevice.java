@@ -714,6 +714,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		device.executeShellCommand("reboot recovery");
 		report.report("reboot recovery command was sent");
 		Thread.sleep(60000);
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		boolean isUp = validateDeviceIsOnline(isEncrypted, isEncryptedPriv, personas);
 		// device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		upTime = getCurrentUpTime();
