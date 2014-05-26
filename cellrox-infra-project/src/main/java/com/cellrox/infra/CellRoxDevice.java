@@ -741,6 +741,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// validateDeviceIsOffline(personas);
 		Thread.sleep(2000);
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		// if the corp is encrypted we should wait until the "cell list state"
 		// is 3 for Priv and 2 for Corp
 		// then we should enter the Corp password and validate both personas'
@@ -923,6 +924,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public void validateEncryptedCorpPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		boolean online = false;
 		String result = null;
 		report.startLevel("Validating Device with Encrypted Corp Persona is Online");
