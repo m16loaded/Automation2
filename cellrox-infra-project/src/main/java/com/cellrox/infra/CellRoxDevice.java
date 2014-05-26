@@ -1714,6 +1714,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	}
 
 	private void executeCliCommand(String Command, boolean silent, long timeout, boolean ignoreErrors, int numOfTries) throws Exception {
+		if (!cli.isConnected()){
+			cli.connect();
+		}
 		CliCommand cmd = new CliCommand(Command);
 		cmd.setSilent(silent);
 		cmd.setAddEnter(true);
