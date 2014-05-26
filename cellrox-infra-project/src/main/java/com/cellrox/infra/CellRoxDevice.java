@@ -925,6 +925,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 */
 	public void validateEncryptedCorpPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
 		Thread.sleep(60000);
+		report.report("about to connect to  CLI after reboot recovery");
+		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		boolean online = false;
 		String result = null;
