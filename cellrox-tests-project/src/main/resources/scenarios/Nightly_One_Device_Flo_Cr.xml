@@ -182,22 +182,22 @@
         </jsystem-ant>
     </target>
     <target name="t20">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Factory_Data_Settings_First_Wizard_Flo.xml">
-            <property name="jsystem.uuid" value="63363a95-24de-4666-8da6-fc2bccc29f5c"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t21">
         <jsystem-ant antfile="${scenarios.base}/scenarios/SetDisplaySleepTime.xml">
             <property name="jsystem.uuid" value="bbdf1885-03eb-46ac-853c-7f6a6d6e2fa6"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t22">
+    <target name="t21">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Unenroll_Enroll_Mdm.xml">
             <property name="jsystem.uuid" value="2bf89ded-d6f6-4aaa-8411-fac7684b98ef"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t22">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Factory_Data_Settings_First_Wizard_Flo.xml">
+            <property name="jsystem.uuid" value="63363a95-24de-4666-8da6-fc2bccc29f5c"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
