@@ -138,7 +138,7 @@
     </target>
     <target name="t12">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="1a30e34f-0f66-4f91-ba43-c77540a4f9d4"/>
+            <sysproperty key="jsystem.uuid" value="765c7220-3080-4bd5-92ca-35143d76a888"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.switchTheNetworkConnection"/>
@@ -218,7 +218,7 @@
     </target>
     <target name="t22">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="dde6735e-74e1-48bb-b3d5-cea96ae53f2c"/>
+            <sysproperty key="jsystem.uuid" value="981889d2-8b06-4f2b-ab9c-bc5769ad348b"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.switchTheNetworkConnection"/>
