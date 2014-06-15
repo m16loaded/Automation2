@@ -1392,7 +1392,7 @@ public class CellroxDeviceOperations extends TestCase {
 		
 		
 	}
-	
+
 
 	@Test
 	@TestProperties(name = "Swipe And Login for ${persona}", paramsInclude = { "currentDevice,persona" })
