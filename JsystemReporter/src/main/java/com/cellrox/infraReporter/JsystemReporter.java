@@ -150,7 +150,7 @@ public class JsystemReporter {
 			//begin to create the html file
 			nList = doc.getElementsByTagName("test");
 			docHtmlString.append("<!DOCTYPE html><html><head><title>Automation report for build : "+ version +"</title></head><body>").append(System.getProperty("line.separator"));
-			docHtmlString.append("<h1><em>Automaion Report - for build : "+version+"<em></h1>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<h1><em>Automation Report - for build : "+version+"<em></h1>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>Start time : "+startTime+"</p>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>End time : "+endTime+"</p>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>Duration : "+duration+"</p>").append(System.getProperty("line.separator"));
