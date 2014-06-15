@@ -56,11 +56,15 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	    	USBDevice primaryDevice = getDeviceById(primary);
 	    	cellroxDevicesList[DeviceNumber.PRIMARY.ordinal()] = new CellRoxDevice(privePort, corpPort, otaFileLocation, primaryDevice.getSerialNumber(), user, password, runStatus);
 	    	report.report("Primary Device: "+ getDevice(DeviceNumber.PRIMARY).getDeviceSerial(),ReportAttribute.BOLD);
-	    	//get secondery device
-	    	USBDevice secondeyDevice = getDeviceById(secondery);
-	    	cellroxDevicesList[DeviceNumber.SECONDARY.ordinal()] = new CellRoxDevice(privePort + DeviceNumber.SECONDARY.ordinal(), corpPort + DeviceNumber.SECONDARY.ordinal(), otaFileLocation,secondeyDevice.getSerialNumber(), user, password, runStatus);
-	    	report.report("SECONDARY Device: "+ getDevice(DeviceNumber.SECONDARY).getDeviceSerial(),ReportAttribute.BOLD);
-//	    	//initing each one of the devices
+	    	
+	    	//get secondery device - if exists
+	    	if (numberOfDevices>1){
+		    	USBDevice secondeyDevice = getDeviceById(secondery);
+		    	cellroxDevicesList[DeviceNumber.SECONDARY.ordinal()] = new CellRoxDevice(privePort + DeviceNumber.SECONDARY.ordinal(), corpPort + DeviceNumber.SECONDARY.ordinal(), otaFileLocation,secondeyDevice.getSerialNumber(), user, password, runStatus);
+		    	report.report("SECONDARY Device: "+ getDevice(DeviceNumber.SECONDARY).getDeviceSerial(),ReportAttribute.BOLD);
+	    	
+	    	}
+	    	//initing each one of the devices
 //	    	for(int index =0 ; index < devices.length ;index++){
 //	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber(), user, password, runStatus);
 //	    	}
