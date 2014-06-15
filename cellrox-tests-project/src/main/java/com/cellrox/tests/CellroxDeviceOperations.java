@@ -13,6 +13,7 @@ import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 
 import org.junit.Test;
+import org.openqa.selenium.logging.NeedsLocalLogs;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
@@ -697,11 +698,15 @@ public class CellroxDeviceOperations extends TestCase {
 	
 
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Class Name \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,value,persona,index" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Class Name \"${text}\" on ${persona}", paramsInclude = { "needForClearText,currentDevice,text,value,persona,index" })
 	public void enterTextByClassName() throws Exception {
 		Selector s = new Selector();
 		s.setClassName(text);
 		s.setIndex(index);
+		if (needForClearTheText){
+			devicesMannager.getDevice(currentDevice).getPersona(persona).clearTextField(s);
+
+		}
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
@@ -758,7 +763,7 @@ public class CellroxDeviceOperations extends TestCase {
 
 	
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "currentDevice,childClassName,childDescription,childIndex,childText,value,persona" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "needForClearText,currentDevice,childClassName,childDescription,childIndex,childText,value,persona" })
 	public void enterTextBy() throws Exception {
 
 		Selector s = new Selector();
@@ -770,16 +775,23 @@ public class CellroxDeviceOperations extends TestCase {
 			s.setIndex(Integer.valueOf(childIndex));
 		if (childDescription != null)
 			s.setDescription(childDescription);
+		if (needForClearTheText){
+			devicesMannager.getDevice(currentDevice).getPersona(persona).clearTextField(s);
 
+		}
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 	
 	
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,value,persona" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "needForClearText,currentDevice,text,value,persona" })
 	public void enterTextByText() throws Exception {
 		Selector s = new Selector();
 		s.setText(text);
+		if (needForClearTheText){
+			devicesMannager.getDevice(currentDevice).getPersona(persona).clearTextField(s);
+
+		}
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 

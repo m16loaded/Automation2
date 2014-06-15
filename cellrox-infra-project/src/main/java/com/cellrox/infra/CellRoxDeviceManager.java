@@ -3,11 +3,14 @@ package com.cellrox.infra;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
 
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.device.USBDevice;
+
+import android.hardware.usb.UsbDevice;
 
 import com.cellrox.infra.enums.DeviceNumber;
 
@@ -22,8 +25,12 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     private String user, password;
     //the runStatus String is for the checking the end of the run falling reason, etc : full/debug
     private String runStatus = "debug";
-    
-    private AdbController adbController;
+    private String primary;
+    private String secondery;
+    private USBDevice[] devices;
+  
+
+	private AdbController adbController;
     
     public void init() throws Exception {
     	super.init();
@@ -43,12 +50,20 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	
 	    	adbController = AdbController.getInstance();
 	    	report.report("Wait for "+numberOfDevices +" to connect.");
-	    	USBDevice[] devices = adbController.waitForDevicesToConnect(numberOfDevices);
+	    	devices = adbController.waitForDevicesToConnect(numberOfDevices);
 	    	
-	    	//initing each one of the devices
-	    	for(int index =0 ; index < devices.length ;index++){
-	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber(), user, password, runStatus);
-	    	}
+	    	//get primary device
+	    	USBDevice primaryDevice = getDeviceById(primary);
+	    	cellroxDevicesList[DeviceNumber.PRIMARY.ordinal()] = new CellRoxDevice(privePort, corpPort, otaFileLocation, primaryDevice.getSerialNumber(), user, password, runStatus);
+	    	report.report("Primary Device: "+ getDevice(DeviceNumber.PRIMARY).getDeviceSerial(),ReportAttribute.BOLD);
+	    	//get secondery device
+	    	USBDevice secondeyDevice = getDeviceById(secondery);
+	    	cellroxDevicesList[DeviceNumber.SECONDARY.ordinal()] = new CellRoxDevice(privePort + DeviceNumber.SECONDARY.ordinal(), corpPort + DeviceNumber.SECONDARY.ordinal(), otaFileLocation,secondeyDevice.getSerialNumber(), user, password, runStatus);
+	    	report.report("SECONDARY Device: "+ getDevice(DeviceNumber.SECONDARY).getDeviceSerial(),ReportAttribute.BOLD);
+//	    	//initing each one of the devices
+//	    	for(int index =0 ; index < devices.length ;index++){
+//	    		cellroxDevicesList[index] = new CellRoxDevice(privePort + index, corpPort + index, otaFileLocation, devices[index].getSerialNumber(), user, password, runStatus);
+//	    	}
 	    	
 	    	//to add to the summary properties
 		    getDevice(DeviceNumber.PRIMARY).addToTheSummarySystemProp();
@@ -56,6 +71,21 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 		    isInit = true;
     	}
     	
+    }
+    
+    /**
+     * This function will return a USBdevice instance (ADB control) according to its' ID
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    private USBDevice getDeviceById(String id) throws Exception{
+    	for (USBDevice device : devices){
+    		if (device.getSerialNumber().trim().equals(id.trim())){
+    			return device;
+    		}
+    	}
+    	throw new Exception("Device "+id+" was not Found");
     }
     
 
@@ -123,5 +153,24 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 		this.runStatus = runStatus;
 	}
     
+	  
+    public String getPrimary() {
+		return primary;
+	}
+
+
+	public void setPrimary(String primary) {
+		this.primary = primary;
+	}
+
+
+	public String getSecondery() {
+		return secondery;
+	}
+
+
+	public void setSecondery(String secondery) {
+		this.secondery = secondery;
+	}
 
 }
