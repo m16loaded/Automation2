@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
 			<artifactId>jsystemApp</artifactId>
-			<version>6.0.02</version>
+			<version>6.1.00</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -100,7 +100,7 @@
 			<plugin>
 				<groupId>org.jsystemtest</groupId>
 				<artifactId>jsystem-maven-plugin</artifactId>
-				<version>6.0.02</version>
+				<version>6.1.00</version>
 				<dependencies>
 					<dependency>
 						<groupId>com.cellrox.tests</groupId>
