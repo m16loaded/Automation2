@@ -430,10 +430,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 		prop = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_sdk_version", prop);// propToParse.split(":")[1].trim());
 
-		// add Build_display_id prop
-		executeCliCommand("getprop | fgrep ro.build.display.id");
-		prop = getPropFromCli(cli.getTestAgainstObject().toString());
-		Summary.getInstance().setProperty("Build_display_id", prop);// propToParse.split(":")[1].trim());
+//		// add Build_display_id prop
+//		executeCliCommand("getprop | fgrep ro.build.display.id");
+//		prop = getPropFromCli(cli.getTestAgainstObject().toString());
+//		Summary.getInstance().setProperty("Build_display_id", prop);// propToParse.split(":")[1].trim());
 
 		// add Build_date prop
 		executeCliCommand("getprop | fgrep ro.build.date]");
@@ -725,6 +725,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		upTime = getCurrentUpTime();
 		setPsString(getPs());
+		
+		//Add version name after OTA is done
+		report.report("Adding version ID to summary");
+		String prop1 = null;
+		cli.connect();
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+		executeCliCommand("getprop | fgrep ro.build.display.id");
+		prop1 = getPropFromCli(cli.getTestAgainstObject().toString());
+		Summary.getInstance().setProperty("Build_display_id", prop1);// propToParse.split(":")[1].trim());
+		//
+		
 		return isUp;
 	}
 
