@@ -85,12 +85,12 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5, 5);
-		// validate the activation screen is in
-		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("PERSONA ACTIVATION"), 7 * 1000)) {
-			report.report("The Persona activation screen wan't found.", Reporter.FAIL);
-		} else {
-			report.report("The Persona activation screen wan found.");
-		}
+//		// validate the activation screen is in
+//		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("PERSONA ACTIVATION"), 7 * 1000)) {
+//			report.report("The Persona activation screen wan't found.", Reporter.FAIL);
+//		} else {
+//			report.report("The Persona activation screen wan found.");
+//		}
 
 		// apply undate / unenroll.zip , adb root
 		// to make sure that i dont have a corp persona
