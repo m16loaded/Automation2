@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import jsystem.extensions.analyzers.text.FindText;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
@@ -63,6 +64,8 @@ public class TestCase extends SystemTestCase4 {
 	@After
 	public void tearDown() throws Exception {
 		try {
+			// get Oren's magic code
+			getPrintkMessage();
 			getUnexpectedErrorScreenshot();
 			report.startLevel("After");
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -110,6 +113,27 @@ public class TestCase extends SystemTestCase4 {
 			device.deleteFile("/data/containers/" + persona + "/data/local/tmp/wathcer.png");
 			
 		}
+	}
+	
+	private void getPrintkMessage() throws Exception{
+		report.startLevel("Validate PrintK");
+		String printk = devicesMannager.getDevice(DeviceNumber.PRIMARY).executeHostShellCommand("cat /proc/sys/kernel/printk");
+		report.report(printk);
+		FindText findText = new FindText("(\\d*)\\s*4\\s*1\\s*7", true,false,2);
+		findText.setTestAgainst(printk);
+		findText.analyze();
+		//if the regex is found it doesn't mean we're Ok, we need to validate that the first number is 7
+		if (findText.getStatus()){
+			String firstDigit = findText.getCounter();
+			if (firstDigit.trim().equals("7")){
+				report.report("Print K was 7 4 1 7 , as Excpected");
+			}else if (firstDigit.trim().equals("15")){
+				report.report("Error! PrintK first digit is 15!",Reporter.FAIL);
+			}else {
+				report.report("Error! PrintK in not 7 4 1 7!",Reporter.FAIL);
+			}
+		}
+		report.stopLevel();
 	}
 
 	/**
