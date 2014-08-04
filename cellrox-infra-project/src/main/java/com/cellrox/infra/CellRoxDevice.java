@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
+import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
@@ -75,12 +76,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private Map<Persona, Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
 	// this boolean is only for showing the summary data in the Jsystem result
 	// sender
-
+	
 	boolean online = false;
 
 	public CellRoxDevice(int privePort, int corpPort, String otaFileLocation, String serialNumber, String user, String password, String runStatus)
 			throws Exception {
-
+		//ListenerstManager.getInstance().addListener(new CellroxTestListenr());
 		this.privePort = privePort;
 		this.corpPort = corpPort;
 		this.otaFileLocation = otaFileLocation;
@@ -97,6 +98,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setDeviceAsRoot();
 		isDeviceConnected();
 
+		initSyslogs();
 		// enable the syslogs
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
@@ -110,6 +112,29 @@ public class CellRoxDevice extends SystemObjectImpl {
 			initProcessesForCheck();
 			setPsString(getPs());
 		}
+		
+	}
+	
+	public CellRoxDevice(String serialNumber, String user, String password) throws Exception {
+		
+		this.deviceSerial = serialNumber;
+		this.user = user;
+		this.password = password;
+		
+		adbController = AdbController.getInstance();
+		device = adbController.waitForDeviceToConnect(serialNumber);
+		cli = new AdbConnection("127.0.0.1", getUser(), getPassword(), serialNumber);
+		cli.setExitTimeout(60 * 1000);
+		
+		setDeviceAsRoot();
+	}
+	
+	private void initSyslogs() throws Exception{
+		report.startLevel("Cleaining System Logs");
+		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_kmsg.txt");
+		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_logcat-radio.txt");
+		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_logcat.txt");
+		report.stopLevel();
 	}
 
 	public void initAllTheCrashesValidationData() throws Exception {
