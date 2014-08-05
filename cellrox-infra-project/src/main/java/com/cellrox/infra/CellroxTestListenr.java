@@ -53,7 +53,9 @@ public class CellroxTestListenr implements ExtendTestListener {
 				// init log parser
 				LogParser logParser = new LogParser();
 				logParser.addExpression(Color.RED, "\\bBUG\\b", "Bug");
-				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning");
+				
+				// Verify for the following only in dmesg and not in logcat
+//				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning");
 				logParser.addExpression(Color.RED, "panic", "Panic!");
 				//ADD HERE MORE EXPRESSION IF NEEDED
 				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
