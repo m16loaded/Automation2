@@ -1397,7 +1397,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public void getLogsOfRun(LogParser parser, boolean kmsgSearch, boolean logcatSearch) throws Exception {
-		String userHome = System.getProperty("user.home");
+		String userHome = "";//System.getProperty("user.home");
 		// get the files
 
 		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
