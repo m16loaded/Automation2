@@ -52,11 +52,11 @@ public class CellroxTestListenr implements ExtendTestListener {
 				ListenerstManager.getInstance().report("******************** SCENARIO MARKED AS TEST LOG RESULTS: ********************", ReportAttribute.BOLD);
 				// init log parser
 				LogParser logParser = new LogParser();
-				logParser.addExpression(Color.RED, "\\bBUG\\b", "Bug");
-				
-				// Verify for the following only in dmesg and not in logcat
-//				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning");
-				logParser.addExpression(Color.RED, "panic", "Panic!");
+				//adding the following for *all* logs
+				logParser.addExpression(Color.RED, "\\bBUG\\b", "Bug", "logcat","logcat-radio","kmsg");
+				logParser.addExpression(Color.RED, "panic", "Panic!","logcat","logcat-radio","kmsg");
+				// Verify for the following only in kmsg and not in logcat
+				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning","kmsg");
 				//ADD HERE MORE EXPRESSION IF NEEDED
 				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
 				cellRoxDevice.getLogs(logParser);

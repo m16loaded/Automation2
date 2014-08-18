@@ -317,7 +317,7 @@
     </target>
     <target name="t36">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="cc2cc9e1-bb60-4b89-98f4-05f6f6488a7d"/>
+            <sysproperty key="jsystem.uuid" value="007747bf-829a-4615-9482-ccc5b09859d4"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.stopLogAndValidate"/>
@@ -367,7 +367,7 @@
     </target>
     <target name="t43">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="bea6428e-ef4d-4565-b42a-abd00eaccfb7"/>
+            <sysproperty key="jsystem.uuid" value="5385dbd5-3ded-4870-888e-a83e29456277"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.stopLogAndValidate"/>

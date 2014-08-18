@@ -1365,6 +1365,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * init logs (logcat, radio, kmsg)
 	 */
 	public void initLogs() throws Exception {
+		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
 		cli.connect();
 		String userHome = System.getProperty("user.home");
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
@@ -1383,7 +1384,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 		File kmsg = new File(userHome + "/testKmsg.txt");
 		File radioLogcat = new File(userHome + "/testRadioLogcat.txt");
 		// set logs to validate
-		parser.setLogs(logcat, radioLogcat, kmsg);
+		parser.addLogFile("logcat", logcat);
+		parser.addLogFile("logcat-radio", radioLogcat);
+		parser.addLogFile("kmsg", kmsg);
+		//parser.setLogs(logcat, radioLogcat, kmsg);
 		parser.validateLogs();
 		// delete all logs locally
 		logcat.delete();
@@ -1414,11 +1418,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// set logs to validate
 
 		if (kmsgSearch && logcatSearch) {
-			parser.setLogs(logcat, kmsg);
+			//parser.setLogs(logcat, kmsg);
+			parser.addLogFile("logcat", logcat);
+			parser.addLogFile("kmsg", kmsg);
 		} else if (kmsgSearch) {
-			parser.setLogs(kmsg);
+//			parser.setLogs(kmsg);
+			parser.addLogFile("kmsg", kmsg);
 		} else {
-			parser.setLogs(logcat);
+//			parser.setLogs(logcat);
+			parser.addLogFile("logcat", logcat);
 		}
 		parser.validateLogs();
 		// delete all logs locally

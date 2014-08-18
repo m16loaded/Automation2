@@ -22,6 +22,7 @@ import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.CellRoxDeviceManager;
 import com.cellrox.infra.WebDriverSO;
 import com.cellrox.infra.ImageFlowReporter.ImageFlowHtmlReport;
+import com.cellrox.infra.enums.Color;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.log.LogParser;
@@ -289,81 +290,26 @@ public class TestCase extends SystemTestCase4 {
 	public void stopSysLogAndValidateInDevice() throws Exception {
 
 		// checking the kmsg
-		LogParserExpression[] expressions = new LogParserExpression[11];
-
-		LogParserExpression expression = new LogParserExpression();
-		expression.setExpression("kernel_panic");
-		expression.setNiceName("kernel_panic");
-		expressions[0] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("oops");
-		expression.setNiceName("oops");
-		expressions[1] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("soft lockup");
-		expression.setNiceName("soft lockup");
-		expressions[2] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("out_of_memory");
-		expression.setNiceName("out_of_memory");
-		expressions[3] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("Timed out waiting for");
-		expression.setNiceName("Timed out waiting for");
-		expressions[4] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression(".coldboot_done");
-		expression.setNiceName(".coldboot_done");
-		expressions[5] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("EGL_BAD_ALLOC");
-		expression.setNiceName("EGL_BAD_ALLOC");
-		expressions[6] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("persona died");
-		expression.setNiceName("persona died");
-		expressions[7] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("FATAL EXCEPTION");
-		expression.setNiceName("FATAL EXCEPTION");
-		expressions[8] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("AudioFlinger\\.\\*buffer overflow");
-		expression.setNiceName("AudioFlinger\\.\\*buffer overflow");
-		expressions[9] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("STATE_CRASH_RESET");
-		expression.setNiceName("STATE_CRASH_RESET");
-		expressions[10] = expression;
-
-		LogParser logParser = new LogParser(expressions);
+		
+		LogParser logParser = new LogParser();
+		logParser.addExpression(Color.RED, "kernel_panic", "kernel_panic", "kmsg");
+		logParser.addExpression(Color.RED, "oops", "oops", "kmsg");
+		logParser.addExpression(Color.RED, "soft lockup", "soft lockup", "kmsg");
+		logParser.addExpression(Color.RED, "out_of_memory", "out_of_memory", "kmsg");
+		logParser.addExpression(Color.RED, "Timed out waiting for", "Timed out waiting for", "kmsg");
+		logParser.addExpression(Color.RED, ".coldboot_done", ".coldboot_done", "kmsg");
+		logParser.addExpression(Color.RED, "EGL_BAD_ALLOC", "EGL_BAD_ALLOC", "kmsg");
+		logParser.addExpression(Color.RED, "persona died", "persona died", "kmsg");
+		logParser.addExpression(Color.RED, "FATAL EXCEPTION", "FATAL EXCEPTION", "kmsg");
+		logParser.addExpression(Color.RED, "AudioFlinger\\.\\*buffer overflow", "AudioFlinger\\.\\*buffer overflow", "kmsg");
+		logParser.addExpression(Color.RED, "STATE_CRASH_RESET", "STATE_CRASH_RESET", "kmsg");
+	
 		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser, true, false);
 
 		// checking the logcat
-		expressions = new LogParserExpression[2];
-		expression = new LogParserExpression();
-
-		expression = new LogParserExpression();
-		expression.setExpression("FATAL_EXEPTION");
-		expression.setNiceName("FATAL_EXEPTION");
-		expressions[0] = expression;
-
-		expression = new LogParserExpression();
-		expression.setExpression("fatal exception");
-		expression.setNiceName("fatal exception");
-		expressions[1] = expression;
-
-		logParser = new LogParser(expressions);
+		logParser = new LogParser();
+		logParser.addExpression(Color.RED, "FATAL_EXEPTION", "FATAL_EXEPTION", "logcat");
+		logParser.addExpression(Color.RED, "fatal exception", "fatal exception", "logcat");
 		devicesMannager.getDevice(currentDevice).getLogsOfRun(logParser, false, true);
 
 	}
