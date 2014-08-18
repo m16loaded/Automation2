@@ -10,12 +10,14 @@ import jsystem.extensions.analyzers.text.FindText;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
+import jsystem.framework.report.Reporter.EnumReportLevel;
 import junit.framework.SystemTestCase4;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+import org.python.modules.re;
 import org.topq.uiautomator.Selector;
 
 import com.cellrox.infra.CellRoxDevice;
@@ -187,9 +189,11 @@ public class TestCase extends SystemTestCase4 {
 			// Step 2 is to check for device crash by the upTime
 			long knownUpTime = device.getUpTime();
 			if (knownUpTime > device.getCurrentUpTime()) {
+				report.stopLevel(); // stop After level
 				report.report("The known upTime is : " + knownUpTime);
 				deviceCrashDetected = true;
-				report.report("Device_Crash", Reporter.FAIL);
+				report.startLevel("Device Crash!",EnumReportLevel.MainFrame);
+				report.report("Device Crash!", Reporter.FAIL);
 				deviceCrash++;
 				sleep(20 * 1000);
 				report.report("Device : " + device.getDeviceSerial());
@@ -208,6 +212,8 @@ public class TestCase extends SystemTestCase4 {
 				String str2 = device.getPs(false);
 				if (!device.isPsDiff(device.getPsString(), str2)) {
 					personaCrashDetected = true;
+					report.stopLevel(); // stop After
+					report.startLevel("Persona Crash!",EnumReportLevel.MainFrame);
 					report.report("Persona_Crash", Reporter.FAIL);
 					personaCrash++;
 					sleep(20 * 1000);
@@ -271,6 +277,7 @@ public class TestCase extends SystemTestCase4 {
 				device.getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
 				device.getPersona(Persona.PRIV).wakeUp();
 				device.switchPersona(Persona.PRIV);
+				report.stopLevel(); // stop device / persona crash
 			}
 
 		}
