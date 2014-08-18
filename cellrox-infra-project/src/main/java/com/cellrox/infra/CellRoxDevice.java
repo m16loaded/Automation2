@@ -1397,15 +1397,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public void getLogsOfRun(LogParser parser, boolean kmsgSearch, boolean logcatSearch) throws Exception {
-		String userHome = "";//System.getProperty("user.home");
+		// these line did not work with jenkins... 
+		//String userHome = "";//System.getProperty("user.home");
 		// get the files
-
-		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
-		File logcat = new File(userHome + "/system_logcat.txt");
-		File kmsg = new File(userHome + "/system_kmsg.txt");
-		File radioLogcat = new File(userHome + "/system_logcat-radio.txt");
+		//device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
+		//device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
+		//device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
+		
+		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", "system_kmsg.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", "system_logcat-radio.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", "system_logcat.txt");
+		
+		File logcat = new File("system_logcat.txt");//(userHome + "/system_logcat.txt");
+		File kmsg = new File("system_kmsg.txt");//(userHome + "/system_kmsg.txt");
+		File radioLogcat = new File("system_logcat-radio.txt");//(userHome + "/system_logcat-radio.txt");
 		// set logs to validate
 
 		if (kmsgSearch && logcatSearch) {
