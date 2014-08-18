@@ -1379,6 +1379,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * get logs (logcat , logcat-radio, kmsg)
 	 */
 	public void getLogs(LogParser parser) throws Exception {
+		// the logs of the test are already in the user home dir...
 		String userHome = System.getProperty("user.home");
 		File logcat = new File(userHome + "/testLogcat.txt");
 		File kmsg = new File(userHome + "/testKmsg.txt");
