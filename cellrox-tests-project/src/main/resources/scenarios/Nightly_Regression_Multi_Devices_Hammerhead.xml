@@ -262,7 +262,7 @@
     </target>
     <target name="t28">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Configure_and_Connect.xml">
-            <property name="jsystem.uuid" value="9809525b-134a-4248-ba28-029cb8d5b51a"/>
+            <property name="jsystem.uuid" value="01e2c6c3-aec1-440e-874c-358d3979fe82"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
