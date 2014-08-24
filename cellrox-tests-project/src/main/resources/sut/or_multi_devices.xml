@@ -5,7 +5,7 @@
         <corpPort>4321</corpPort>
         <deviceAsRootOnInit>true</deviceAsRootOnInit>
 		<otaFileLocation>/home/topq/main_jenkins/workspace/Automation_Nightly/artifacts/ota-nightly.zip</otaFileLocation>
-		<numberOfDevices>2</numberOfDevices>
+		<numberOfDevices>1</numberOfDevices>
 		<user>topq</user>
 		<password>Aa123456</password>
 		<runStatus>debug</runStatus>
