@@ -3,6 +3,7 @@ package com.cellrox.infra;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
@@ -34,6 +35,7 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     
     public void init() throws Exception {
     	super.init();
+    	
     	
     	
     	report.report("Initing CellRoxDeviceManager");

@@ -85,12 +85,12 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5, 5);
-		// validate the activation screen is in
-		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("PERSONA ACTIVATION"), 7 * 1000)) {
-			report.report("The Persona activation screen wan't found.", Reporter.FAIL);
-		} else {
-			report.report("The Persona activation screen wan found.");
-		}
+//		// validate the activation screen is in
+//		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("PERSONA ACTIVATION"), 7 * 1000)) {
+//			report.report("The Persona activation screen wan't found.", Reporter.FAIL);
+//		} else {
+//			report.report("The Persona activation screen wan found.");
+//		}
 
 		// apply undate / unenroll.zip , adb root
 		// to make sure that i dont have a corp persona
@@ -175,7 +175,7 @@ public class MDMOperation extends TestCase {
 		//
 		// devicesMannager.getDevice(currentDevice).connectToServerPriv();
 
-		// devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5,5);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5,5);
 
 		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Next"));
 
@@ -295,6 +295,37 @@ public class MDMOperation extends TestCase {
 
 	}
 
+//	/**
+//	 * The function gets the owner and return activation code
+//	 * 
+//	 * @throws InterruptedException
+//	 * */
+//	public String getTheActivationCode(String ownerName) throws ParseException, InterruptedException {
+//
+//		driver.get(siteUrl + "devices");
+//		Thread.sleep(3000);
+//		// this list is for all the names
+//		List<WebElement> weListOwnerNames = driver.findElements(By.xpath("//div[3]/div/span"));
+//		List<WebElement> weListIdImeiActivationCode = driver.findElements(By.xpath("//div[5]/div/span"));
+//
+//		for (int i = 0; i < weListOwnerNames.size(); i++) {
+//
+//			if (weListOwnerNames.get(i).getText().trim().equals(ownerName)) {
+//				// if this is true we find the correct line
+//				String activationCode = weListIdImeiActivationCode.get(i).getText();
+//				if (activationCode.contains("Activation token:")) {
+//					activationCode = activationCode.replace("Activation token:", "").trim();
+//					report.report("Activation code for : " + ownerName + " found : " + activationCode);
+//					return activationCode;
+//				}
+//			}
+//		}
+//		report.report("Activation code for : " + ownerName + "was not found", Reporter.FAIL);
+//		return null;
+//
+//	}
+	
+	
 	/**
 	 * The function gets the owner and return activation code
 	 * 
@@ -305,25 +336,22 @@ public class MDMOperation extends TestCase {
 		driver.get(siteUrl + "devices");
 		Thread.sleep(3000);
 		// this list is for all the names
-		List<WebElement> weListOwnerNames = driver.findElements(By.xpath("//div[3]/div/span"));
-		List<WebElement> weListIdImeiActivationCode = driver.findElements(By.xpath("//div[5]/div/span"));
-
-		for (int i = 0; i < weListOwnerNames.size(); i++) {
-
-			if (weListOwnerNames.get(i).getText().trim().equals(ownerName)) {
-				// if this is true we find the correct line
-				String activationCode = weListIdImeiActivationCode.get(i).getText();
-				if (activationCode.contains("Activation token:")) {
-					activationCode = activationCode.replace("Activation token:", "").trim();
-					report.report("Activation code for : " + ownerName + " found : " + activationCode);
-					return activationCode;
-				}
+		List<WebElement> activationCodes = driver.findElements(By.cssSelector(".muted.ng-binding"));
+		String activationCode = activationCodes.get(0).getText();
+			if (activationCode.contains("code:")) {
+				activationCode = activationCode.replace("waiting for activation (code: ", "").trim();
+				activationCode.replace(")", "").trim();
+				report.report("Activation code for : " + ownerName + " found : " + activationCode);
+				return activationCode;
 			}
-		}
 		report.report("Activation code for : " + ownerName + "was not found", Reporter.FAIL);
 		return null;
 
 	}
+	
+	
+	
+	
 
 	public String getMdmUser() {
 		return mdmUser;

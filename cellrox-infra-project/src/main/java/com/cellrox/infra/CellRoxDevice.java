@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
+import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
@@ -75,12 +76,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private Map<Persona, Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
 	// this boolean is only for showing the summary data in the Jsystem result
 	// sender
-
+	
 	boolean online = false;
 
 	public CellRoxDevice(int privePort, int corpPort, String otaFileLocation, String serialNumber, String user, String password, String runStatus)
 			throws Exception {
-
+		//ListenerstManager.getInstance().addListener(new CellroxTestListenr());
 		this.privePort = privePort;
 		this.corpPort = corpPort;
 		this.otaFileLocation = otaFileLocation;
@@ -97,6 +98,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setDeviceAsRoot();
 		isDeviceConnected();
 
+		initSyslogs();
 		// enable the syslogs
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
@@ -110,6 +112,29 @@ public class CellRoxDevice extends SystemObjectImpl {
 			initProcessesForCheck();
 			setPsString(getPs());
 		}
+		
+	}
+	
+	public CellRoxDevice(String serialNumber, String user, String password) throws Exception {
+		
+		this.deviceSerial = serialNumber;
+		this.user = user;
+		this.password = password;
+		
+		adbController = AdbController.getInstance();
+		device = adbController.waitForDeviceToConnect(serialNumber);
+		cli = new AdbConnection("127.0.0.1", getUser(), getPassword(), serialNumber);
+		cli.setExitTimeout(60 * 1000);
+		
+		setDeviceAsRoot();
+	}
+	
+	private void initSyslogs() throws Exception{
+		report.startLevel("Cleaining System Logs");
+		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_kmsg.txt");
+		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_logcat-radio.txt");
+		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_logcat.txt");
+		report.stopLevel();
 	}
 
 	public void initAllTheCrashesValidationData() throws Exception {
@@ -1340,6 +1365,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * init logs (logcat, radio, kmsg)
 	 */
 	public void initLogs() throws Exception {
+		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
 		cli.connect();
 		String userHome = System.getProperty("user.home");
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
@@ -1353,12 +1379,16 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * get logs (logcat , logcat-radio, kmsg)
 	 */
 	public void getLogs(LogParser parser) throws Exception {
+		// the logs of the test are already in the user home dir...
 		String userHome = System.getProperty("user.home");
 		File logcat = new File(userHome + "/testLogcat.txt");
 		File kmsg = new File(userHome + "/testKmsg.txt");
 		File radioLogcat = new File(userHome + "/testRadioLogcat.txt");
 		// set logs to validate
-		parser.setLogs(logcat, radioLogcat, kmsg);
+		parser.addLogFile("logcat", logcat);
+		parser.addLogFile("logcat-radio", radioLogcat);
+		parser.addLogFile("kmsg", kmsg);
+		//parser.setLogs(logcat, radioLogcat, kmsg);
 		parser.validateLogs();
 		// delete all logs locally
 		logcat.delete();
@@ -1372,23 +1402,32 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public void getLogsOfRun(LogParser parser, boolean kmsgSearch, boolean logcatSearch) throws Exception {
-		String userHome = System.getProperty("user.home");
+		// these line did not work with jenkins... 
+		//String userHome = "";//System.getProperty("user.home");
 		// get the files
-
-		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
-		File logcat = new File(userHome + "/system_logcat.txt");
-		File kmsg = new File(userHome + "/system_kmsg.txt");
-		File radioLogcat = new File(userHome + "/system_logcat-radio.txt");
+		//device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
+		//device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
+		//device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
+		
+		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", "system_kmsg.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", "system_logcat-radio.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", "system_logcat.txt");
+		
+		File logcat = new File("system_logcat.txt");//(userHome + "/system_logcat.txt");
+		File kmsg = new File("system_kmsg.txt");//(userHome + "/system_kmsg.txt");
+		File radioLogcat = new File("system_logcat-radio.txt");//(userHome + "/system_logcat-radio.txt");
 		// set logs to validate
 
 		if (kmsgSearch && logcatSearch) {
-			parser.setLogs(logcat, kmsg);
+			//parser.setLogs(logcat, kmsg);
+			parser.addLogFile("logcat", logcat);
+			parser.addLogFile("kmsg", kmsg);
 		} else if (kmsgSearch) {
-			parser.setLogs(kmsg);
+//			parser.setLogs(kmsg);
+			parser.addLogFile("kmsg", kmsg);
 		} else {
-			parser.setLogs(logcat);
+//			parser.setLogs(logcat);
+			parser.addLogFile("logcat", logcat);
 		}
 		parser.validateLogs();
 		// delete all logs locally

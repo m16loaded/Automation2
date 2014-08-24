@@ -13,19 +13,24 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
+
 public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 
 	protected String siteUrl; 
 	
-	@FindBy(xpath = "//*[@value='REMOVE']")
-	WebElement removeBtn;
+	@FindBy(id = "more-btn")
+	WebElement moreBtn;
+	
+	@FindBy(id = "retire-btn")
+	WebElement retireBtn;
 	
 	public CellroxAutomationDevicesAbstractPage(WebDriver driver, String siteUrl) {
 		super(driver);
 		this.siteUrl = siteUrl;
 		driver.get(siteUrl+"devices");
 		WebDriverWait wait = new WebDriverWait(driver, 30);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@value='REMOVE']")));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("more-btn")));
 		PageFactory.initElements(driver, this);
 	}
 
@@ -54,40 +59,23 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 	 * */
 	public boolean clickOnTheDeviceCheckBox(String imei , String macAdr) {
 		boolean status = false;
-		List<WebElement> weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col4 colt4']/span")); 
-		List<WebElement> weList2 = driver.findElements(By.cssSelector(".ngSelectionCheckbox")); 
-		
-		for(int i=0; i<weList.size() ; i++) {
-			WebElement webElement = weList.get(i);
-			String imeiElement = "";
-			imeiElement = webElement.getText();
-			if((imeiElement.trim().equals(imei)) || (imeiElement.trim().equals(macAdr))) {
-				//the wanted element is founded
-				weList2.get(i).click();
-				status =  true;
-				break;
-			}
-		}
-		
+		List<WebElement> deviceCheckbox = driver.findElements(By.id(imei+"-checkbox"));
+		if(deviceCheckbox.size() != 0){
+			deviceCheckbox.get(0).click();
+			status =  true;
+			return status;
+		}	
 		return status;
 	}
 	
 	public boolean clickOnTheDeviceImei(String imei , String macAdr) {
 		boolean status = false;
-		List<WebElement> weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col4 colt4']/span")); 
-		for(int i=0; i<weList.size() ; i++) {
-			WebElement webElement = weList.get(i);
-			String imeiElement = "";
-			imeiElement = webElement.getText();
-			if((imeiElement.trim().equals(imei)) || (imeiElement.trim().equals(macAdr))) {
-				//the wanted element is founded
-				weList.get(i).click();
-				status =  true;
-				break;
-				
-			}
-		}
-		
+		List<WebElement> deviceImei = driver.findElements(By.id(imei+"-devId"));
+		if(deviceImei.size() != 0){
+			deviceImei.get(0).click();
+			status =  true;
+			return status;
+		}	
 		return status;
 	}
 	
@@ -146,7 +134,10 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 			report.report("Couldn't find the macAdr : " + macAdr +", or imei : "+imei, Reporter.FAIL);
 		}
 		
-		removeBtn.click();
+		moreBtn.click();
+		Thread.sleep(3000);
+		retireBtn.click();
+		Thread.sleep(3000);
 		
 		Thread.sleep(3000);
 		//to check this is a popup
@@ -155,25 +146,42 @@ public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 			driver.findElement(By.cssSelector("#password")).sendKeys(password);
 		}		
 		
-		//to check that im click on the remove
-		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).click();
+		Thread.sleep(3000);
 		
+		//to check that im click on the remove
+//		driver.findElements(By.cssSelector(".btn")).get(driver.findElements(By.cssSelector(".btn")).size()-1).click();
+		driver.findElement(By.xpath("//*[@value='Retire']")).click();
+		
+		Thread.sleep(5000);
+		//click on 'force retire'
+		driver.findElement(By.xpath("//*[@id='"+imei+"-retiring']/*/*[@id='force-retire']")).click();
 		Thread.sleep(3000);
 		driver.get(siteUrl+ "devices");
 		Thread.sleep(3000);
-		weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col4 colt4']/span"));
-		for(int i=0; i<weList.size() ; i++) {
-			WebElement webElement = weList.get(i);
-			String imeiElement = "";
-			imeiElement = webElement.getText();
-			if((imeiElement.trim().equals(imei)) || (imeiElement.trim().equals(macAdr))) {
-				//the wanted element is founded
-				report.report("The deleteing of the phone didn't worked, the phone is still in." , Reporter.FAIL);
-				status = false;
-			}
-		}
 		
+		//Verify if the device is no longer in devices page
+		
+		List<WebElement> devImei = driver.findElements(By.id(imei+"-devId"));
+		if(devImei.size() == 0){
+			status =  true;
+			return status;
+		}
+		else report.report("The deleteing of the phone didn't worked, the phone is still in." , Reporter.FAIL);
 		return status;
+		
+//		weList = driver.findElements(By.xpath("//*[@class='ngCellText ng-scope col4 colt4']/span"));
+//		for(int i=0; i<weList.size() ; i++) {
+//			WebElement webElement = weList.get(i);
+//			String imeiElement = "";
+//			imeiElement = webElement.getText();
+//			if((imeiElement.trim().equals(imei)) || (imeiElement.trim().equals(macAdr))) {
+//				//the wanted element is founded
+//				report.report("The deleteing of the phone didn't worked, the phone is still in." , Reporter.FAIL);
+//				status = false;
+//			}
+//		}
+//		
+//		return status;
 		
 	}
 	
