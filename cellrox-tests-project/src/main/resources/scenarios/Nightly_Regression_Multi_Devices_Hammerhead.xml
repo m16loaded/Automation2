@@ -368,7 +368,7 @@
     </target>
     <target name="t42">
         <jsystem-ant antfile="${scenarios.base}/scenarios/AddGmailAccount.xml">
-            <property name="jsystem.uuid" value="3cf1289b-a0a2-455c-ad6d-fa3f0158e2ad"/>
+            <property name="jsystem.uuid" value="54caa5d9-35b9-4d02-82a7-cff05b1e86fe"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
@@ -447,22 +447,22 @@
         </jsystem>
     </target>
     <target name="t53">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
-            <property name="jsystem.uuid" value="d310d307-5566-4db1-8a86-f439f74cf753"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t54">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Data_enabled.xml">
             <property name="jsystem.uuid" value="189435cc-1a5a-4c21-9c47-627b53c19dd4"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t55">
+    <target name="t54">
         <jsystem-ant antfile="${scenarios.base}/scenarios/AP_mode_on-off.xml">
             <property name="jsystem.uuid" value="83d08dab-8485-46d5-b815-194fe12bdb9f"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t55">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
+            <property name="jsystem.uuid" value="d310d307-5566-4db1-8a86-f439f74cf753"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
