@@ -85,7 +85,7 @@ public class JsystemReporter {
 		String urltoReporter = "http://build.vm.cellrox.com:8080/job/Automation_Nightly/HTML_Report/?";
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
-		String doaCrash = null, deviceCrash = null, personaCrash = null;
+		String doaCrash = null, deviceCrash = null, personaCrash = null,deviceCrashScnarioName=null,personaCrashScenarioName = null;
 		String compareStatus, seconedColor, lastTime = null , vellamoResults = "";
 		int pass = 0, fail = 0, total = 0, index = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null,
@@ -137,7 +137,9 @@ public class JsystemReporter {
 			version = prop.getProperty("Build_display_id").split("\n")[0].trim();
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
+			deviceCrashScnarioName = prop.getProperty("deviceCrash");
 			personaCrash = prop.getProperty("Persona_Crash");
+			personaCrashScenarioName = prop.getProperty("personaCrash");
 			startTime = prop.getProperty("Start_Time");
 			endTime = prop.getProperty("End_Time");
 			duration = getDateDuration(startTime, endTime);
@@ -180,8 +182,21 @@ public class JsystemReporter {
 				docHtmlString.append("<p>DOA : no</p>").append(System.getProperty("line.separator"));
 			}
 			
-			docHtmlString.append("<p>Device crash count: "+deviceCrash+"</p>").append(System.getProperty("line.separator"));
-			docHtmlString.append("<p>Persona crash count: "+personaCrash+"</p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p>Device Crash count: "+deviceCrash+"</p>").append(System.getProperty("line.separator"));
+			// if device crash was detected
+			if (!deviceCrashScnarioName.isEmpty()){
+			docHtmlString.append("<p>Device Crash on Scenarios: "+deviceCrashScnarioName+"</p>").append(System.getProperty("line.separator"));
+			}
+			
+			
+			docHtmlString.append("<p>Persona Crash count: "+personaCrash+"</p>").append(System.getProperty("line.separator"));
+			// if persona crash was detected
+			if (!personaCrashScenarioName.isEmpty()){
+				docHtmlString.append("<p>Persona Crash on Scenarios: "+personaCrashScenarioName+"</p>").append(System.getProperty("line.separator"));
+			}
+			
+			
+			
 //			docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
 			
 			testsTable.append("<p><b>Test report : </b></p>").append(System.getProperty("line.separator"));

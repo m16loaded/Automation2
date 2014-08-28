@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jsystem.extensions.analyzers.text.FindText;
+import jsystem.framework.RunProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Summary;
@@ -22,6 +23,7 @@ import org.topq.uiautomator.Selector;
 
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.CellRoxDeviceManager;
+import com.cellrox.infra.StaticUtils;
 import com.cellrox.infra.WebDriverSO;
 import com.cellrox.infra.ImageFlowReporter.ImageFlowHtmlReport;
 import com.cellrox.infra.enums.Color;
@@ -78,8 +80,10 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
+			Summary.getInstance().setProperty("personaCrash", "");
+			Summary.getInstance().setProperty("deviceCrash", "");
 			if (!isPass()) {
-
+				
 				// report.report("screen flow",
 				// imageFlowHtmlReport.getHtmlReport(), Reporter.PASS, false,
 				// true, false, false);
@@ -192,9 +196,11 @@ public class TestCase extends SystemTestCase4 {
 				report.stopLevel(); // stop After level
 				report.report("The known upTime is : " + knownUpTime);
 				deviceCrashDetected = true;
-				report.startLevel("Device Crash!",EnumReportLevel.MainFrame);
+				RunProperties.getInstance().setRunProperty("deviceCrash", "1");
+				report.startLevel("Device Crash! on "+getMethodName(),EnumReportLevel.MainFrame);
 				report.report("Device Crash!", Reporter.FAIL);
 				deviceCrash++;
+				// TODO: can we know the name of the test? 
 				sleep(20 * 1000);
 				report.report("Device : " + device.getDeviceSerial());
 				// last_kmsg
@@ -204,7 +210,6 @@ public class TestCase extends SystemTestCase4 {
 				device.setDeviceAsRoot();
 				device.setUpTime(device.getCurrentUpTime());
 				device.setPsString(device.getPs());
-
 			}
 
 			// Step 3 is to check for persona crash
@@ -212,9 +217,11 @@ public class TestCase extends SystemTestCase4 {
 				String str2 = device.getPs(false);
 				if (!device.isPsDiff(device.getPsString(), str2)) {
 					personaCrashDetected = true;
+					RunProperties.getInstance().setRunProperty("personaCrash", "1");
 					report.stopLevel(); // stop After
-					report.startLevel("Persona Crash!",EnumReportLevel.MainFrame);
+					report.startLevel("Persona Crash! on "+getMethodName(),EnumReportLevel.MainFrame);
 					report.report("Persona_Crash", Reporter.FAIL);
+//					RunProperties.getInstance().setRunProperty("personaCrash", "1");
 					personaCrash++;
 					sleep(20 * 1000);
 					report.report("Device : " + device.getDeviceSerial());
@@ -244,7 +251,10 @@ public class TestCase extends SystemTestCase4 {
 					} catch (Exception e) {
 						report.report("Error, persona CORP crashed.", Reporter.FAIL);
 					}
-					report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
+					report.report("Please Find Below Logs Before Crash");
+					// since last K message will not help up in this case - we'll look in logcat
+					stopSysLogAndValidateInDevice();
+					report.report("There is an error, the device is offline or had unwanted reboot. Rebooting Device...");
 					device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 				}
 

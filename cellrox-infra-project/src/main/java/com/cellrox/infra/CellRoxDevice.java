@@ -396,13 +396,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 	}
 
 	/**
-	 * This function perform : "adb devices" and "cell list stsate" if the sell
+	 * This function perform : "adb devices" and "cell list state" if the cell
 	 * list state isn't returned it will include this as error and throw
 	 * exception.
 	 * */
 	public void validateConnectivity() throws Exception {
 		cli.connect();
 		executeCliCommand("adb devices");
+		//TODO: add validation for device status i.e. offline
 		if (!cli.getTestAgainstObject().toString().contains(getDeviceSerial())) {
 			throw new Exception("no connection, the device" + getDeviceSerial() + " isn't online.");
 		}
