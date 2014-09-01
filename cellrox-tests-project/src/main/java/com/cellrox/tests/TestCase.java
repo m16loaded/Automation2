@@ -80,8 +80,8 @@ public class TestCase extends SystemTestCase4 {
 			Summary.getInstance().setProperty("Doa_Crash", String.valueOf(doaCrach));
 			Summary.getInstance().setProperty("Device_Crash", String.valueOf(deviceCrash));
 			Summary.getInstance().setProperty("Persona_Crash", String.valueOf(personaCrash));
-			Summary.getInstance().setProperty("personaCrash", "");
-			Summary.getInstance().setProperty("deviceCrash", "");
+//			Summary.getInstance().setProperty("personaCrash", "");
+//			Summary.getInstance().setProperty("deviceCrash", "");
 			if (!isPass()) {
 				
 				// report.report("screen flow",
@@ -197,6 +197,8 @@ public class TestCase extends SystemTestCase4 {
 				report.report("The known upTime is : " + knownUpTime);
 				deviceCrashDetected = true;
 				RunProperties.getInstance().setRunProperty("deviceCrash", "1");
+				report.startLevel("Device Crash! on "+getMethodName(),EnumReportLevel.MainFrame);
+				report.stopLevel();
 				report.startLevel("Device Crash! on "+getMethodName(),EnumReportLevel.MainFrame);
 				report.report("Device Crash!", Reporter.FAIL);
 				deviceCrash++;
