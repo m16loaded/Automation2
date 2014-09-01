@@ -177,8 +177,8 @@ public class TestCase extends SystemTestCase4 {
 	 * */
 	private void validateDeviceStatus() throws Exception {
 
-		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
-
+		//for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
+		CellRoxDevice device = devicesMannager.getDevice(DeviceNumber.PRIMARY);
 			boolean deviceCrashDetected = false;
 			boolean personaCrashDetected = false;
 			// Step 1 is to check for doa crash
@@ -290,7 +290,7 @@ public class TestCase extends SystemTestCase4 {
 				report.stopLevel(); // stop device / persona crash
 			}
 
-		}
+		//}
 	}
 
 	/**
