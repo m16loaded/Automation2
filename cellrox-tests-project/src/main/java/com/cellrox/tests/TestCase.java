@@ -135,7 +135,7 @@ public class TestCase extends SystemTestCase4 {
 			}else if (firstDigit.trim().equals("15")){
 				report.report("Error! PrintK first digit is 15!",Reporter.FAIL);
 			}else {
-				report.report("Error! PrintK in not 7 4 1 7!",Reporter.FAIL);
+				report.report("Error! PrintK in not 7 4 1 7!",Reporter.WARNING);
 			}
 		}
 		report.stopLevel();
