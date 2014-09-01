@@ -16,8 +16,8 @@ public class DeviceClient {
 	public DeviceClient(String serverUrl) throws MalformedURLException {
 		URL serverURL = new URL(serverUrl);
 		JsonRpcHttpClient client = new JsonRpcHttpClient(serverURL);
-		client.setReadTimeoutMillis(120000);
-		client.setConnectionTimeoutMillis(60 * 60 * 1000);
+		client.setReadTimeoutMillis(180*60*1000);
+		client.setConnectionTimeoutMillis(180 * 60 * 1000);
 		deviceService = ProxyUtil.createClientProxy(
 				getClass().getClassLoader(), AutomatorService.class, client);
 		
