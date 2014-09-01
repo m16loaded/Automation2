@@ -20,6 +20,7 @@ import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.report.Reporter.EnumReportLevel;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
@@ -158,7 +159,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		processForCheck.add("/system/bin/keystore");
 		processForCheck.add("/system/bin/surface_monitor");
 		processForCheck.add("/system/bin/sdcard");
-		processForCheck.add("/sbin/adbd");
+		//processForCheck.add("/sbin/adbd");
 		processForCheck.add("system_server");
 		processForCheck.add("com.android.systemui");
 		processForCheck.add("android.process.media");
@@ -183,6 +184,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		processForCheck.add("com.android.email");
 		processForCheck.add("com.android.exchange");
 	}
+	
 
 	/**
 	 * This function send command to the agent and check that the expectedLine
@@ -1262,16 +1264,16 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (map1.equals(map2)) {
 			return true;
 		} else {
-			report.startLevel("Process Diffrencess");
-			report.report("The Following processes could not be found:");
+			report.startLevel("Process Diffrencess",EnumReportLevel.MainFrame);
+			report.report("The Following processes could not be found:",report.FAIL);
 			for (Entry<String, String> entery : map1.entrySet()) {
 				if (!map2.containsKey(entery.getKey())) {
 					report.report(entery.getKey() + "," + entery.getValue());
 				}
 			}
-			report.report("Map 1 - Before Fail : ");
+			report.report("PS Map Before Fail : ",ReportAttribute.BOLD);
 			printMap(map1);
-			report.report("Map 2 - After Fail : ");
+			report.report("PS Map After Fail : ",ReportAttribute.BOLD);
 			printMap(map2);
 			report.stopLevel();
 			return false;

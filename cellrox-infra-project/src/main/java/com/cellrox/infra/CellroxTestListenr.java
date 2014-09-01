@@ -13,8 +13,10 @@ import jsystem.framework.report.Summary;
 import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.TestInfo;
 import jsystem.framework.scenario.JTestContainer;
+import jsystem.framework.scenario.ScenarioAsTest;
 import jsystem.framework.scenario.flow_control.AntForLoop;
 import jsystem.framework.sut.SutFactory;
+import jsystem.utils.FileUtils;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
@@ -24,6 +26,11 @@ import com.sun.swing.internal.plaf.basic.resources.basic;
 
 public class CellroxTestListenr implements ExtendTestListener {
 
+	String execution = "";
+	boolean deviceCrashOnScenario = false;
+	boolean personaCrashOnScenario = false;
+	boolean fatalExceptionOnScenario = false;
+	
 	public CellroxTestListenr() {
 		// get the device properties
 		try {
@@ -67,19 +74,36 @@ public class CellroxTestListenr implements ExtendTestListener {
 				logParser.addExpression(Color.RED, "panic", "Panic!", "logcat", "logcat-radio", "kmsg");
 				// Verify for the following only in kmsg and not in logcat
 				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning", "kmsg");
+				// Verify logcat
+				logParser.addExpression(Color.RED, "WATCHDOG KILLING SYSTEM PROCESS", "Watchdog", "logcat");
+				logParser.addExpression(Color.RED, "FATAL EXCEPTION", "fatal exception", "logcat");
 				// ADD HERE MORE EXPRESSION IF NEEDED
 				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
 				cellRoxDevice.getLogs(logParser);
 				lastTestScenarioAsTest = false;
 				ListenerstManager.getInstance().report("NEW CODE3");
-
 				validateCrashes();
+				//report to log
+				//reportToLogStash((ScenarioAsTest) test);
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private String reportToLogStash(ScenarioAsTest test){
+		//logstash format: <version> <build> <status> <testName> <duration> <personaCrash> <deviceCrash> <FatalException> 
+		StringBuilder log = new StringBuilder();
+		log.append("hammerhead ");
+		log.append("182 ");
+		log.append(test.isPass());
+		log.append(scenarioAsTestName);
+		log.append(" 150 ");
+		
+		return log.toString();
+		
 	}
 
 	private void validateCrashes() throws Exception {
@@ -103,7 +127,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 		if (RunProperties.getInstance().getRunProperty("personaCrash") != null) {
 			if (RunProperties.getInstance().getRunProperty("personaCrash").equals("1")) {
 				ListenerstManager.getInstance().report("Persona Crash has been detected in this scenario!", Reporter.FAIL);
-				// add the scenraio name to summary report which is later parsed to
+				// add the scenario name to summary report which is later parsed to
 				// the "manager report"
 				String personaCrashes = (String) Summary.getInstance().getProperty("personaCrash");
 				if (personaCrashes != null) {
@@ -147,7 +171,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	@Override
 	public void endRun() {
-		// TODO Auto-generated method stub
+		System.out.println("************************** THIS IS THE END OF THE WHOLE RUN **************************");
 
 	}
 
@@ -165,12 +189,12 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	@Override
 	public void startContainer(JTestContainer container) {
-
+		System.out.println("************************** THIS IS THE START OF THE WHOLE SCENARIO **************************");
 	}
 
 	@Override
 	public void endContainer(JTestContainer container) {
-
+		System.out.println("************************** THIS IS THE END OF THE WHOLE SCENARIO **************************");
 	}
 
 }
