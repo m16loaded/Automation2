@@ -1371,10 +1371,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
 		cli.connect();
 		String userHome = System.getProperty("user.home");
+		Thread.sleep(500);
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
-		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", true);
-		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", true);
-		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", true);
+		Thread.sleep(500);
+		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", false);
+		Thread.sleep(500);
+		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", false);
+		Thread.sleep(500);
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", false);
+		Thread.sleep(500);
 		cli.disconnect();
 	}
 
@@ -1394,9 +1399,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		//parser.setLogs(logcat, radioLogcat, kmsg);
 		parser.validateLogs();
 		// delete all logs locally
-		logcat.delete();
-		kmsg.delete();
-		radioLogcat.delete();
+//		logcat.delete();
+//		kmsg.delete();
+//		radioLogcat.delete();
 	}
 
 	/**
