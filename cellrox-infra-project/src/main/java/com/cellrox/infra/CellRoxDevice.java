@@ -1371,15 +1371,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
 		cli.connect();
 		String userHome = System.getProperty("user.home");
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", false);
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", false);
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", false);
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		cli.disconnect();
 	}
 
