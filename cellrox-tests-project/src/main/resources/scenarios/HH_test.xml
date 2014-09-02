@@ -19,6 +19,7 @@
         <antcallback target="t3"/>
         <antcallback target="t4"/>
         <antcallback target="t5"/>
+        <antcallback target="t6"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -61,6 +62,14 @@
         </jsystem>
     </target>
     <target name="t5">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="ff7fad11-6fb7-457f-933c-fc61e5b58cd5"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
+        </jsystem>
+    </target>
+    <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
             <property name="jsystem.uuid" value="40ede728-c000-4340-afe9-9582cf10980b"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
