@@ -225,6 +225,73 @@ public class MDMOperation extends TestCase {
 
 	}
 
+	//////////////////////////////////////////////////////////////////
+	
+	
+	
+	
+	/**
+	 * Fake activation
+	 * 
+	 * */
+	@Test
+	@TestProperties(name = "Fake Enroll Owner", paramsInclude = { "ownerName,currentDevice" })
+	public void fakeEnrollOwner() throws Exception {
+
+		String activationCode = (String) Summary.getInstance().getProperty("IMEI");
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5,5);
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Next"));
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+				.setText(new Selector().setClassName("android.widget.EditText").setIndex(0), activationCode.substring(0, 4));
+		sleep(500);
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+				.setText(new Selector().setClassName("android.widget.EditText").setIndex(2), activationCode.substring(4, 8));
+		sleep(500);
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+				.setText(new Selector().setClassName("android.widget.EditText").setIndex(4), activationCode.substring(8, 12));
+		sleep(500);
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+				.setText(new Selector().setClassName("android.widget.EditText").setIndex(3), "demo");
+		sleep(500);
+
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
+		Thread.sleep(400);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
+		boolean isReboot = true;
+		try {
+			isReboot = devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 60 * 1000);
+		} catch (Exception e) {
+			report.report("The reboot button does not exist.", Reporter.FAIL);
+			isReboot = false;
+		}
+
+		if (isReboot) {
+			report.report("The device activated");
+		} else {
+			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("Error")), Reporter.FAIL);
+			report.report("The device fail to activate.", Reporter.FAIL);
+		}
+		// TODO device encrypted for priv after change
+		devicesMannager.getDevice(currentDevice).rebootDevice(true, false, Persona.PRIV, Persona.CORP);
+
+		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+		devicesMannager.getDevice(currentDevice).connectToServers();
+
+	}
+	
+	
+	
+	
+	
+	//////////////////////////////////////////////////////////////////
+	
+	
 	/**
 	 * This is step 4 in the activation. This function : 1. Click password in
 	 * the corp and verify corp is uploaded. 2. Compare the data from the device
