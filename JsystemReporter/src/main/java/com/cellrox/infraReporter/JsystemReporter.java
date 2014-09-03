@@ -200,7 +200,7 @@ public class JsystemReporter {
 
 			docHtmlString.append("<p>Persona Crash count: " + personaCrash + "</p>").append(System.getProperty("line.separator"));
 			// if persona crash was detected
-			if (deviceCrashScnarioName != null) {
+			if (personaCrashScenarioName != null) {
 				if (!personaCrashScenarioName.isEmpty()) {
 					docHtmlString.append("<p>Persona Crash on Scenarios: " + personaCrashScenarioName + "</p>").append(System.getProperty("line.separator"));
 				}
