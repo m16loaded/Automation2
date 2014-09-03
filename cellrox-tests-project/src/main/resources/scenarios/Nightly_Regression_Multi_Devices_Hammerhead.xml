@@ -71,6 +71,7 @@
         <antcallback target="t55"/>
         <antcallback target="t56"/>
         <antcallback target="t57"/>
+        <antcallback target="t58"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead.xml">
@@ -477,6 +478,13 @@
         </jsystem-ant>
     </target>
     <target name="t57">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/New_UX-Switch_Personas.xml">
+            <property name="jsystem.uuid" value="3660079c-8146-4ace-84b0-88d3af1b8ea7"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t58">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
             <property name="jsystem.uuid" value="d310d307-5566-4db1-8a86-f439f74cf753"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
