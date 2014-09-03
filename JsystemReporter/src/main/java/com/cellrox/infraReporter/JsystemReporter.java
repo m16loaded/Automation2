@@ -140,7 +140,11 @@ public class JsystemReporter {
 			 * a table with the wanted color that represents the status of the
 			 * test and the time of it.
 			 * */
-			version = prop.getProperty("Build_display_id").split("\n")[0].trim();
+			if (prop.getProperty("Build_display_id")!=null){
+				version = prop.getProperty("Build_display_id").split("\n")[0].trim();
+			}
+			
+			
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
 			deviceCrashScnarioName = prop.getProperty("deviceCrash");
