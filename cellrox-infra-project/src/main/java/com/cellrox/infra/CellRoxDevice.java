@@ -1376,13 +1376,13 @@ public class CellRoxDevice extends SystemObjectImpl {
 		
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
 		Thread.sleep(1000);
-		executeCliCommand("rm -f " + userHome + "/testLogcat.txt &", false);
+		executeCliCommand("rm -f " + userHome + "/testLogcat.txt", false);
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", false);
 		Thread.sleep(1000);
-		executeCliCommand("rm -f " + userHome + "/testRadioLogcat.txt &", false);
+		executeCliCommand("rm -f " + userHome + "/testRadioLogcat.txt", false);
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", false);
 		Thread.sleep(1000);
-		executeCliCommand("rm -f " + userHome + "/testKmsg.txt &", false);
+		executeCliCommand("rm -f " + userHome + "/testKmsg.txt", false);
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", false);
 		Thread.sleep(1000);
 		cli.disconnect();
