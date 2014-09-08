@@ -105,6 +105,7 @@ public class LogParser extends SystemObjectOperation {
 					// expression.setColor(Color.RED);
 					log = log.replace(expression.getExpression(), "<b><font size=\"4\" " + expression.getHtmlColor() + ">" + expression.getExpression()
 							+ "</font></b>");
+					// CHANGE HERE IF YOU'D  LIKE OTHER REPORT LEVEL I.E WRANING , BOLD, PASS
 					report.report("found error " + expression.getNiceName() + " in " + logName, Reporter.FAIL);
 					reportToRunProperty(expression.getNiceName());
 				}

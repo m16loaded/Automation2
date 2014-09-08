@@ -93,7 +93,7 @@ public class JsystemReporter {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null, deviceCrashScnarioName = null, personaCrashScenarioName = null;
-		String compareStatus, seconedColor, lastTime = null, vellamoResults = "";
+		String compareStatus, seconedColor, lastTime = null, vellamoResults = "", corpBootTime=null,privBootTime=null;
 		int pass = 0, fail = 0, total = 0, index = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
@@ -158,6 +158,8 @@ public class JsystemReporter {
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
 			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " ");
+			corpBootTime = prop.getProperty("hostCorpDuration");
+			privBootTime = prop.getProperty("hostPrivDuration");
 			
 			//get errors from log
 			
@@ -216,7 +218,14 @@ public class JsystemReporter {
 					docHtmlString.append("<p>"+key +" : "+ prop.getProperty(key.toString())+"</p>").append(System.getProperty("line.separator"));
 				}
 			}
-			
+			// print corp boot time
+			if (corpBootTime!=null){
+				docHtmlString.append("<p>Corp Decrypt Boot Time: " + corpBootTime + "</p>").append(System.getProperty("line.separator"));
+			}
+			// print priv boot time
+			if (privBootTime!=null){
+				docHtmlString.append("<p>Corp Decrypt Boot Time: " + privBootTime + "</p>").append(System.getProperty("line.separator"));
+			}
 			
 			// docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
 

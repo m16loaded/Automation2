@@ -3,8 +3,11 @@ package com.cellrox.infra;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,13 +15,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jsystem.extensions.analyzers.text.FindText;
 import jsystem.extensions.analyzers.text.GetTextCounter;
 import jsystem.extensions.analyzers.text.TextNotFound;
-import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.Reporter.EnumReportLevel;
 import jsystem.framework.report.Reporter.ReportAttribute;
@@ -26,11 +29,9 @@ import jsystem.framework.report.Summary;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.utils.FileUtils;
 
-import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.AdbControllerException;
 import org.jsystemtest.mobile.core.device.USBDevice;
-import org.python.modules.thread;
 import org.topq.uiautomator.AutomatorService;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
@@ -50,6 +51,8 @@ import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
 
 public class CellRoxDevice extends SystemObjectImpl {
+	
+	private static final String LOGCAT_TIME_FORMAT = "MM-dd hh:mm:ss.SSS";
 
 	// init from the SUT
 	private int encryptPasseord = 1111;
@@ -728,6 +731,61 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setDeviceAsRoot();
 		upTime = getCurrentUpTime();
 		setPsString(getPs());
+	}
+	
+	public void getbootingDeviceTime(int timeout, boolean isEncrypted, boolean isEncryptedPriv, long expectedDurationHostCorp, long expectedDurationHostPriv,Persona... personas) throws Exception {
+		long currentTime = System.currentTimeMillis();
+		try {
+			report.startLevel("Rebooting device... ");
+			sync();
+			device.reboot();
+			report.report("reboot command was sent");
+			Thread.sleep(5000);
+			device  = adbController.waitForDeviceToConnect(getDeviceSerial());
+			Thread.sleep(5000);
+			setDeviceAsRoot();	
+			report.stopLevel();
+			//first line is the host upload time
+			String hostBoot = waitAndReturnLineFromTomcat("I/Vold",".*I/Vold\\s*\\(\\s*\\d*\\):\\s*Vold.*", 10 * 60 * 1000, 2000);
+			//priv boot animation finished
+			String privAnimatedFinish = waitAndReturnLineFromTomcat("Boot animation finished",".*\\(priv\\): Boot animation finished", 10 * 60 * 1000, 2000);
+			//Wait for Device with Encrypted Corp Persona to Turn Online
+			report.startLevel("Wait for Device with Encrypted Corp Persona to Turn Online");
+			validateDeviceIsOnline(currentTime, timeout, isEncrypted, isEncryptedPriv, personas);
+			report.stopLevel();
+			//corp boot animation finished
+			String corpAnimatedFinish = waitAndReturnLineFromTomcat("Boot animation finished",".*\\(corp\\): Boot animation finished", 10 * 60 * 1000, 1000);
+			// get the date of host boot
+			Date hostBootTime = StaticUtils.getTimeFromLogcat(hostBoot, LOGCAT_TIME_FORMAT);
+			//get the date of corp animation finish time
+			Date corpAnimationFinishTime = StaticUtils.getTimeFromLogcat(corpAnimatedFinish, LOGCAT_TIME_FORMAT);
+			//get the date of priv animation finish time
+			Date privAnimationFinishTime = StaticUtils.getTimeFromLogcat(privAnimatedFinish, LOGCAT_TIME_FORMAT);
+			// get the duration between host and corp
+			long durationHostCorp = TimeUnit.MILLISECONDS.toSeconds(corpAnimationFinishTime.getTime() - hostBootTime.getTime());
+			// get the duration between host and priv
+			long durationHostPriv = TimeUnit.MILLISECONDS.toSeconds(privAnimationFinishTime.getTime() - hostBootTime.getTime());
+			//report to Summary
+			Summary.getInstance().setProperty("hostCorpDuration", ""+durationHostCorp);
+			Summary.getInstance().setProperty("hostPrivDuration", ""+durationHostPriv);
+			//analyze and report
+			if (durationHostCorp>expectedDurationHostCorp){
+				report.report("Duration Between Boot and Corp Animation Finish Time was "+durationHostCorp+" sec. and not "+expectedDurationHostCorp+" sec. as Expected",false);
+			}else{
+				report.report("Duration Between Boot and Corp Animation Finish Time was "+durationHostCorp+" sec. as Expected");
+			}
+			if (durationHostPriv>expectedDurationHostPriv){
+				report.report("Duration Between Boot and Priv Animation Finish Time was "+durationHostPriv+" sec. and not "+expectedDurationHostPriv+" sec. as Expected",false);
+			}else{
+				report.report("Duration Between Boot and Priv Animation Finish Time was "+durationHostPriv+" sec. as Expected");
+			}
+		} catch (Exception e) {
+		}
+
+		report.startLevel("Finish Device Loading...");
+		upTime = getCurrentUpTime();
+		setPsString(getPs());
+		report.stopLevel();
 	}
 
 	public void setDataAfterReboot() throws Exception {
@@ -1603,7 +1661,41 @@ public class CellRoxDevice extends SystemObjectImpl {
 		report.report("Click Here to See Logcat Result", log, ReportAttribute.HTML);
 		return true;
 	}
-
+	
+	/**
+	 * This fucntion will return the requested line
+	 * @param line
+	 * @param timeout
+	 * @param interval
+	 * @return
+	 * @throws Exception
+	 */
+	public String waitAndReturnLineFromTomcat(String filter, String line, long timeout, long interval) throws Exception {
+		final long start = System.currentTimeMillis();
+		String actualLine = "";
+		line = "("+line+")";
+		report.startLevel("Wait for "+line+" in Logcat");
+		while (!actualLine.matches(line)) {
+			Pattern p = Pattern.compile(line);
+			Matcher m = p.matcher(actualLine);
+			if (m.find()){
+				report.stopLevel();
+				report.report("Found in Logcat \""+m.group(1)+"\n");
+				return m.group(1);
+			}
+			if (System.currentTimeMillis() - start > timeout) {
+				report.stopLevel();
+				report.report("Could not find the line " + line, Reporter.FAIL);
+				return null;
+			}
+			executeCommandAdb(String.format("logcat -v time -d | grep \"%s\"", filter));
+			actualLine = cli.getTestAgainstObject().toString();
+			Thread.sleep(interval);
+		}
+		return null;
+	}
+	
+	
 	public void deleteFile(String file) throws Exception {
 		report.startLevel("Deleting File " + file);
 		cli.connect();
