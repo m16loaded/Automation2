@@ -13,6 +13,7 @@ import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.scenario.SystemObjectOperation;
 import jsystem.utils.FileUtils;
 
+import com.cellrox.infra.CellroxTestListenr;
 import com.cellrox.infra.enums.Color;
 import com.cellrox.infra.object.LogParserExpression;
 
@@ -85,7 +86,7 @@ public class LogParser extends SystemObjectOperation {
 		addExpression(expression.getColor(),expression.getExpression(),expression.getNiceName(), logNames);
 	}
 
-	public void validateLogs() throws IOException {
+	public void validateLogs() throws Exception {
 	
 		// for each log name that we are interested in:
 		for (String logName : tmpExpressions.keySet()) {
@@ -105,12 +106,23 @@ public class LogParser extends SystemObjectOperation {
 					log = log.replace(expression.getExpression(), "<b><font size=\"4\" " + expression.getHtmlColor() + ">" + expression.getExpression()
 							+ "</font></b>");
 					report.report("found error " + expression.getNiceName() + " in " + logName, Reporter.FAIL);
+					reportToRunProperty(expression.getNiceName());
 				}
 			}
 			// print log
 			log = log.replace("\n", "<br>");
 			report.report("Click Here to See Results " + logName, log, ReportAttribute.HTML);
 		}
+	}
+	
+	/**
+	 * this function will report to runProperty that an error was found 
+	 * the {@link CellroxTestListenr} will later parse the errors and add them to summary report
+	 * @param niceName
+	 * @throws Exception
+	 */
+	public void reportToRunProperty(String niceName) throws Exception {
+		runProperties.setRunProperty(niceName+" error", "1");
 	}
 
 	public void addLogFile(String logName, File logcat) throws Exception {
