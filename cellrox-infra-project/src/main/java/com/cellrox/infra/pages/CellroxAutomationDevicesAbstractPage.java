@@ -13,8 +13,6 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
-
 public class CellroxAutomationDevicesAbstractPage extends CellRoxAbstractPage {
 
 	protected String siteUrl; 

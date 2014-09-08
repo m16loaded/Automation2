@@ -2,10 +2,6 @@ package com.cellrox.infra;
 
 import java.io.IOException;
 
-import org.python.modules.re;
-import org.springframework.context.support.StaticApplicationContext;
-
-import jsystem.extensions.report.html.Report;
 import jsystem.framework.RunProperties;
 import jsystem.framework.report.ExtendTestListener;
 import jsystem.framework.report.ListenerstManager;
@@ -17,14 +13,11 @@ import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.ScenarioAsTest;
 import jsystem.framework.scenario.flow_control.AntForLoop;
 import jsystem.framework.sut.SutFactory;
-import jsystem.utils.FileUtils;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
 import com.cellrox.infra.enums.Color;
 import com.cellrox.infra.log.LogParser;
-import com.sun.swing.internal.plaf.basic.resources.basic;
-import com.sun.xml.internal.fastinfoset.sax.Properties;
 
 public class CellroxTestListenr implements ExtendTestListener {
 
