@@ -2,6 +2,7 @@ package com.cellrox.infra;
 
 import java.io.IOException;
 
+import org.python.modules.re;
 import org.springframework.context.support.StaticApplicationContext;
 
 import jsystem.extensions.report.html.Report;
@@ -23,6 +24,7 @@ import junit.framework.Test;
 import com.cellrox.infra.enums.Color;
 import com.cellrox.infra.log.LogParser;
 import com.sun.swing.internal.plaf.basic.resources.basic;
+import com.sun.xml.internal.fastinfoset.sax.Properties;
 
 public class CellroxTestListenr implements ExtendTestListener {
 
@@ -108,36 +110,31 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	private void validateCrashes() throws Exception {
 		// report persona / device crash
-		if (RunProperties.getInstance().getRunProperty("deviceCrash") != null) {
-			if (RunProperties.getInstance().getRunProperty("deviceCrash").equals("1")) {
-				ListenerstManager.getInstance().report("Device Crash has been detected in this scenario!", Reporter.FAIL);
-				// add the scenraio name to summary report which is later parsed
-				// to the "manager report"
-				String deviceCrashes = (String) Summary.getInstance().getProperty("deviceCrash");
-				if (deviceCrashes != null) {
-					deviceCrashes += deviceCrashes + ";" + scenarioAsTestName;
-				} else {
-					deviceCrashes = scenarioAsTestName;
-				}
-				Summary.getInstance().setProperty("deviceCrash", deviceCrashes);
-				// and reset back to 0 for the next crash (tfu tfu tfu)
-				RunProperties.getInstance().setRunProperty("deviceCrash", "0");
+		reportToSummary("deviceCrash");
+		reportToSummary("personaCrash");
+		//validate log errors coming from logParser
+		for (Object key : RunProperties.getInstance().getRunProperties().keySet()){
+			if (key.toString().contains("error")){
+				reportToSummary(key.toString());
 			}
 		}
-		if (RunProperties.getInstance().getRunProperty("personaCrash") != null) {
-			if (RunProperties.getInstance().getRunProperty("personaCrash").equals("1")) {
-				ListenerstManager.getInstance().report("Persona Crash has been detected in this scenario!", Reporter.FAIL);
+	}
+
+	private void reportToSummary(String property) throws IOException, Exception {
+		if (RunProperties.getInstance().getRunProperty(property) != null) {
+			if (RunProperties.getInstance().getRunProperty(property).equals("1")) {
+				ListenerstManager.getInstance().report(property+" has been detected in this scenario!", Reporter.FAIL);
 				// add the scenario name to summary report which is later parsed to
 				// the "manager report"
-				String personaCrashes = (String) Summary.getInstance().getProperty("personaCrash");
-				if (personaCrashes != null) {
-					personaCrashes += personaCrashes + ";" + scenarioAsTestName;
+				String runProperty = (String) Summary.getInstance().getProperty(property);
+				if (runProperty != null) {
+					runProperty += runProperty + ";" + scenarioAsTestName;
 				} else {
-					personaCrashes = scenarioAsTestName;
+					runProperty = scenarioAsTestName;
 				}
-				Summary.getInstance().setProperty("personaCrash", personaCrashes);
+				Summary.getInstance().setProperty(property, runProperty);
 				// and reset back to 0 for the next crash (tfu tfu tfu)
-				RunProperties.getInstance().setRunProperty("personaCrash", "0");
+				RunProperties.getInstance().setRunProperty(property, "0");
 			}
 		}
 	}

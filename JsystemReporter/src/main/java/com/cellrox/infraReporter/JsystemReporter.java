@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
@@ -157,6 +158,10 @@ public class JsystemReporter {
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
 			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " ");
+			
+			//get errors from log
+			
+			
 			// noCon = prop.getProperty("No_Connection");
 
 			// begin to create the html file
@@ -205,6 +210,14 @@ public class JsystemReporter {
 					docHtmlString.append("<p>Persona Crash on Scenarios: " + personaCrashScenarioName + "</p>").append(System.getProperty("line.separator"));
 				}
 			}
+			//get errors from log - this is a dynamic key, we only know that the key name contains "error"
+			for (Object key : prop.keySet()){
+				if (key.toString().contains("error")){
+					docHtmlString.append("<p>"+key +" : "+ prop.getProperty(key.toString())+"</p>").append(System.getProperty("line.separator"));
+				}
+			}
+			
+			
 			// docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
 
 			testsTable.append("<p><b>Test report : </b></p>").append(System.getProperty("line.separator"));
