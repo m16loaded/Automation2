@@ -218,13 +218,13 @@ public class JsystemReporter {
 					docHtmlString.append("<p>"+key +" : "+ prop.getProperty(key.toString())+"</p>").append(System.getProperty("line.separator"));
 				}
 			}
-			// print corp boot time
-			if (corpBootTime!=null){
-				docHtmlString.append("<p>Corp Decrypt Boot Time: " + corpBootTime + "sec. </p>").append(System.getProperty("line.separator"));
-			}
 			// print priv boot time
 			if (privBootTime!=null){
-				docHtmlString.append("<p>Priv Decrypt Boot Time: " + privBootTime + "sec. </p>").append(System.getProperty("line.separator"));
+				docHtmlString.append("<p>Priv Boot Time: " + privBootTime + "sec. </p>").append(System.getProperty("line.separator"));
+			}
+			// print corp boot time
+			if (corpBootTime!=null){
+				docHtmlString.append("<p>Corp Decryption window Boot Time: " + corpBootTime + "sec. </p>").append(System.getProperty("line.separator"));
 			}
 			
 			// docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
