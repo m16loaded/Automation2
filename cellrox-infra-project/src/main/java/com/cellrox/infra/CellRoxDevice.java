@@ -48,7 +48,10 @@ import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.State;
+import com.cellrox.infra.log.Log;
+import com.cellrox.infra.log.LogManager;
 import com.cellrox.infra.log.LogParser;
+import com.cellrox.infra.log.Log.LogTypes;
 
 public class CellRoxDevice extends SystemObjectImpl {
 	
@@ -80,6 +83,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private Map<Persona, Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
 	// this boolean is only for showing the summary data in the Jsystem result
 	// sender
+	
+	private LogManager logManager;
 	
 	boolean online = false;
 
@@ -131,6 +136,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.setExitTimeout(60 * 1000);
 		
 		setDeviceAsRoot();
+		
+		// INIT test logs
+		logManager = new LogManager();
+		logManager.addLog(new Log("testRadioLogcat","adb -s " + getDeviceSerial() + " logcat -b radio -v time",LogTypes.ADB));
+		logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial() + " logcat -v time",LogTypes.ADB));
+		logManager.addLog(new Log("testKmsg","adb -s " + getDeviceSerial() + " shell cat /proc/kmsg",LogTypes.ADB));
+//		logManager.populateLogManager();
+		
 	}
 	
 	private void initSyslogs() throws Exception{
@@ -1429,38 +1442,38 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void initLogs() throws Exception {
 		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
 		cli.connect();
-		String userHome = System.getProperty("user.home");
-		Thread.sleep(1000);
-		
+//		String userHome = System.getProperty("user.home");
+//		Thread.sleep(1000);
+//		
 		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
-		Thread.sleep(1000);
-		executeCliCommand("rm -f " + userHome + "/testLogcat.txt", false);
-		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", false);
-		Thread.sleep(1000);
-		executeCliCommand("rm -f " + userHome + "/testRadioLogcat.txt", false);
-		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", false);
-		Thread.sleep(1000);
-		executeCliCommand("rm -f " + userHome + "/testKmsg.txt", false);
-		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", false);
-		Thread.sleep(1000);
-		cli.disconnect();
+//		Thread.sleep(1000);
+//		executeCliCommand("rm -f " + userHome + "/testLogcat.txt", false);
+//		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", false);
+//		Thread.sleep(1000);
+//		executeCliCommand("rm -f " + userHome + "/testRadioLogcat.txt", false);
+//		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", false);
+//		Thread.sleep(1000);
+//		executeCliCommand("rm -f " + userHome + "/testKmsg.txt", false);
+//		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", false);
+//		Thread.sleep(1000);
+//		cli.disconnect();
+		logManager.populateLogManager();
+		logManager.startWritingAllLogs();
 	}
 
 	/**
 	 * get logs (logcat , logcat-radio, kmsg)
 	 */
 	public void getLogs(LogParser parser) throws Exception {
-		// the logs of the test are already in the user home dir...
-		String userHome = System.getProperty("user.home");
-		File logcat = new File(userHome + "/testLogcat.txt");
-		File kmsg = new File(userHome + "/testKmsg.txt");
-		File radioLogcat = new File(userHome + "/testRadioLogcat.txt");
-		// set logs to validate
-		parser.addLogFile("logcat", logcat);
-		parser.addLogFile("logcat-radio", radioLogcat);
-		parser.addLogFile("kmsg", kmsg);
-		//parser.setLogs(logcat, radioLogcat, kmsg);
-		parser.validateLogs();
+		
+		logManager.stopWritingAllLogs(parser);
+		
+//		// the logs of the test are already in the user home dir...
+//		String userHome = System.getProperty("user.home");
+//		File logcat = new File(userHome + "/testLogcat.txt");
+//		File kmsg = new File(userHome + "/testKmsg.txt");
+//		File radioLogcat = new File(userHome + "/testRadioLogcat.txt");
+//		
 		// delete all logs locally
 //		logcat.delete();
 //		kmsg.delete();

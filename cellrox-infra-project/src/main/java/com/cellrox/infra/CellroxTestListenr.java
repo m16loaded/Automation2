@@ -25,6 +25,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 	boolean deviceCrashOnScenario = false;
 	boolean personaCrashOnScenario = false;
 	boolean fatalExceptionOnScenario = false;
+	CellRoxDevice cellRoxDevice;
 	
 	public CellroxTestListenr() {
 		// get the device properties
@@ -32,6 +33,8 @@ public class CellroxTestListenr implements ExtendTestListener {
 			primaryDeviceId = SutFactory.getInstance().getSutInstance().getValue("//primary");
 			user = SutFactory.getInstance().getSutInstance().getValue("//user");
 			password = SutFactory.getInstance().getSutInstance().getValue("//password");
+			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,20 +66,20 @@ public class CellroxTestListenr implements ExtendTestListener {
 			try {
 				ListenerstManager.getInstance().report("******************** SCENARIO MARKED AS TEST LOG RESULTS: ********************", ReportAttribute.BOLD);
 				// init log parser
-				LogParser logParser = new LogParser();
+ 				LogParser logParser = new LogParser();
 				// adding the following for *all* logs
-				logParser.addExpression(Color.RED, "\\bBUG\\b", "Bug", "logcat", "logcat-radio", "kmsg");
-				logParser.addExpression(Color.RED, "panic", "Panic!", "logcat", "logcat-radio", "kmsg");
+				logParser.addExpression(Color.RED, "\\bBUG\\b", "Bug", "testLogcat", "testRadioLogcat", "testKmsg");
+				logParser.addExpression(Color.RED, "panic", "Panic!", "testLogcat", "ltestRadioLogcat", "testKmsg");
 				// Verify for the following only in kmsg and not in logcat
-				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning", "kmsg");
+				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning", "testKmsg");
 				// Verify logcat
-				logParser.addExpression(Color.RED, "WATCHDOG KILLING SYSTEM PROCESS", "Watchdog", "logcat");
-				logParser.addExpression(Color.RED, "FATAL EXCEPTION", "fatal exception", "logcat");
+				logParser.addExpression(Color.RED, "WATCHDOG KILLING SYSTEM PROCESS", "Watchdog", "testLogcat");
+				logParser.addExpression(Color.RED, "FATAL EXCEPTION", "fatal exception", "testLogcat");
 				// ADD HERE MORE EXPRESSION IF NEEDED
-				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
+//				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
 				cellRoxDevice.getLogs(logParser);
 				lastTestScenarioAsTest = false;
-				ListenerstManager.getInstance().report("NEW CODE3");
+				ListenerstManager.getInstance().report("NEW CODE4");
 				validateCrashes();
 				//report to log
 				//reportToLogStash((ScenarioAsTest) test);
@@ -147,7 +150,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 		// if basicName is not null this is a test that is marked as scenario
 		if (testInfo.basicName != null) {
 			try {
-				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
+//				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
 				cellRoxDevice.initLogs();
 				scenarioAsTestName = testInfo.basicName;
 			} catch (Exception e) {
@@ -179,6 +182,12 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	@Override
 	public void startContainer(JTestContainer container) {
+		try {
+			cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("************************** THIS IS THE START OF THE WHOLE SCENARIO **************************");
 	}
 
