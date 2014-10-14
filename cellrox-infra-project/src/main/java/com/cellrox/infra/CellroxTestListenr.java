@@ -69,7 +69,7 @@ public class CellroxTestListenr implements ExtendTestListener {
  				LogParser logParser = new LogParser();
 				// adding the following for *all* logs
 				logParser.addExpression(Color.RED, "\\bBUG\\b", "Bug", "testLogcat", "testRadioLogcat", "testKmsg");
-				logParser.addExpression(Color.RED, "panic", "Panic!", "testLogcat", "ltestRadioLogcat", "testKmsg");
+				logParser.addExpression(Color.RED, "panic", "Panic!", "testLogcat", "testRadioLogcat", "testKmsg");
 				// Verify for the following only in kmsg and not in logcat
 				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning", "testKmsg");
 				// Verify logcat
@@ -124,7 +124,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 				// the "manager report"
 				String runProperty = (String) Summary.getInstance().getProperty(property);
 				if (runProperty != null) {
-					runProperty += runProperty + ";" + scenarioAsTestName;
+					runProperty = runProperty + ";" + scenarioAsTestName;
 				} else {
 					runProperty = scenarioAsTestName;
 				}
