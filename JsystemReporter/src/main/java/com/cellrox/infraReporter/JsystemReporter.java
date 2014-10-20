@@ -21,7 +21,6 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
@@ -93,8 +92,8 @@ public class JsystemReporter {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null, deviceCrashScnarioName = null, personaCrashScenarioName = null;
-		String compareStatus, seconedColor, lastTime = null, vellamoResults = "", corpBootTime=null,privBootTime=null;
-		int pass = 0, fail = 0, total = 0, index = 0;
+		String compareStatus = null, seconedColor = null, lastTime = null, vellamoResults = "", corpBootTime = null, privBootTime = null;
+		int pass = 0, fail = 0, total = 0, index = 0 , warning = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -141,11 +140,10 @@ public class JsystemReporter {
 			 * a table with the wanted color that represents the status of the
 			 * test and the time of it.
 			 * */
-			if (prop.getProperty("Build_display_id")!=null){
+			if (prop.getProperty("Build_display_id") != null) {
 				version = prop.getProperty("Build_display_id").split("\n")[0].trim();
 			}
-			
-			
+
 			doaCrash = prop.getProperty("Doa_Crash");
 			deviceCrash = prop.getProperty("Device_Crash");
 			deviceCrashScnarioName = prop.getProperty("deviceCrash");
@@ -160,10 +158,9 @@ public class JsystemReporter {
 			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " ");
 			corpBootTime = prop.getProperty("hostCorpDuration");
 			privBootTime = prop.getProperty("hostPrivDuration");
-			
-			//get errors from log
-			
-			
+
+			// get errors from log
+
 			// noCon = prop.getProperty("No_Connection");
 
 			// begin to create the html file
@@ -201,7 +198,8 @@ public class JsystemReporter {
 			// if device crash was detected
 			if (deviceCrashScnarioName != null) {
 				if (!deviceCrashScnarioName.isEmpty()) {
-					docHtmlString.append("<p>Device Crash on Scenarios: <ul><li>" + deviceCrashScnarioName.replace(";", "</li><li>") + "</li></ul></p>").append(System.getProperty("line.separator"));
+					docHtmlString.append("<p>Device Crash on Scenarios: <ul><li>" + deviceCrashScnarioName.replace(";", "</li><li>") + "</li></ul></p>")
+							.append(System.getProperty("line.separator"));
 				}
 			}
 
@@ -209,24 +207,27 @@ public class JsystemReporter {
 			// if persona crash was detected
 			if (personaCrashScenarioName != null) {
 				if (!personaCrashScenarioName.isEmpty()) {
-					docHtmlString.append("<p>Persona Crash on Scenarios: <ul><li>" + personaCrashScenarioName.replace(";", "</li><li>") + "</li></ul></p>").append(System.getProperty("line.separator"));
+					docHtmlString.append("<p>Persona Crash on Scenarios: <ul><li>" + personaCrashScenarioName.replace(";", "</li><li>") + "</li></ul></p>")
+							.append(System.getProperty("line.separator"));
 				}
 			}
-			//get errors from log - this is a dynamic key, we only know that the key name contains "error"
-			for (Object key : prop.keySet()){
-				if (key.toString().contains("error")){
-					docHtmlString.append("<p>"+key +" : <ul><li>"+ prop.getProperty(key.toString()).replace(";", "</li><li>")+"</li></ul></p>").append(System.getProperty("line.separator"));
+			// get errors from log - this is a dynamic key, we only know that
+			// the key name contains "error"
+			for (Object key : prop.keySet()) {
+				if (key.toString().contains("error")) {
+					docHtmlString.append("<p>" + key + " : <ul><li>" + prop.getProperty(key.toString()).replace(";", "</li><li>") + "</li></ul></p>").append(
+							System.getProperty("line.separator"));
 				}
 			}
 			// print priv boot time
-			if (privBootTime!=null){
+			if (privBootTime != null) {
 				docHtmlString.append("<p>Priv Boot Time: " + privBootTime + "sec. </p>").append(System.getProperty("line.separator"));
 			}
 			// print corp boot time
-			if (corpBootTime!=null){
+			if (corpBootTime != null) {
 				docHtmlString.append("<p>Corp Decryption window Boot Time: " + corpBootTime + "sec. </p>").append(System.getProperty("line.separator"));
 			}
-			
+
 			// docHtmlString.append("<p>No Connection number: "+noCon+"</p>").append(System.getProperty("line.separator"));
 
 			testsTable.append("<p><b>Test report : </b></p>").append(System.getProperty("line.separator"));
@@ -259,10 +260,10 @@ public class JsystemReporter {
 					if (status.equals("false")) {
 						color = "RED";
 						++fail;
-					} /*
-					 * else if (status.equals("warning")) { color = "YELLOW";
-					 * ++warning; }
-					 */else if (status.equals("true")) {
+					} else if (status.equals("warning")) {
+						color = "YELLOW";
+						++warning;
+					} else if (status.equals("true")) {
 						color = "GREEN";
 						++pass;
 					}
@@ -272,9 +273,12 @@ public class JsystemReporter {
 						if (testsStatusMapOld.get(name).equals("true")) {
 							compareStatus = testsStatusMapOld.get(name);
 							seconedColor = "GREEN";
-						} else {
+						} else if (testsStatusMapOld.get(name).equals("false")) {
 							compareStatus = testsStatusMapOld.get(name);
 							seconedColor = "RED";
+						}else if (testsStatusMapOld.get(name).equals("warning")){
+							compareStatus = testsStatusMapOld.get(name);
+							seconedColor = "YELLOW";
 						}
 						// if(status.equals(testsStatusMapOld.get(name))) {
 						// compareStatus = testsStatusMapOld.get(name);
