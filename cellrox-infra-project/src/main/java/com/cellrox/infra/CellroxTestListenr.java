@@ -72,6 +72,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 				logParser.addExpression(Color.RED, "panic", "Panic!", "testLogcat", "testRadioLogcat", "testKmsg");
 				// Verify for the following only in kmsg and not in logcat
 				logParser.addExpression(Color.RED, "\\bWARNING\\b", "Warning", "testKmsg");
+				
 				// Verify logcat
 				logParser.addExpression(Color.RED, "WATCHDOG KILLING SYSTEM PROCESS", "Watchdog", "testLogcat");
 				logParser.addExpression(Color.RED, "FATAL EXCEPTION", "fatal exception", "testLogcat");
@@ -79,7 +80,7 @@ public class CellroxTestListenr implements ExtendTestListener {
 //				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
 				cellRoxDevice.getLogs(logParser);
 				lastTestScenarioAsTest = false;
-				ListenerstManager.getInstance().report("NEW CODE4");
+				ListenerstManager.getInstance().report("NEW CODE7");
 				validateCrashes();
 				//report to log
 				//reportToLogStash((ScenarioAsTest) test);
@@ -106,20 +107,20 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	private void validateCrashes() throws Exception {
 		// report persona / device crash
-		reportToSummary("deviceCrash");
-		reportToSummary("personaCrash");
+		reportToSummary("deviceCrash",Reporter.FAIL);
+		reportToSummary("personaCrash",Reporter.FAIL);
 		//validate log errors coming from logParser
 		for (Object key : RunProperties.getInstance().getRunProperties().keySet()){
 			if (key.toString().contains("error")){
-				reportToSummary(key.toString());
+				reportToSummary(key.toString(),Reporter.WARNING);
 			}
 		}
 	}
 
-	private void reportToSummary(String property) throws IOException, Exception {
+	private void reportToSummary(String property,int status) throws IOException, Exception {
 		if (RunProperties.getInstance().getRunProperty(property) != null) {
 			if (RunProperties.getInstance().getRunProperty(property).equals("1")) {
-				ListenerstManager.getInstance().report(property+" has been detected in this scenario!", Reporter.FAIL);
+				ListenerstManager.getInstance().report(property+" has been detected in this scenario!", status);
 				// add the scenario name to summary report which is later parsed to
 				// the "manager report"
 				String runProperty = (String) Summary.getInstance().getProperty(property);

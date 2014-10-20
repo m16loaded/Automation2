@@ -201,7 +201,7 @@ public class JsystemReporter {
 			// if device crash was detected
 			if (deviceCrashScnarioName != null) {
 				if (!deviceCrashScnarioName.isEmpty()) {
-					docHtmlString.append("<p>Device Crash on Scenarios: " + deviceCrashScnarioName + "</p>").append(System.getProperty("line.separator"));
+					docHtmlString.append("<p>Device Crash on Scenarios: <ul><li>" + deviceCrashScnarioName.replace(";", "</li><li>") + "</li></ul></p>").append(System.getProperty("line.separator"));
 				}
 			}
 
@@ -209,13 +209,13 @@ public class JsystemReporter {
 			// if persona crash was detected
 			if (personaCrashScenarioName != null) {
 				if (!personaCrashScenarioName.isEmpty()) {
-					docHtmlString.append("<p>Persona Crash on Scenarios: " + personaCrashScenarioName + "</p>").append(System.getProperty("line.separator"));
+					docHtmlString.append("<p>Persona Crash on Scenarios: <ul><li>" + personaCrashScenarioName.replace(";", "</li><li>") + "</li></ul></p>").append(System.getProperty("line.separator"));
 				}
 			}
 			//get errors from log - this is a dynamic key, we only know that the key name contains "error"
 			for (Object key : prop.keySet()){
 				if (key.toString().contains("error")){
-					docHtmlString.append("<p>"+key +" : "+ prop.getProperty(key.toString())+"</p>").append(System.getProperty("line.separator"));
+					docHtmlString.append("<p>"+key +" : <ul><li>"+ prop.getProperty(key.toString()).replace(";", "</li><li>")+"</li></ul></p>").append(System.getProperty("line.separator"));
 				}
 			}
 			// print priv boot time

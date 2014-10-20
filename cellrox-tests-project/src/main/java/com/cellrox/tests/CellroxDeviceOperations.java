@@ -293,13 +293,13 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Is The Device Connected on ${currentDevice}", paramsInclude = { "currentDevice" })
+	@TestProperties(name = "Verify ${currentDevice} Device Connected to ADB", paramsInclude = { "currentDevice" })
 	public void isTheDeviceConnected() throws Exception {
 		devicesMannager.getDevice(currentDevice).isDeviceConnected();
 	}
 
 	@Test
-	@TestProperties(name = "Verify Uiautomator Server Status on Device ${currentDevice} (Configure if Necessary)",paramsInclude={"currentDevice"})
+	@TestProperties(name = "Verify Uiautomator Server Status on ${currentDevice} Device (Configure if Necessary)",paramsInclude={"currentDevice"})
 	public void isDeviceConnectedToServer() throws Exception {
 		try {
 			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).ping() == null){
