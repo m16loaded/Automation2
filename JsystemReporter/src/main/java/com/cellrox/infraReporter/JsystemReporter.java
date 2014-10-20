@@ -114,7 +114,7 @@ public class JsystemReporter {
 		}
 
 		newNameOfReport = nameOfReport.replace(".html", "_").concat(currentDate.replace("/", "_")).concat(".html");
-
+		new File(newNameOfReport);
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
