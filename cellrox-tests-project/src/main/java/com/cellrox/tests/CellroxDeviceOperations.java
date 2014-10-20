@@ -11,10 +11,12 @@ import jsystem.extensions.analyzers.compare.CompareValues;
 import jsystem.framework.TestProperties;
 import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.report.Reporter.ReportAttribute;
 import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 
 import org.junit.Test;
+import org.python.core.exceptions;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
@@ -122,9 +124,10 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name="Validate Personas Boot Time",paramsInclude = {"currentDevice,deviceEncrypted,deviceEncryptedPriv,expectedDurationHostCorp,expectedDurationHostPriv" })
+	@TestProperties(name = "Validate Personas Boot Time", paramsInclude = { "currentDevice,deviceEncrypted,deviceEncryptedPriv,expectedDurationHostCorp,expectedDurationHostPriv" })
 	public void getLodingTime() throws Exception {
-		devicesMannager.getDevice(currentDevice).getbootingDeviceTime(10*60*1000,deviceEncrypted, deviceEncryptedPriv,expectedDurationHostCorp,expectedDurationHostPriv, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).getbootingDeviceTime(10 * 60 * 1000, deviceEncrypted, deviceEncryptedPriv, expectedDurationHostCorp,
+				expectedDurationHostPriv, Persona.PRIV, Persona.CORP);
 	}
 
 	public long getExpectedDurationHostCorp() {
@@ -293,6 +296,24 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Is The Device Connected on ${currentDevice}", paramsInclude = { "currentDevice" })
 	public void isTheDeviceConnected() throws Exception {
 		devicesMannager.getDevice(currentDevice).isDeviceConnected();
+	}
+
+	@Test
+	@TestProperties(name = "Verify Uiautomator Server Status on Device ${currentDevice} (Configure if Necessary)",paramsInclude={"currentDevice"})
+	public void isDeviceConnectedToServer() throws Exception {
+		try {
+			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).ping() == null){
+				throw new Exception();
+			}
+			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).ping() == null){
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			report.report("UiAutomator server is down on the given device: "+devicesMannager.getDevice(currentDevice).getDeviceSerial()+" Configuring device...",ReportAttribute.BOLD);
+			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
+		}
+		report.report("UiAutomator server is up and running on the given device: "+devicesMannager.getDevice(currentDevice).getDeviceSerial(),ReportAttribute.BOLD);
+
 	}
 
 	/**

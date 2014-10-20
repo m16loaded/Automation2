@@ -641,11 +641,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 			executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
 
-		cli.switchToHost();
-		executeCliCommand("adb -s " + getDeviceSerial() + " root");
-		executeCliCommand("rm /data/local/tmp/local_pipe");
-		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
-		executeCliCommand("nc -lk " + privePort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
+//		cli.switchToHost();
+//		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+//		executeCliCommand("rm /data/local/tmp/local_pipe");
+//		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+//		executeCliCommand("nc -lk " + privePort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
 
 		cli.switchToHost();
 		cli.switchToPersona(Persona.CORP);
@@ -660,6 +660,13 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		cli.switchToHost();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		
+		// configure priv pipes on host
+		executeCliCommand("rm /data/local/tmp/local_pipe");
+		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+		executeCliCommand("nc -lk " + privePort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
+		
+		//configure corp pipes on host
 		executeCliCommand("rm /data/local/tmp/local_pipe");
 		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
 		executeCliCommand("nc -lk " + corpPort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/corp/data/unix_soc >/data/local/tmp/local_pipe &");
