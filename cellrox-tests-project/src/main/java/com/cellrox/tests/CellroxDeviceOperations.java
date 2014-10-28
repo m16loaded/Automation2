@@ -1960,6 +1960,91 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 
 	}
+	
+	/**
+	 * This test is validate the missed call from the wanted number and clear
+	 * the call log. Please insert the number including "-".
+	 * */
+	@Test
+	@TestProperties(name = "Validate missed calls only from : \"${phoneNumber}\" : ${persona}", paramsInclude = { "currentDevice,phoneNumber,persona" })//changed by Igor
+	public void validateMissedCallOnly() throws Exception {
+
+		// phoneNumber = "052-542-7444";
+		try {
+			report.startLevel("Validate income call from : " + phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Phone"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(0));
+
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText("Missed"), persona);
+
+			if (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText(phoneNumber))) {
+				report.report("Couldn't find the incoming call from : " + phoneNumber, Reporter.FAIL);
+			} else {
+				report.report("Find the incoming call from : " + phoneNumber);
+			}
+
+			// clear call log
+			/*String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.getUiObject(new Selector().setClassName("android.view.View").setIndex(0));
+			report.report("The father id : " + fatherInstance);
+			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.getChild(fatherInstance, new Selector().setClassName("android.widget.ImageButton").setIndex(0));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Clear call log"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
+
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");*/
+
+		} finally {
+			report.stopLevel();
+		}
+
+	}
+	
+	
+	/**
+	 * This test is validate the missed call from the wanted number and clear
+	 * the call log. Please insert the number including "-".
+	 * */
+	@Test
+	@TestProperties(name = "Remove only : \"${phoneNumber}\" : ${persona}", paramsInclude = { "currentDevice,phoneNumber,persona" }) //changed by Igor
+	public void removeMissedCall() throws Exception {
+
+		// phoneNumber = "052-542-7444";
+		try {
+			report.startLevel("Validate income call from : " + phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Phone"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(0));
+
+			devicesMannager.getDevice(currentDevice).clickOnSelectorByUi(new Selector().setText("Missed"), persona);
+
+			/*if (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText(phoneNumber))) {
+				report.report("Couldn't find the incoming call from : " + phoneNumber, Reporter.FAIL);
+			} else {
+				report.report("Find the incoming call from : " + phoneNumber);
+			}*/
+
+			// clear call log
+			String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.getUiObject(new Selector().setClassName("android.view.View").setIndex(0));
+			report.report("The father id : " + fatherInstance);
+			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.getChild(fatherInstance, new Selector().setClassName("android.widget.ImageButton").setIndex(0));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Clear call log"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OK"));
+
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+
+		} finally {
+			report.stopLevel();
+		}
+
+	}
 
 	/**
 	 * The test send sms to the wanted number.
