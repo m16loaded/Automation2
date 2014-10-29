@@ -119,36 +119,36 @@
         </jsystem-ant>
     </target>
     <target name="t6">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Movius.xml">
+            <property name="jsystem.uuid" value="aa423fb3-c698-4bca-a054-41c23365c9f0"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t7">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Feedback_Create.xml">
             <property name="jsystem.uuid" value="2d6c9d27-7781-400d-ba37-023ac82bbaf8"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t7">
+    <target name="t8">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo2.xml">
             <property name="jsystem.uuid" value="6bc85cde-6af1-48c5-a048-28b9f2d8f1cf"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t8">
+    <target name="t9">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo.xml">
             <property name="jsystem.uuid" value="e6d29bfd-91a5-4795-aad5-64ecf86418e1"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t9">
+    <target name="t10">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2_Hammerhead.xml">
             <property name="jsystem.uuid" value="4d2f5148-3c53-4646-9a63-6622f9e4c1bb"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t10">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Movius2.xml">
-            <property name="jsystem.uuid" value="e3583d4f-5c4e-4fc5-9cf2-86aa7420982f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
