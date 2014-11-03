@@ -17,12 +17,27 @@
         <antcallback target="t1"/>
         <antcallback target="t2"/>
         <antcallback target="t3"/>
-        <antcallback target="t4"/>
-        <antcallback target="t5"/>
-        <antcallback target="t6"/>
-        <antcallback target="t7"/>
+        <antcallback return="ScreenStatus" target="t4"/>
+        <echo message="Check condition &quot;${ScreenStatus}&quot; EQUALS &quot;false&quot;"/>
+        <if>
+            <!--#Jsystem#-->
+            <jsystemscriptcondition fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.8412756a-3d35-4d33-a4c3-a8cdd9fcd330" language="javascript" params="str &lt;SEP&gt; ${ScreenStatus} &lt;SEP&gt; EQUALS &lt;SEP&gt; false &lt;SEP&gt; false" parentName="${jsystem.parent.name}.${ant.project.name}" src="ifScriptCondition.js" value="false"/>
+            <then>
+                <antcallback target="t5"/>
+                <antcallback target="t6"/>
+                <antcallback target="t7"/>
+            </then>
+            <else>
+                <!--#Jsystem#-->
+            </else>
+        </if>
         <antcallback target="t8"/>
         <antcallback target="t9"/>
+        <antcallback target="t10"/>
+        <antcallback target="t11"/>
+        <antcallback target="t12"/>
+        <antcallback target="t13"/>
+        <antcallback target="t14"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -58,13 +73,53 @@
     </target>
     <target name="t4">
         <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="805f394b-50d1-4687-b6ee-f13be4c27907"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.getTheScreenStatus"/>
+        </jsystem>
+    </target>
+    <target name="t5">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="dee56abc-b767-469f-be06-fabc2ba1d6a8"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.wakeUp"/>
+        </jsystem>
+    </target>
+    <target name="t6">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="be83d7b2-33d6-461c-86c0-32c8e2a220a8"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
+        </jsystem>
+    </target>
+    <target name="t7">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="5f8104a6-9a44-4fed-ab1c-0eff0d4a8628"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
+        </jsystem>
+    </target>
+    <target name="t8">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="6df06ea0-1e68-4ebd-b558-1a823ce64583"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
+        </jsystem>
+    </target>
+    <target name="t9">
+        <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="af2dc63d-6f5f-4764-9b36-ee5b85a7ae6b"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.callToAnotherPhone"/>
         </jsystem>
     </target>
-    <target name="t5">
+    <target name="t10">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="6b8ba015-7c5d-453e-a617-751d2a8630e5"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -72,7 +127,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
         </jsystem>
     </target>
-    <target name="t6">
+    <target name="t11">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="b3e0ab2b-2ab0-44f0-8262-7cf907649bf1"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -80,7 +135,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.validateMissedCall"/>
         </jsystem>
     </target>
-    <target name="t7">
+    <target name="t12">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="a1b35c6b-4b62-4c70-8d2d-e2df9f95c708"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -88,7 +143,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.callToAnotherPhone"/>
         </jsystem>
     </target>
-    <target name="t8">
+    <target name="t13">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="d99f22b2-caf1-4595-88ad-37747a836453"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -96,7 +151,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
         </jsystem>
     </target>
-    <target name="t9">
+    <target name="t14">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="bbe6634e-2a43-4ddc-8f3b-14dfd4cdef17"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
