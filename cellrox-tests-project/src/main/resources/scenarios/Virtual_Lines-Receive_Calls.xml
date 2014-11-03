@@ -38,6 +38,7 @@
         <antcallback target="t12"/>
         <antcallback target="t13"/>
         <antcallback target="t14"/>
+        <antcallback target="t15"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -105,13 +106,21 @@
     </target>
     <target name="t8">
         <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="7aa42b4e-7fc3-420c-819a-4848245be1f4"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
+        </jsystem>
+    </target>
+    <target name="t9">
+        <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="6df06ea0-1e68-4ebd-b558-1a823ce64583"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
         </jsystem>
     </target>
-    <target name="t9">
+    <target name="t10">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="af2dc63d-6f5f-4764-9b36-ee5b85a7ae6b"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -119,7 +128,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.callToAnotherPhone"/>
         </jsystem>
     </target>
-    <target name="t10">
+    <target name="t11">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="6b8ba015-7c5d-453e-a617-751d2a8630e5"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -127,7 +136,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
         </jsystem>
     </target>
-    <target name="t11">
+    <target name="t12">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="b3e0ab2b-2ab0-44f0-8262-7cf907649bf1"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -135,7 +144,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.validateMissedCall"/>
         </jsystem>
     </target>
-    <target name="t12">
+    <target name="t13">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="a1b35c6b-4b62-4c70-8d2d-e2df9f95c708"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -143,7 +152,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.callToAnotherPhone"/>
         </jsystem>
     </target>
-    <target name="t13">
+    <target name="t14">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="d99f22b2-caf1-4595-88ad-37747a836453"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -151,7 +160,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
         </jsystem>
     </target>
-    <target name="t14">
+    <target name="t15">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="bbe6634e-2a43-4ddc-8f3b-14dfd4cdef17"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
