@@ -22,6 +22,7 @@
         <antcallback target="t6"/>
         <antcallback target="t7"/>
         <antcallback target="t8"/>
+        <antcallback target="t9"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -71,13 +72,20 @@
         </jsystem-ant>
     </target>
     <target name="t6">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
+            <property name="jsystem.uuid" value="2d44db0a-1f65-4c55-90c8-073ae20fc6e0"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t7">
         <jsystem-ant antfile="${scenarios.base}/scenarios/UnitTests.xml">
             <property name="jsystem.uuid" value="c87e44e3-6428-4f63-8978-4d25295fe118"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t7">
+    <target name="t8">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="3871b269-274c-4ea7-8a1b-de833dcd47e8"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -85,7 +93,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
         </jsystem>
     </target>
-    <target name="t8">
+    <target name="t9">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="d258d298-8368-488e-a97f-c043b8b06253"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
