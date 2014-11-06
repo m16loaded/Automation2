@@ -33,6 +33,13 @@
         </jsystem>
     </target>
     <target name="t1">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
+            <property name="jsystem.uuid" value="f6cf99b7-1e11-47b4-bcf7-61fc54b8744c"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t2">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="3c94bbdf-19d8-49de-855f-c9a1a06c83da"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -40,7 +47,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
     </target>
-    <target name="t2">
+    <target name="t3">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="a58bea0e-66af-4fb3-a208-6bece8db8d57"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -48,7 +55,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLogin"/>
         </jsystem>
     </target>
-    <target name="t3">
+    <target name="t4">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="32a709fe-5060-41f0-a537-ef82604ab9fe"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -56,7 +63,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
         </jsystem>
     </target>
-    <target name="t4">
+    <target name="t5">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="40072f0a-7574-483b-841b-9ae199e43988"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -64,16 +71,9 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
         </jsystem>
     </target>
-    <target name="t5">
+    <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
             <property name="jsystem.uuid" value="40ede728-c000-4340-afe9-9582cf10980b"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t6">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
-            <property name="jsystem.uuid" value="2d44db0a-1f65-4c55-90c8-073ae20fc6e0"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
