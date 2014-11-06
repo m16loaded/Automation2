@@ -122,6 +122,16 @@ public class CellroxDeviceOperations extends TestCase {
 			}
 		}
 	}
+	@Test    //added by Igor 6.11
+    @TestProperties(name = "Get Full Text of Text Contains And Replace \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
+    public void getTextByTextContainsTrim() throws Exception {
+        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
+        //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
+        msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
+        msg=msg.substring(0, 4);
+        report.report(msg,ReportAttribute.BOLD);
+        Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+    }  //added by Igor 6.11
 
 	@Test
 	@TestProperties(name = "Validate Personas Boot Time", paramsInclude = { "currentDevice,deviceEncrypted,deviceEncryptedPriv,expectedDurationHostCorp,expectedDurationHostPriv" })
