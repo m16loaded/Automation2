@@ -41,19 +41,19 @@
         </jsystem>
     </target>
     <target name="t2">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
-            <property name="jsystem.uuid" value="f8ed13df-7a7b-48f6-95de-14df5051d677"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t3">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="a58bea0e-66af-4fb3-a208-6bece8db8d57"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLogin"/>
         </jsystem>
+    </target>
+    <target name="t3">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
+            <property name="jsystem.uuid" value="04ee7f98-59ef-449d-8a29-c9476a7e36b1"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t4">
         <jsystem showoutput="true">
