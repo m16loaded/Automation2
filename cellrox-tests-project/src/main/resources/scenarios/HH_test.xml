@@ -96,7 +96,7 @@
     </target>
     <target name="t9">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
-            <property name="jsystem.uuid" value="24bdf5cb-60d4-42b7-8f4e-77c1dcfb3312"/>
+            <property name="jsystem.uuid" value="6d4d1bec-52b3-41cb-ba10-6f95a30ae90a"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
