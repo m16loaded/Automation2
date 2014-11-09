@@ -33,19 +33,19 @@
         </jsystem>
     </target>
     <target name="t1">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
-            <property name="jsystem.uuid" value="f6cf99b7-1e11-47b4-bcf7-61fc54b8744c"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t2">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="3c94bbdf-19d8-49de-855f-c9a1a06c83da"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
+    </target>
+    <target name="t2">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
+            <property name="jsystem.uuid" value="f8ed13df-7a7b-48f6-95de-14df5051d677"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t3">
         <jsystem showoutput="true">
