@@ -74,6 +74,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private String remoteFilepath;
 	private long expectedDurationHostCorp;
 	private long expectedDurationHostPriv;
+	private int expectedNumber2;
 
 	/**
 	 * Validate that the automation servers are alive. If the automation servers
@@ -123,15 +124,114 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 	@Test    //added by Igor 6.11
-    @TestProperties(name = "Get Full Text of Text Contains And Replace \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
+    @TestProperties(name = "Get Full Text of Text Contains And Replace + compare report \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,expectedNumber2" })
     public void getTextByTextContainsTrim() throws Exception {
         String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
         //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
         msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
         msg=msg.substring(0, 4);
         report.report(msg,ReportAttribute.BOLD);
+        int foo = Integer.parseInt(msg);
+        
+       // int expected= expectedNumber2;
+        
+//        switch(expectedNumber2){
+//        case 1:expectedNumber2=2750;
+//           if(foo<2750){
+//        	   Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(2750-foo)+" points difference"+ "\\");
+//        	   report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+//        	   break;
+//           }
+//        case 2:expectedNumber2=1400;
+//        if(foo<1400){
+//     	      Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(1400-foo)+" points difference"+ "\\");
+//     	      report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+//       	      break;
+//        }
+//        case 3:expectedNumber2=1500;
+//        if(foo<1500){
+//     	   Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(1500-foo)+" points difference"+ "\\");
+//     	   report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+//     	   break;
+//        }
+//        case 4:expectedNumber2=2444;
+//        if(foo<2444){
+//     	   Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(2444-foo)+" points difference"+ "\\");
+//     	  report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+//       	  break;
+//        }
+//        case 5:expectedNumber2=1391;
+//        if(foo<1391){
+//     	   Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(1391-foo)+" points difference"+ "\\");
+//     	  report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+//     	 break;
+//        }
+//        case 6:expectedNumber2=891;
+//        if(foo<891){
+//     	   Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(891-foo)+" points difference"+ "\\");
+//     	  report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+//     	 break;
+//        }
+        
+        if(foo<expectedNumber2){
+        	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(expectedNumber2-foo)+" points difference"+ "\\");
+        	report.report(msg+"is too low: "+(expectedNumber2-foo)+" points difference",Reporter.FAIL);
+        }
         Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
-    }  //added by Igor 6.11
+        
+        }
+        
+      
+     //added by Igor 6.11
+	@Test    //added by Igor 10.11
+    @TestProperties(name = "Get Full Text of Text Contains And Replace - Vellamo 3 Browser +compare\"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,expectedNumber" })
+    public void getTextByTextContainsTrimBrowser() throws Exception {
+        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
+        //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
+        msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
+        msg=msg.substring(0, 4);
+        report.report(msg,ReportAttribute.BOLD);
+        
+        int foo = Integer.parseInt(msg);
+        if(foo<2750){
+        	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(2750-foo)+" points difference"+ "\\");
+        	report.report(msg+"is too low: "+(2750-foo)+" points difference",Reporter.FAIL);
+        }
+        Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+    }  //added by Igor 10.11
+	@Test    //added by Igor 10.11
+    @TestProperties(name = "Get Full Text of Text Contains And Replace - Vellamo 3 Multicore + compare \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
+    public void getTextByTextContainsTrimMutlicore() throws Exception {
+        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
+        //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
+        msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
+        msg=msg.substring(0, 4);
+        report.report(msg,ReportAttribute.BOLD);
+        //Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+        int foo = Integer.parseInt(msg);
+        if(foo<1400){
+        	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(2750-foo)+" points difference"+ "\\");
+        	report.report(msg+"is too low: "+(1400-foo)+" points difference",Reporter.FAIL);
+        }
+        Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+    }  //added by Igor 10.11
+	
+	@Test    //added by Igor 10.11
+    @TestProperties(name = "Get Full Text of Text Contains And Replace - Vellamo 3 Metal  + compare \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
+    public void getTextByTextContainsTrimMetal() throws Exception {
+        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
+        //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
+        msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
+        msg=msg.substring(0, 4);
+        report.report(msg,ReportAttribute.BOLD);
+       // Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+        int foo = Integer.parseInt(msg);
+        if(foo<1500){
+        	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(2750-foo)+" points difference"+ "\\");
+        	report.report(msg+"is too low: "+(1500-foo)+" points difference",Reporter.FAIL );
+        }
+        Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+    }  //added by Igor 10.11
 
 	@Test
 	@TestProperties(name = "Validate Personas Boot Time", paramsInclude = { "currentDevice,deviceEncrypted,deviceEncryptedPriv,expectedDurationHostCorp,expectedDurationHostPriv" })
@@ -2717,6 +2817,14 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setElementAttributes(ElementAttributes elementAttributes) {
 		this.elementAttributes = elementAttributes;
+	}
+
+	public int getExpectedNumber2() {
+		return expectedNumber2;
+	}
+
+	public void setExpectedNumber2(int expectedNumber2) {
+		this.expectedNumber2 = expectedNumber2;
 	}
 
 }
