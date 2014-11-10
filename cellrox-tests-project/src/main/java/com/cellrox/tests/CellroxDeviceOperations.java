@@ -177,7 +177,9 @@ public class CellroxDeviceOperations extends TestCase {
         	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "is too low: "+(expectedNumber2-foo)+" points difference"+ "\\");
         	report.report(msg+"is too low: "+(expectedNumber2-foo)+" points difference",Reporter.FAIL);
         }
+        else{
         Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+        }
         
         }
         
