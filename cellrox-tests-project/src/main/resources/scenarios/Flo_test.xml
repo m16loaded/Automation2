@@ -23,6 +23,7 @@
         <antcallback target="t7"/>
         <antcallback target="t8"/>
         <antcallback target="t9"/>
+        <antcallback target="t10"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -98,6 +99,13 @@
     <target name="t9">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3FLOv1.xml">
             <property name="jsystem.uuid" value="2e6d568f-c85f-4f0a-a23d-4573e1e5f97a"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t10">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/BT_ON_OFF.xml">
+            <property name="jsystem.uuid" value="96bbf128-961e-4498-beef-52cdde99ccae"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
