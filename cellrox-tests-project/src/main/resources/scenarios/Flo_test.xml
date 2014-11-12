@@ -97,15 +97,15 @@
         </jsystem>
     </target>
     <target name="t9">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3FLOv1.xml">
-            <property name="jsystem.uuid" value="2e6d568f-c85f-4f0a-a23d-4573e1e5f97a"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/BT_ON_OFF.xml">
+            <property name="jsystem.uuid" value="96bbf128-961e-4498-beef-52cdde99ccae"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t10">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/BT_ON_OFF.xml">
-            <property name="jsystem.uuid" value="96bbf128-961e-4498-beef-52cdde99ccae"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3FLOv1.xml">
+            <property name="jsystem.uuid" value="e6d51baf-eaf7-4350-9367-ccaef1b6ea8e"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
