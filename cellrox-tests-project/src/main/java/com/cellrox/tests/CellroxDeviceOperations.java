@@ -132,6 +132,8 @@ public class CellroxDeviceOperations extends TestCase {
         msg=msg.substring(0, 4);
         report.report(msg,ReportAttribute.BOLD);
         int foo = Integer.parseInt(msg);
+    
+        
         
        // int expected= expectedNumber2;
         
@@ -202,6 +204,17 @@ public class CellroxDeviceOperations extends TestCase {
         }
         Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
     }  //added by Igor 10.11
+	
+	@Test    //added by Igor 14.12
+    @TestProperties(name = "Get Full Text of Text Contains And Replace - SpeedTest\"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,expectedNumber" })
+    public void getTextByTextContainsTrimBold() throws Exception {
+        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
+        report.report(msg,ReportAttribute.BOLD);
+        
+        Summary.getInstance().setProperty("SpeedTest download speed", Summary.getInstance().getProperty("SpeedTest download speed") + msg + "\\");
+    }  //added by Igor 14.12
+	
+	
 	@Test    //added by Igor 10.11
     @TestProperties(name = "Get Full Text of Text Contains And Replace - Vellamo 3 Multicore + compare \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
     public void getTextByTextContainsTrimMutlicore() throws Exception {
@@ -370,6 +383,11 @@ public class CellroxDeviceOperations extends TestCase {
 	public void validateCliCommandOutputExistsOnTheScreen() throws Exception {
 		devicesMannager.getDevice(currentDevice).validateCliCommandOutputExistsOnTheScreen(text, persona);
 	}
+	@Test //added by Igor 19.11
+	@TestProperties(name = "Validate Cli Local Command Output Exists On The Screen ${text}", paramsInclude = "currentDevice,persona,text")
+	public void validateCliLocalCommandOutputExistsOnTheScreen() throws Exception {
+		devicesMannager.getDevice(currentDevice).validateCliLocalCommandOutputExistsOnTheScreen(text, persona);
+	} //added by 19.11
 
 	@Test
 	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,text" })
@@ -388,6 +406,13 @@ public class CellroxDeviceOperations extends TestCase {
 	public void executeCommandCli() throws Exception {
 		devicesMannager.getDevice(currentDevice).executeCommandAdb(text);
 	}
+	@Test   //added by Igor 16.11
+	@TestProperties(name = "Execute Command : ${text} local shell : ${currentDevice}", paramsInclude = { "currentDevice,text" })
+	public void executeLocalCommandCli() throws Exception {
+		//executeCommandLocalCli(text);
+		//executeCommandLocalCli(text);
+		devicesMannager.getDevice(currentDevice).executeCommandLocalCli(text);
+	}  //added by Igor16.11
 
 	/**
 	 * The function do the same action as the script get_logs_adb return .zip

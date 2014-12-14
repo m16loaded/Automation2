@@ -26,6 +26,7 @@
         <antcallback target="t10"/>
         <antcallback target="t11"/>
         <antcallback target="t12"/>
+        <antcallback target="t13"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -124,6 +125,13 @@
     <target name="t12">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Vellamo3_HH.xml">
             <property name="jsystem.uuid" value="dd70d4ab-3bb4-4d15-9a19-d4a60ab92654"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t13">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedTestHH.xml">
+            <property name="jsystem.uuid" value="b9d08669-61b9-4b8f-bf28-0986e95d35ce"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
