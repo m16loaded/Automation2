@@ -383,11 +383,11 @@ public class CellroxDeviceOperations extends TestCase {
 	public void validateCliCommandOutputExistsOnTheScreen() throws Exception {
 		devicesMannager.getDevice(currentDevice).validateCliCommandOutputExistsOnTheScreen(text, persona);
 	}
-	@Test //added by Igor 19.11
-	@TestProperties(name = "Validate Cli Local Command Output Exists On The Screen ${text}", paramsInclude = "currentDevice,persona,text")
-	public void validateCliLocalCommandOutputExistsOnTheScreen() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateCliLocalCommandOutputExistsOnTheScreen(text, persona);
-	} //added by 19.11
+//	@Test //added by Igor 19.11
+//	@TestProperties(name = "Validate Cli Local Command Output Exists On The Screen ${text}", paramsInclude = "currentDevice,persona,text")
+//	public void validateCliLocalCommandOutputExistsOnTheScreen() throws Exception {
+//		devicesMannager.getDevice(currentDevice).validateCliLocalCommandOutputExistsOnTheScreen(text, persona);
+//	} //added by 19.11
 
 	@Test
 	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,text" })
@@ -406,13 +406,13 @@ public class CellroxDeviceOperations extends TestCase {
 	public void executeCommandCli() throws Exception {
 		devicesMannager.getDevice(currentDevice).executeCommandAdb(text);
 	}
-	@Test   //added by Igor 16.11
-	@TestProperties(name = "Execute Command : ${text} local shell : ${currentDevice}", paramsInclude = { "currentDevice,text" })
-	public void executeLocalCommandCli() throws Exception {
-		//executeCommandLocalCli(text);
-		//executeCommandLocalCli(text);
-		devicesMannager.getDevice(currentDevice).executeCommandLocalCli(text);
-	}  //added by Igor16.11
+//	@Test   //added by Igor 16.11
+//	@TestProperties(name = "Execute Command : ${text} local shell : ${currentDevice}", paramsInclude = { "currentDevice,text" })
+//	public void executeLocalCommandCli() throws Exception {
+//		//executeCommandLocalCli(text);
+//		//executeCommandLocalCli(text);
+//		devicesMannager.getDevice(currentDevice).executeCommandLocalCli(text);
+//	}  //added by Igor16.11
 
 	/**
 	 * The function do the same action as the script get_logs_adb return .zip
