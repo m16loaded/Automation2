@@ -35,27 +35,6 @@ public class LogFileWriter implements ILogRebootListner {
 	
 		
 	}
-//	
-//	/**
-//	 * This function will return the last line of log
-//	 */
-//	public int getLastLine() throws Exception{
-//		int lastCurrentLogLineNumber = 0;
-//		// if serial connection - use WC
-//		if (cliConnection!=null){
-//			CliCommand cmd = new CliCommand("wc -l "+logName+".log");
-//			FindText findText = new FindText("(\\d+)\\s*"+logName+".log",true,false,2);
-//			cmd.addAnalyzers(findText);
-//			cliConnection.handleCliCommand("wc",cmd);
-//			lastCurrentLogLineNumber = Integer.parseInt(findText.getCounter());
-//		}else{
-//			StringBuilder currentLog = getCurrentLog();
-//			// get log last line number
-//			lastCurrentLogLineNumber = currentLog.toString().split("\\n").length;
-//		}
-//		
-//		return lastCurrentLogLineNumber;
-//	}
 
 	/**
 	 * Start writing the log

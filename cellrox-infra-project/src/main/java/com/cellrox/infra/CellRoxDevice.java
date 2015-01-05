@@ -137,11 +137,22 @@ public class CellRoxDevice extends SystemObjectImpl {
 		
 		setDeviceAsRoot();
 		
-		// INIT test logs
+		// INIT test logs - for kitkat
+//		logManager = new LogManager();
+//		logManager.addLog(new Log("testRadioLogcat","adb -s " + getDeviceSerial() + " logcat -b radio -v time -T 0",LogTypes.ADB));
+//		logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial() + " logcat -v time -T 0",LogTypes.ADB));
+//		logManager.addLog(new Log("testKmsg","adb -s " + getDeviceSerial() + " shell cat /proc/kmsg",LogTypes.ADB));
+		
+		//TODO Lollipop - INIT test logs (logmux)
+		
 		logManager = new LogManager();
-		logManager.addLog(new Log("testRadioLogcat","adb -s " + getDeviceSerial() + " logcat -b radio -v time",LogTypes.ADB));
-		logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial() + " logcat -v time",LogTypes.ADB));
+		report.report("adb -s " + getDeviceSerial() + " shell logmux -b radio -v threadtime -T 0");
+		logManager.addLog(new Log("testRadioLogcat","adb -s " + getDeviceSerial() + " shell logmux -b radio -v threadtime -T 0",LogTypes.ADB));
+		logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial() + " shell logmux -v threadtime -T 0",LogTypes.ADB));
 		logManager.addLog(new Log("testKmsg","adb -s " + getDeviceSerial() + " shell cat /proc/kmsg",LogTypes.ADB));
+		
+		
+		
 //		logManager.populateLogManager();
 		
 	}
@@ -548,20 +559,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		try {
 			pullFileFromDevice("/proc/last_kmsg", report.getCurrentTestFolder() + "/last_kmsg.txt");
 			report.addLink("Click Here for Last Kmsg Log", "last_kmsg.txt");
-			// report.startLevel("click here for kmsg logger");
-			// cli.connect();
-			// //this is a wanted exception!
-			// executeCliCommand("adb -s "+
-			// getDeviceSerial()+" shell cat /proc/last_kmsg" , true , 240 *
-			// 1000 , true, 2);
-			//
-			// cli.disconnect();
 		} catch (Exception e) {
 		}
-		// finally {
-		// report.report(cli.getTestAgainstObject().toString());
-		// report.stopLevel();
-		// }
 
 	}
 
@@ -869,10 +868,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
-		// executeCliCommand("adb -s " + getDeviceSerial() + " root");
-		// if the corp is encrypted we should wait until the "cell list state"
-		// is 3 for Priv and 2 for Corp
-		// then we should enter the Corp password and validate both personas'
 		// state is 3
 		if (isEncrypted) {
 			validateEncryptedCorpPersonasAreOnline(beginTime, timeout, personas);
@@ -1449,21 +1444,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void initLogs() throws Exception {
 		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
 		cli.connect();
-//		String userHome = System.getProperty("user.home");
-//		Thread.sleep(1000);
-//		
-		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
-//		Thread.sleep(1000);
-//		executeCliCommand("rm -f " + userHome + "/testLogcat.txt", false);
-//		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -v time > " + userHome + "/testLogcat.txt &", false);
-//		Thread.sleep(1000);
-//		executeCliCommand("rm -f " + userHome + "/testRadioLogcat.txt", false);
-//		executeCliCommand("adb -s " + getDeviceSerial() + " logcat -b radio -v time > " + userHome + "/testRadioLogcat.txt &", false);
-//		Thread.sleep(1000);
-//		executeCliCommand("rm -f " + userHome + "/testKmsg.txt", false);
-//		executeCliCommand("adb -s " + getDeviceSerial() + " shell cat /proc/kmsg > " + userHome + "/testKmsg.txt &", false);
-//		Thread.sleep(1000);
-//		cli.disconnect();
+		
+		//executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
+		
 		logManager.populateLogManager();
 		logManager.startWritingAllLogs();
 	}
@@ -1475,16 +1458,6 @@ public class CellRoxDevice extends SystemObjectImpl {
 		
 		logManager.stopWritingAllLogs(parser);
 		
-//		// the logs of the test are already in the user home dir...
-//		String userHome = System.getProperty("user.home");
-//		File logcat = new File(userHome + "/testLogcat.txt");
-//		File kmsg = new File(userHome + "/testKmsg.txt");
-//		File radioLogcat = new File(userHome + "/testRadioLogcat.txt");
-//		
-		// delete all logs locally
-//		logcat.delete();
-//		kmsg.delete();
-//		radioLogcat.delete();
 	}
 
 	/**
@@ -1912,17 +1885,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.handleCliCommand(Command, cmd);
 		// this part is for checking if the adb is down, if so it will restart
 		// the connection
-		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { // TODO
-																									// if
-																									// offline
-																									// etc.
-																									// status
-																									// repets
-																									// -
-																									// add
-																									// here
-																									// the
-																									// retrys
+		/** TODO if offline etc. status repets - add here the retrys **/
+		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { 
 			if (numOfTries > 1) {
 				cli.connect();
 				cmd = new CliCommand("adb kill-server");

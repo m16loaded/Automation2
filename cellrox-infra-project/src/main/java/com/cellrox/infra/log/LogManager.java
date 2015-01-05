@@ -52,12 +52,6 @@ public class LogManager extends SystemObjectImpl {
 				LogFileWriter logFileWriter = new LogFileWriter(log.getLogCommand(), log.getType(), log.getLogName());
 
 				logFileWriters.put(log.getLogName(), logFileWriter);
-				// // init log message waiters
-				// LogMessageWaiter logMessageWaiter = new
-				// LogMessageWaiter(log.getLogCommand(), log.getType(),
-				// log.getLogName());
-				// logMessageWaiters.put(log.getLogName(), logMessageWaiter);
-				// logMarkers.put(log.getLogName(), 0);
 			}
 		}
 	}
@@ -78,47 +72,6 @@ public class LogManager extends SystemObjectImpl {
 		return results;
 	}
 
-	// /**
-	// * This function will mark a log for later analysis
-	// *
-	// * @throws Exception
-	// */
-	// public void markLogs(String logName) throws Exception {
-	// String logFullName = getLogFullName(logName);
-	// // get the requested log
-	// LogFileWriter log = logFileWriters.get(logFullName);
-	// // get log last line number
-	// int lastCurrentLogLineNumber = log.getLastLine();
-	// report.report("Marking log " + logName + " at line " +
-	// lastCurrentLogLineNumber);
-	// // save the last current line
-	// logMarkers.put(logFullName, lastCurrentLogLineNumber + 1);
-	// }
-
-	// /**
-	// * This function will wait until:<br>
-	// * - A requested string (<b>(can be a regex)</b> will appear in a
-	// requested
-	// * log<br>
-	// * - Timeout<br>
-	// * <b>Please note: </b> THIS IS A BLOCKING FUNCTION
-	// *
-	// * @return true if the string was found
-	// * @throws Exception
-	// */
-	// public boolean waitForLogMessage(String logName, String filter, long
-	// timeout, String stringToFind) throws Exception {
-	// boolean found = false;
-	// report.report("wait for logcat message filterd by " + filter +
-	// " and contains: " + stringToFind);
-	// LogMessageWaiter logMessageWaiter = logMessageWaiters.get(logName);
-	// found = logMessageWaiter.waitForLineInLog(filter, timeout, stringToFind);
-	// if (found) {
-	// report.report("Message Found on Log " + logName + ": \"" +
-	// logMessageWaiter.getmMsg() + "\"");
-	// }
-	// return found;
-	// }
 
 	/**
 	 * This function will wait until:<br>
@@ -165,11 +118,7 @@ public class LogManager extends SystemObjectImpl {
 			String localReportFolder = report.getCurrentTestFolder();
 			for (String logKey : logFileWriters.keySet()) {
 				String logFile = null;
-//				if (isLogWithPath(logKey)) {
-//					logFile = logKey + ".txt";
-//				} else {
 					logFile = localReportFolder + "\\" + logKey + ".txt";
-//				}
 				logFileWriters.get(logKey).stopLogWriter();
 				FileUtils.write(logFile, logFileWriters.get(logKey).getLog());
 				parser.addLogFile(logKey, new File(logFile));
@@ -209,9 +158,6 @@ public class LogManager extends SystemObjectImpl {
 		}
 	}
 
-	// private String stringArrayToString(String[] array, String separator) {
-	// return StringUtils.join(array, separator);
-	// }
 
 	/**
 	 * Return the log name as it is saved in the log map, because if path was

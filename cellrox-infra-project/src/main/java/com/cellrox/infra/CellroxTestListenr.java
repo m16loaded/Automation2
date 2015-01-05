@@ -36,7 +36,6 @@ public class CellroxTestListenr implements ExtendTestListener {
 			
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -50,13 +49,11 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	@Override
 	public void addError(Test test, Throwable t) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void addFailure(Test test, AssertionFailedError t) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -88,7 +85,6 @@ public class CellroxTestListenr implements ExtendTestListener {
 				//reportToLogStash((ScenarioAsTest) test);
 
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -157,7 +153,6 @@ public class CellroxTestListenr implements ExtendTestListener {
 				cellRoxDevice.initLogs();
 				scenarioAsTestName = testInfo.basicName;
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			lastTestScenarioAsTest = true;
@@ -173,13 +168,11 @@ public class CellroxTestListenr implements ExtendTestListener {
 
 	@Override
 	public void startLoop(AntForLoop loop, int count) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void endLoop(AntForLoop loop, int count) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -188,7 +181,6 @@ public class CellroxTestListenr implements ExtendTestListener {
 		try {
 			cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("************************** THIS IS THE START OF THE WHOLE SCENARIO **************************");
