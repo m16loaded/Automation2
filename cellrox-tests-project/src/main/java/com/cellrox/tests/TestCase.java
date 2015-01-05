@@ -50,7 +50,7 @@ public class TestCase extends SystemTestCase4 {
 	@Before
 	public void init() throws Exception {
 		try {
-			report.startLevel("Before");
+			report.startLevel("Before - kitkat");
 			imageFlowHtmlReport = new ImageFlowHtmlReport();
 
 			if (!devicesReadyForAutomation) {
