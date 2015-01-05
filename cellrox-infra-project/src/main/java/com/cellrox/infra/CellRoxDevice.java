@@ -1971,16 +1971,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 	/**
 	 * The switch persona function is switching to the wanted persona. If there
 	 * is an error the function will try to switch one more time.
+	 * 
+	 * Lollipop version (from CLI)
 	 * */
 	public void switchPersona(Persona persona) throws Exception {
 		Persona current = getForegroundPersona();
 		if (current == persona) {
 			report.report("Persona " + persona + " is Already in the Foreground");
 		} else {
-			getPersona(current).click(5, 5);
+			String output = device.executeShellCommand("cell switch "+persona.getValue());				
 			current = getForegroundPersona();
-			if (current == persona) {
-				report.report("Switch to " + persona);
+			if (current == persona && output.contains("OK")) {
+				report.report("Switched to " + persona+" from CLI");
 
 			} else {
 				report.report("Could not Switch to " + persona + " for the first time.");
@@ -1988,9 +1990,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 				if (current == persona) {
 					report.report("Persona " + persona + " is in the Foreground");
 				} else {
-					getPersona(current).click(5, 5);
+					output = device.executeShellCommand("cell switch "+persona.getValue());				
 					current = getForegroundPersona();
-					if (current == persona) {
+					if (current == persona && output.contains("OK")) {
 						report.report("Switch to " + persona);
 					} else {
 						report.report("Could not Switch to " + persona, Reporter.FAIL);
@@ -2000,13 +2002,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 	}
 
+	/**
+	 * This was modified to Lollipop (swiping from buttom to top)
+	 *	 
+	 *
+	 */
 	public void unlockBySwipe(Persona persona) throws Exception {
 		try {
-			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setClassName("android.widget.ScrollView"));
 
 			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
-			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-			getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+			//int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
+			getPersona(persona).swipe(middleX, oInfo.getBounds().getBottom(), middleX, oInfo.getBounds().getTop(), 20);
 
 			getPersona(persona).pressKey("home");
 		} catch (Exception e) {

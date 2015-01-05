@@ -66,7 +66,8 @@ public class CellroxDeviceOperations extends TestCase {
 	private String logsLocation = System.getProperty("user.home") + "/LOGS_FROM_ADB";
 	private LogcatHandler logType = LogcatHandler.PRIV;
 	private String user, password;
-	private boolean vellamoResultShow = false, needForClearTheText = false;
+	private boolean vellamoResultShow = false;
+	private boolean  needForClearTheText = false;
 	private boolean screenStatus;
 	private boolean elementAttributeStatus;
 	private ElementAttributes elementAttributes = ElementAttributes.ENABLED;
@@ -867,7 +868,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Class Name \"${text}\" on ${persona}", paramsInclude = { "needForClearText,currentDevice,text,value,persona,index" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Class Name \"${text}\" on ${persona}", paramsInclude = { "needForClearTheText,currentDevice,text,value,persona,index" })
 	public void enterTextByClassName() throws Exception {
 		Selector s = new Selector();
 		s.setClassName(text);
@@ -928,7 +929,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "needForClearText,currentDevice,childClassName,childDescription,childIndex,childText,value,persona" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by : Class : \"${childClassName}\", Text \"${childText}\", Description : \"${childDescription}\", Index : \"${childIndex}\" on ${persona}", paramsInclude = { "needForClearTheText,currentDevice,childClassName,childDescription,childIndex,childText,value,persona" })
 	public void enterTextBy() throws Exception {
 
 		Selector s = new Selector();
@@ -944,11 +945,12 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).getPersona(persona).clearTextField(s);
 
 		}
+		
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
 	@Test
-	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "needForClearText,currentDevice,text,value,persona" })
+	@TestProperties(name = "Enter Text \"${value}\" on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "needForClearTheText,currentDevice,text,value,persona" })
 	public void enterTextByText() throws Exception {
 		Selector s = new Selector();
 		s.setText(text);
@@ -1003,6 +1005,8 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Switch Persona to ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void switchPersona() throws Exception {
 		devicesMannager.getDevice(currentDevice).switchPersona(persona);
+		
+	
 	}
 
 	/**
@@ -2783,7 +2787,7 @@ public class CellroxDeviceOperations extends TestCase {
 		this.vellamoResultShow = vellamoResultShow;
 	}
 
-	public boolean isNeedForClearTheText() {
+	public boolean getNeedForClearTheText() {
 		return needForClearTheText;
 	}
 

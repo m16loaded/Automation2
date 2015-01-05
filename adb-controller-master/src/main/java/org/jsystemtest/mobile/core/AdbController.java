@@ -247,7 +247,6 @@ public class AdbController implements IDeviceChangeListener {
 
 	@Override
 	public void deviceChanged(IDevice device, int changeMask) {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -57,19 +57,17 @@ public class WiFiDevice extends AbstractAndroidDevice {
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void runTestOnDevice(String pakageName, String testClassName, String testName) throws IOException {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void installPackage(String apkLocation, boolean reinstall) throws InstallException {
-		// TODO Auto-generated method stub
 
 	}
 
