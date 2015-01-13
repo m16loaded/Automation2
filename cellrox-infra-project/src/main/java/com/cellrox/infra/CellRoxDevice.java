@@ -2020,6 +2020,19 @@ public class CellRoxDevice extends SystemObjectImpl {
 			report.report("Error in unlocking the device.");
 		}
 	}
+	public void unlockBySwipeSecondary(Persona persona) throws Exception { //added by Igor 13.01
+		try {
+			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+
+			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
+			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
+			getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+
+			getPersona(persona).pressKey("home");
+		} catch (Exception e) {
+			report.report("Error in unlocking the device.");
+		}
+	}                                                                             //added by Igor 13.01
 
 	public void answerCall(Persona persona) throws Exception {
 		try {

@@ -1562,6 +1562,20 @@ public class CellroxDeviceOperations extends TestCase {
 		// unlock by swipe
 		devicesMannager.getDevice(currentDevice).unlockBySwipe(persona);
 	}
+	
+	@Test
+	@TestProperties(name = "Secondary Swipe And Login for ${persona}", paramsInclude = { "currentDevice,persona" }) //added by Igor 13.01
+	public void swipeAndLoginSecondary() throws Exception {
+		// wake up
+		try {
+			devicesMannager.getDevice(currentDevice).getPersona(devicesMannager.getDevice(currentDevice).getForegroundPersona()).wakeUp();
+		} catch (Exception e) {/* do nothing */
+		}
+		// switch persona
+		devicesMannager.getDevice(currentDevice).switchPersona(persona);
+		// unlock by swipe
+		devicesMannager.getDevice(currentDevice).unlockBySwipeSecondary(persona);
+	}                                                                                                                        //added by Igor 13.01
 
 	/**
 	 * This function scroll to the wanted text to find and click on it. For

@@ -236,10 +236,10 @@
     </target>
     <target name="t24">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="92becf7c-8709-44fc-bbc5-c6f68be4765e"/>
+            <sysproperty key="jsystem.uuid" value="82a56589-247d-4be7-99d7-50b81fdcdec5"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLogin"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLoginSecondary"/>
         </jsystem>
     </target>
     <target name="t25">
