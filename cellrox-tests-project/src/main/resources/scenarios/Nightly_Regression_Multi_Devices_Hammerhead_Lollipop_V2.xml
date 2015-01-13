@@ -62,14 +62,14 @@
     </target>
     <target name="t5">
         <jsystem-ant antfile="${scenarios.base}/scenarios/GPS_ON_OFF_LP.xml">
-            <property name="jsystem.uuid" value="50460dbb-4d0c-419e-824f-f679f2879748"/>
+            <property name="jsystem.uuid" value="6626ee3d-9f03-4d65-90d2-236928f69b07"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/BT_ON_OFF_lp.xml">
-            <property name="jsystem.uuid" value="73aef3fb-e696-4757-af96-3aaf2c01d1c4"/>
+            <property name="jsystem.uuid" value="72d512eb-c187-4b59-9a74-890d19d18de7"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
