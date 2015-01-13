@@ -23,9 +23,9 @@
                     <!--Task for updating the ant parameters file - used for reference parameters-->
                 </jsystemsetantproperties>
                 <antcallback target="t0"/>
+                <antcallback target="t1"/>
             </sequential>
         </jsystemfor>
-        <antcallback target="t1"/>
         <antcallback target="t2"/>
         <antcallback target="t3"/>
         <antcallback target="t4"/>
@@ -36,15 +36,23 @@
         <antcallback target="t9"/>
         <antcallback target="t10"/>
         <antcallback target="t11"/>
+        <antcallback target="t12"/>
     </target>
     <target name="t0">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp.xml">
+            <property name="jsystem.uuid" value="8e95e20e-f95d-4931-827d-05457cfd00d0"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t1">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
             <property name="jsystem.uuid" value="0b1c7d0b-464c-4ab9-a4a9-1af08accaf1b"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t1">
+    <target name="t2">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="04e1d17d-2df4-4425-a4f0-a061d80d5c63"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -52,7 +60,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
         </jsystem>
     </target>
-    <target name="t2">
+    <target name="t3">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="3c94bbdf-19d8-49de-855f-c9a1a06c83da"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -60,7 +68,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
     </target>
-    <target name="t3">
+    <target name="t4">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="cb5cb42b-7db6-43a5-85bb-6b342a0a0082"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -68,7 +76,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
         </jsystem>
     </target>
-    <target name="t4">
+    <target name="t5">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="1f4e03e2-ca62-4876-8de2-aa6e8a72c56b"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -76,7 +84,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
     </target>
-    <target name="t5">
+    <target name="t6">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="1496c664-5db5-4bfa-8cd8-ee215f832621"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -84,7 +92,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLogin"/>
         </jsystem>
     </target>
-    <target name="t6">
+    <target name="t7">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="313d875c-d684-403b-8698-c188f2511141"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -92,14 +100,14 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
         </jsystem>
     </target>
-    <target name="t7">
+    <target name="t8">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
             <property name="jsystem.uuid" value="5d609993-c909-40ae-91bc-4676429e8513"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t8">
+    <target name="t9">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="b2d40126-5898-4e17-b7bf-1087600ae60c"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -107,7 +115,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLoginSecondary"/>
         </jsystem>
     </target>
-    <target name="t9">
+    <target name="t10">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="d7600751-a94d-4977-8ed8-866485f50f65"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -115,14 +123,14 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
         </jsystem>
     </target>
-    <target name="t10">
+    <target name="t11">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp.xml">
             <property name="jsystem.uuid" value="e22a8322-49cc-4985-9026-f1ee8daabe2a"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t11">
+    <target name="t12">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
             <property name="jsystem.uuid" value="d4b16b3a-1682-472b-b6bc-f4e88aa928bf"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
