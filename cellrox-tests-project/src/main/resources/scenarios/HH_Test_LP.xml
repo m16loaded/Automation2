@@ -269,7 +269,7 @@
     </target>
     <target name="t29">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="b3e42773-1535-4a77-b10a-7d68717c33fd"/>
+            <sysproperty key="jsystem.uuid" value="459fd909-70e1-4559-bba7-ee9544269b7a"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.switchTheWiFiLP"/>
