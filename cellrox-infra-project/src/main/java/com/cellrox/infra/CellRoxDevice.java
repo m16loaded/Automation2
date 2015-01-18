@@ -1852,6 +1852,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.disconnect();
 
 	}
+	
+	public void executeCommandLocalCli(String cmd) throws Exception { //added by Igor 19.11  (to CellRoxDevice)
+        cli.connect();
+        Runtime.getRuntime().exec(cmd);
+        executeCliCommand(cmd);
+    }    //added by Igor 19.11
 
 	public void pushApplication(String appFullPath, String locationForPushing) throws Exception {
 		cli.connect();
