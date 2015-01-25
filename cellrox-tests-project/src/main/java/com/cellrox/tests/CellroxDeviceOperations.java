@@ -386,6 +386,17 @@ public class CellroxDeviceOperations extends TestCase {
 	public void validateCliCommandOutputExistsOnTheScreen() throws Exception {
 		devicesMannager.getDevice(currentDevice).validateCliCommandOutputExistsOnTheScreen(text, persona);
 	}
+	
+	@Test   //added by Igor 16.11  (to CellroxDeviceOperations)
+	@TestProperties(name = "Execute Command : ${text} local shell : ${currentDevice}", paramsInclude = { "currentDevice,text" })
+	public void executeLocalCommandCli() throws Exception {
+		devicesMannager.getDevice(currentDevice).executeCommandLocalCli(text);
+	}  //added by Igor16.11
+	
+	
+	
+	
+	
 //	@Test //added by Igor 19.11
 //	@TestProperties(name = "Validate Cli Local Command Output Exists On The Screen ${text}", paramsInclude = "currentDevice,persona,text")
 //	public void validateCliLocalCommandOutputExistsOnTheScreen() throws Exception {
