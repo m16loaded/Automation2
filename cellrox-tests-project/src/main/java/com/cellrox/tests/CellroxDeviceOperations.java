@@ -20,7 +20,9 @@ import org.python.core.exceptions;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
+import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiSelector;
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.StaticUtils;
 import com.cellrox.infra.enums.DeviceNumber;
@@ -562,7 +564,56 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("Couldn't open the application : " + text, Reporter.FAIL);
 		}
 	}
-
+	@Test //vv
+	@TestProperties(name = "Open apps 2 \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
+	public void openApp2() throws UiObjectNotFoundException {
+		
+//		if (!devicesMannager.getDevice(currentDevice).getPersona(persona).openApp2(text)) {
+//			report.report("Couldn't open the application : " + text, Reporter.FAIL);
+//		}
+	//	UiObject AppsTab = new UiObject(new UiSelector().className("android.widget.TextView").description("Apps"));
+//		String objectId = devicesMannager
+//				.getDevice(currentDevice)
+//				.getPersona(persona)
+//				.childByText(new Selector().setScrollable(true).setClassName("android.widget.TextView").setDescription("Apps"));
+//		
+//		 
+//        if(AppsTab.exists())
+//            AppsTab.click();
+//	}
+		
+		
+        try {
+        devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
+        //if (!devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Music")) {
+//        UiObject Settings = new UiObject(new UiSelector().text("Settings"));
+//        Settings.click();
+        }
+        catch (Exception eE) {
+            if (exceptionThrower) {
+                report.report("Could not find UiObject " + eE.getMessage(), Reporter.FAIL);
+            } else {
+                report.report("Could not find UiObject " + eE.getMessage());
+            }
+            report.report("Couldn't open the application : " + text, Reporter.FAIL);
+       
+        Selector s = new Selector();
+        s.setText(text);
+        try {
+            if (waitForNewWindow) {
+                devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+            } else {
+                devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+            }
+        } catch (Exception e) {
+            if (exceptionThrower) {
+                report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+            } else {
+                report.report("Could not find UiObject " + e.getMessage());
+            }
+        }
+	}
+	}
 	@Test
 	@TestProperties(name = "push ${localLocation} to ${remotefileLocation}", paramsInclude = { "currentDevice,localLocation,remotefileLocation" })
 	public void pushToDevice() throws Exception {
@@ -672,7 +723,7 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 
-	@Test
+	@Test //vv1
 	@TestProperties(name = "Scroll and Click on UiObject by Text \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void scrollAndClick() throws Exception {
 
@@ -1197,6 +1248,86 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 
 	}
+	
+		@Test   //added by Igor 14.01
+		@TestProperties(name = "Switch the wifi (LP) : ${onOff} Text on ${persona}", paramsInclude = { "currentDevice,persona,onOff" })
+		public void switchTheWiFiLP() throws Exception {
+	
+			report.report("About to switch the the Wi-Fi to : " + onOff);
+	
+	//		if (onOff == State.ON)
+	//			onOff = State.OFF;
+	//		else
+	//			onOff = State.ON;
+	
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
+			
+		//	devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription("WIRELESS & NETWORKS"), 10000);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription("Wireless & Networks"), 10000);
+	//		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona)
+	//				.getUiObject(new Selector().setClassName("android.widget.LinearLayout").setIndex(1));
+	//		devicesMannager.getDevice(currentDevice).getPersona(persona).click("Wi-Fi");
+	//		try {
+	//			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona)
+	//					.childByText(new Selector().setScrollable(true), new Selector().setText("Wi-Fi"), "Wi-Fi", true);
+	//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+	//		devicesMannager.getDevice(currentDevice).getPersona(persona)
+	//				.getUiObject(new Selector().setClassName("android.widget.LinearLayout").setIndex(0));
+			
+						
+			try {
+			Selector s = new Selector();
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Wi?Fi"));
+			
+			//Runtime.getRuntime().exec("\"svc wifi enable\"");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains("Wi"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.LinearLayout").setIndex(1));
+			report.report("BOBO");
+		//	Wi(?:(?!Fi)(?:.|\n))*Fi
+	//		s.setText("Wi-Fi");
+	//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+		
+			
+			
+			if (onOff == State.ON){
+				//devicesMannager.getDevice(currentDevice).getPersona(persona).click("Off");
+				s.setText("Off");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+			}
+			else{
+				s.setText("On");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+			}
+			}
+	
+	//		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona)
+	//				.getUiObject(new Selector().setClassName("android.widget.LinearLayout").setIndex(1));
+			
+			 catch (Exception e) {
+				//report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+			}
+	
+	//		try {
+	//			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, new Selector().setText(onOff.getValue()));
+	//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+	//		} catch (Exception e) {/*
+	//								 * in this case we are on the correct condition
+	//								 * of the wifi connection
+	//								 */
+	//		}
+	//		Selector s = new Selector();
+	//		s.setText(text);
+	//		try {
+	//			if (waitForNewWindow) {
+	//				devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+	//			} else {
+	//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+	//			}
+	
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+	
+		}  //added by Igor 14.01
 
 	/**
 	 * This test is a full test from ping dns 1. Open the application 2. For
