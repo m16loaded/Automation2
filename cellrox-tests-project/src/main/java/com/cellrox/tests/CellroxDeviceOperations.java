@@ -1851,6 +1851,11 @@ public class CellroxDeviceOperations extends TestCase {
 	public void waitforLineInLogcat() throws Exception {
 		devicesMannager.getDevice(currentDevice).waitForLineInTomcat(expectedLine, Integer.valueOf(timeout), interval);
 	}
+	@Test //added by Igor 27.01
+	@TestProperties(name = "Wait For \"${expectedLine}\" in LOGMUX", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
+	public void waitforLineInLogcatLP() throws Exception {
+		devicesMannager.getDevice(currentDevice).waitForLineInTomcat2(expectedLine, Integer.valueOf(timeout), interval);
+	}
 
 	@Test
 	@TestProperties(name = "delete file ${remotefileLocation} from Device", paramsInclude = { "currentDevice,remotefileLocation" })
@@ -1949,7 +1954,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * @param RegularExpression
 	 *            - is this expression is a regular expression
 	 * */
-	@Test
+	@Test //Val
 	@TestProperties(name = "Validate  expression in the cli command : \"${cliCommand}\" , with the text : \"${text}\" , with persona : ${persona}", paramsInclude = { "currentDevice,cliCommand,text,regularExpression,persona" })
 	public void validateExpressionCliCommandPersona() throws Exception {
 		devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, persona);
@@ -2217,6 +2222,133 @@ public class CellroxDeviceOperations extends TestCase {
 
 	}
 
+
+	
+	@Test //added by Igor 29.01
+	@TestProperties(name = "Make a call KK2LP : \"${phoneNumber}\" : ${persona} and answer, the caller is KK .", paramsInclude = { "phoneNumber,persona" })
+	public void KK2LP() throws Exception {
+		try {
+
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			} catch (Exception e) {
+			}
+			DeviceNumber secDevice;
+			currentDevice = DeviceNumber.SECONDARY;			
+    		secDevice = DeviceNumber.PRIMARY;
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(persona).pressKey("home");
+
+			report.startLevel("Calling to : " + phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+			Thread.sleep(400);
+			devicesMannager.getDevice(currentDevice).getPersona(persona)
+					.click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(1));
+			Thread.sleep(400);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			// call
+			report.report("Dailing...");
+//			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).excuteCommand("input keyevent 26"); //power button
+//     		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).excuteCommand("input keyevent 26"); //power button
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial"));
+			//devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, persona); 
+			report.report("Wait for incoming call.");
+
+		//	devicesMannager.getDevice(currentDevice).validateExpressionCliCommand("logmux -T 500", "RINGING", false, 4);
+				Thread.sleep(12000);
+			//	report.report("BEFORE CLICK");
+				for(int i=0;i<8;i++){
+				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(86));
+				
+				Thread.sleep(500);
+				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+				
+				Thread.sleep(500);
+				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+				
+				}
+				
+			   if (devicesMannager.getDevice(secDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) {
+				   devicesMannager.getDevice(secDevice).getPersona(persona).pressKeyCode(5);
+				   Thread.sleep(5000);
+			 } 
+			
+			else {
+				report.report("There was no incoming call on " + devicesMannager.getDevice(secDevice).getDeviceSerial() + " (" + secDevice + ")", report.FAIL);
+			}
+			report.report("hangup");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+
+		} finally {
+			report.stopLevel();
+		}
+
+	}
+
+	
+	@Test //added by Igor 29.01
+	@TestProperties(name = "Make a call LP2KK : \"${phoneNumber}\" : ${persona} and answer, the caller LP .", paramsInclude = { "phoneNumber,persona" })
+	public void LP2KK() throws Exception {
+		try {
+
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			} catch (Exception e) {
+			}
+			DeviceNumber secDevice;
+			currentDevice = DeviceNumber.PRIMARY;			
+    		secDevice = DeviceNumber.SECONDARY;
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(persona).pressKey("home");
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).switchPersona(persona);
+			devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(persona).pressKey("home");
+
+			report.startLevel("Calling to : " + phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+			Thread.sleep(400);
+			//com.android.dialer
+			//com.android.service.telecom
+			//com.android.service.phone
+			String cliCommand="monkey -p com.android.dialer -c android.intent.category.LAUNCHER 1" ;
+			String text = "Events injected: 1" ;
+			devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, false, persona);
+		//	devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(1));  //working
+			Thread.sleep(400);
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			// call
+			report.report("Dailing...");
+
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial pad"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial"));
+			//devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, persona); 
+			report.report("Wait for incoming call.");
+			
+
+
+			   if (devicesMannager.getDevice(secDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) {
+				   devicesMannager.getDevice(secDevice).getPersona(persona).pressKeyCode(5);
+				   report.report("pressed answer");
+				   Thread.sleep(7000);
+			 } 
+			
+			else {
+				report.report("There was no incoming call on " + devicesMannager.getDevice(secDevice).getDeviceSerial() + " (" + secDevice + ")", report.FAIL);
+			}
+			report.report("hangup");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("End"));
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+
+		} finally {
+			report.stopLevel();
+		}
+
+	}
 	/**
 	 * This test is validate the missed call from the wanted number and clear
 	 * the call log. Please insert the number including "-".
@@ -2258,6 +2390,8 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 
 	}
+	
+	
 	
 	/**
 	 * This test is validate the missed call from the wanted number and clear
