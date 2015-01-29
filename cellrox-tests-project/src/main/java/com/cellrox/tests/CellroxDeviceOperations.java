@@ -1851,11 +1851,11 @@ public class CellroxDeviceOperations extends TestCase {
 	public void waitforLineInLogcat() throws Exception {
 		devicesMannager.getDevice(currentDevice).waitForLineInTomcat(expectedLine, Integer.valueOf(timeout), interval);
 	}
-	@Test //added by Igor 27.01
-	@TestProperties(name = "Wait For \"${expectedLine}\" in LOGMUX", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
-	public void waitforLineInLogcatLP() throws Exception {
-		devicesMannager.getDevice(currentDevice).waitForLineInTomcat2(expectedLine, Integer.valueOf(timeout), interval);
-	}
+//	@Test //added by Igor 27.01
+//	@TestProperties(name = "Wait For \"${expectedLine}\" in LOGMUX", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
+//	public void waitforLineInLogcatLP() throws Exception {
+//		devicesMannager.getDevice(currentDevice).waitForLineInTomcat2(expectedLine, Integer.valueOf(timeout), interval);
+//	}
 
 	@Test
 	@TestProperties(name = "delete file ${remotefileLocation} from Device", paramsInclude = { "currentDevice,remotefileLocation" })
