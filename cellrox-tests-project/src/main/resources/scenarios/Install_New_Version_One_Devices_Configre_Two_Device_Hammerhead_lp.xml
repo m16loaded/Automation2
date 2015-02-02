@@ -11,7 +11,6 @@
     <typedef classname="com.aqua.anttask.jsystem.JSystemScriptCondition" name="jsystemscriptcondition"/>
     <taskdef classname="com.aqua.anttask.jsystem.JSystemSwitch" name="jsystemswitch"/>
     <taskdef classname="com.aqua.anttask.jsystem.JSystemForTask" name="jsystemfor"/>
-    <taskdef classname="com.aqua.anttask.jsystem.JSystemDataDrivenTask" name="jsystemdatadriven"/>
     <taskdef classname="com.aqua.anttask.jsystem.JSystemSetAntProperties" name="jsystemsetantproperties"/>
     <target name="execute scenario">
         <antcallback target="t0"/>
@@ -41,6 +40,7 @@
         <antcallback target="t24"/>
         <antcallback target="t25"/>
         <antcallback target="t26"/>
+        <antcallback target="t27"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -212,13 +212,21 @@
     </target>
     <target name="t21">
         <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="c9e285d7-c08a-49ac-962f-e9ef7e8def72"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLogin"/>
+        </jsystem>
+    </target>
+    <target name="t22">
+        <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="8318a0c0-44c5-45ba-a23d-65b7087892c0"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
         </jsystem>
     </target>
-    <target name="t22">
+    <target name="t23">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="acc35319-5f39-4c65-b8ef-ca256adb8e07"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -226,7 +234,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
         </jsystem>
     </target>
-    <target name="t23">
+    <target name="t24">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="09366e57-87ab-40e8-9970-daeea7c51268"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -234,7 +242,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
     </target>
-    <target name="t24">
+    <target name="t25">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="82a56589-247d-4be7-99d7-50b81fdcdec5"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -242,7 +250,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLoginSecondary"/>
         </jsystem>
     </target>
-    <target name="t25">
+    <target name="t26">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="f7cf900a-37c3-4b11-b265-0b98a2765d83"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -250,7 +258,7 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
         </jsystem>
     </target>
-    <target name="t26">
+    <target name="t27">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="29f68107-e140-47c9-a068-0f66321233a9"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
