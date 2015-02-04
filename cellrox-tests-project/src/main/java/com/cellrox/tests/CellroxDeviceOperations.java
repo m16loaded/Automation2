@@ -78,6 +78,8 @@ public class CellroxDeviceOperations extends TestCase {
 	private long expectedDurationHostCorp;
 	private long expectedDurationHostPriv;
 	private int expectedNumber2;
+	private String platform;
+	private String PackageName;
 
 	/**
 	 * Validate that the automation servers are alive. If the automation servers
@@ -2004,6 +2006,78 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 
 	}
+	
+	@Test //play    //added by Igor 04.02 
+	@TestProperties(name = "install the application in LP: \"${text}\" from google Store, on persona : ${persona}", paramsInclude = { "currentDevice,appName,text,persona" })
+	public void installApplicationLP() throws Exception {
+
+		try {
+
+			report.startLevel("Install the application: " + text);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Play Store");
+			
+			String cliCommand ="monkey -p com.android.vending -c android.intent.category.LAUNCHER 1";
+			String text = "Events injected: 1" ;
+			devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, false, persona);
+			
+			long start = System.currentTimeMillis();
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
+				if (System.currentTimeMillis() - start > Integer.valueOf(10 * 1000)) {
+					report.report("Could not find UiObject with text EDITORS' CHOICE after " + Integer.valueOf(10 * 1000) / 1000 + " sec.");
+					break;
+				}
+				Thread.sleep(1500);
+			}
+			if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Accept"))) {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Accept"));
+			}
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setTextContains(text), 10 * 1000);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+			} catch (Exception e) {
+				report.report("First time of open the app store didn't succeed, about to try for the seconed time.");
+				closeAppStoreAndOpenFromBegining(currentDevice, persona, appName, text);
+			}
+			// check if the application already exist
+
+			boolean isAppExist = false;
+			try {
+				isAppExist = devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setText("UNINSTALL"), 2 * 1000);
+			} catch (Exception e) {/* nothing really the application not exist */
+			}
+			if (isAppExist) {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+				devicesMannager.getDevice(currentDevice).getPersona(persona).openApp(text);
+			}
+
+			else {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("INSTALL"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("ACCEPT"));
+
+				start = System.currentTimeMillis();
+				while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("UNINSTALL"))) {
+					if (System.currentTimeMillis() - start > Integer.valueOf(60 * 1000)) {
+						report.report("Could not find UiObject with text UNINSTALL after " + Integer.valueOf(10 * 1000) / 1000 + " sec.", Reporter.FAIL);
+						break;
+					}
+					Thread.sleep(1500);
+				}
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("OPEN"));
+			}
+		} catch (Exception e) {
+			report.report("Error" + e.getMessage(), Reporter.FAIL);
+		} finally {
+			report.stopLevel();
+		}
+
+	}
 
 	/**
 	 * This function was written to reciver from situations of fallings of the
@@ -2312,7 +2386,7 @@ public class CellroxDeviceOperations extends TestCase {
 	 * */
 	
 	@Test //added by Igor 29.01
-	@TestProperties(name = "Make a call KK2LP Shamu : \"${phoneNumber}\" : ${persona} and answer, the caller is KK .", paramsInclude = { "phoneNumber,persona" })
+	@TestProperties(name = "Make a call KK2LP Shamu : \"${phoneNumber}\" : ${persona} and answer,on ${platform} the caller is KK .", paramsInclude = { "phoneNumber,persona,platform" })
 	public void KK2LP_shamu() throws Exception {
 		try {
 
@@ -2346,6 +2420,7 @@ public class CellroxDeviceOperations extends TestCase {
 		//	devicesMannager.getDevice(currentDevice).validateExpressionCliCommand("logmux -T 500", "RINGING", false, 4);
 				Thread.sleep(12000);
 			//	report.report("BEFORE CLICK");
+				if(platform=="N5"){
 				for(int i=0;i<8;i++){
 				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(86));
 				
@@ -2355,6 +2430,17 @@ public class CellroxDeviceOperations extends TestCase {
 				Thread.sleep(500);
 				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
 				
+				}
+				}
+				else if(platform=="N6") {
+					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(86));
+					
+					Thread.sleep(500);
+					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+					
+					Thread.sleep(500);
+					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+					
 				}
 				
 			   if (devicesMannager.getDevice(secDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) {
@@ -2435,6 +2521,42 @@ public class CellroxDeviceOperations extends TestCase {
 			report.stopLevel();
 		}
 
+	}
+	
+	
+	@Test //added by Igor 04.02
+	@TestProperties(name = "Open application by Package Name in  :${PackageName} : ${persona}  .", paramsInclude = { "PackageName,persona" })
+	public void openAppByPackageName() throws Exception {
+		try {
+
+			try {
+				
+				currentDevice = DeviceNumber.PRIMARY;			
+	    		
+				devicesMannager.getDevice(DeviceNumber.PRIMARY).switchPersona(persona);
+				devicesMannager.getDevice(DeviceNumber.PRIMARY).getPersona(persona).pressKey("home");
+				
+				report.startLevel("Oppening" + PackageName);
+				
+				Thread.sleep(400);
+				String cliCommand="monkey -p " + packageName +" -c android.intent.category.LAUNCHER 1" ;
+				String text = "Events injected: 1" ;
+				devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, false, persona);
+				
+			} catch (Exception e) {
+				report.report("Oppening" + PackageName + "failed");
+			}
+			
+
+
+
+			report.report("Wait for incoming call.");
+			
+		}finally {
+				report.stopLevel();
+			}
+
+		
 	}
 	/**
 	 * This test is validate the missed call from the wanted number and clear
