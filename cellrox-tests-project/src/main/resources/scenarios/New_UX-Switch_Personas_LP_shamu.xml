@@ -92,10 +92,10 @@
     </target>
     <target name="t0">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="47247271-fa8a-4e59-a905-6e43f6e15003"/>
+            <sysproperty key="jsystem.uuid" value="a797447d-acc7-4512-b997-8e88b763199d"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
         </jsystem>
     </target>
     <target name="t1">

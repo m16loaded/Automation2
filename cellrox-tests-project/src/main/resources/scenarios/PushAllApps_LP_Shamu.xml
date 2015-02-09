@@ -18,13 +18,15 @@
         <antcallback target="t2"/>
         <antcallback target="t3"/>
         <antcallback target="t4"/>
+        <antcallback target="t5"/>
+        <antcallback target="t6"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="26bb95b7-38a2-4b7f-9707-b21a9d250f43"/>
+            <sysproperty key="jsystem.uuid" value="989ed1af-dfe2-4737-acc3-38fc14223bee"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
         </jsystem>
     </target>
     <target name="t1">
@@ -52,6 +54,22 @@
         </jsystem>
     </target>
     <target name="t4">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="ce793ca8-f19f-493f-9311-899c91ff44c5"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.pushApplicationTo"/>
+        </jsystem>
+    </target>
+    <target name="t5">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="2a326a9d-87ab-403a-9c3b-d9e554292533"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.pushApplicationTo"/>
+        </jsystem>
+    </target>
+    <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
             <property name="jsystem.uuid" value="21845aca-dde6-47a9-b5c1-06e5122594fe"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
