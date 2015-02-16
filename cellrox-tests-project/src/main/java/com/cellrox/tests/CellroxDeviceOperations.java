@@ -78,7 +78,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private long expectedDurationHostCorp;
 	private long expectedDurationHostPriv;
 	private int expectedNumber2;
-	private String platform;
+	private int platformNew;
 	private String PackageName;
 
 	/**
@@ -2339,8 +2339,8 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(persona).pressKey("home");
 
 			report.startLevel("Calling to : " + phoneNumber);
-			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
-			Thread.sleep(400);
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+//			Thread.sleep(400);
 			//com.android.dialer
 			//com.android.service.telecom
 			//com.android.service.phone
@@ -2385,9 +2385,10 @@ public class CellroxDeviceOperations extends TestCase {
 	 * the call log. Please insert the number including "-".
 	 * */
 	
-	@Test //added by Igor 29.01
-	@TestProperties(name = "Make a call KK2LP Shamu : \"${phoneNumber}\" : ${persona} and answer,on ${platform} the caller is KK .", paramsInclude = { "phoneNumber,persona,platform" })
-	public void KK2LP_shamu() throws Exception {
+	// : ${persona}
+	@Test //added by Igor 29.01  //Will later add a uni test with platform definition	
+	@TestProperties(name = "Make a call KK2LP Uni : \"${phoneNumber}\"  and answer,on ${persona} using Nexus :\"${platformNew}\" the caller is KK .", paramsInclude = { "phoneNumber,persona,platformNew" })
+	public void KK2LP_Uni() throws Exception {
 		try {
 
 			try {
@@ -2409,19 +2410,20 @@ public class CellroxDeviceOperations extends TestCase {
 					.click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(1));
 			Thread.sleep(400);
 			devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
-			// call
+		
 			report.report("Dailing...");
-//			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).excuteCommand("input keyevent 26"); //power button
-//     		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).excuteCommand("input keyevent 26"); //power button
+
 			devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("dial"));
-			//devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, regularExpression, persona); 
+
 			report.report("Wait for incoming call.");
 
-		//	devicesMannager.getDevice(currentDevice).validateExpressionCliCommand("logmux -T 500", "RINGING", false, 4);
+		
 				Thread.sleep(12000);
-			//	report.report("BEFORE CLICK");
-				if(platform=="N5"){
+			report.report("BEFORE CONDITION");
+				if(platformNew==5){
+					
 				for(int i=0;i<8;i++){
+					report.report("Nexus 5");
 				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(86));
 				
 				Thread.sleep(500);
@@ -2429,19 +2431,33 @@ public class CellroxDeviceOperations extends TestCase {
 				
 				Thread.sleep(500);
 				devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+				}
+				}
 				
-				}
-				}
-				else if(platform=="N6") {
-					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(86));
+				else if(platformNew==6) {
+					
+					for(int i=0;i<8;i++){
+						report.report("Nexus 6");
+					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(150));
 					
 					Thread.sleep(500);
-					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(600), Integer.valueOf(160));
 					
 					Thread.sleep(500);
-					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
-					
+					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(660), Integer.valueOf(170));
+					}
 				}
+				
+				
+//				for(int i=0;i<8;i++){
+//					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(150));
+//					
+//					Thread.sleep(500);
+//					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(600), Integer.valueOf(160));
+//					
+//					Thread.sleep(500);
+//					devicesMannager.getDevice(secDevice).getPersona(persona).click(Integer.valueOf(660), Integer.valueOf(170));
+//					}
 				
 			   if (devicesMannager.getDevice(secDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) {
 				   devicesMannager.getDevice(secDevice).getPersona(persona).pressKeyCode(5);
@@ -2481,7 +2497,7 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(DeviceNumber.SECONDARY).getPersona(persona).pressKey("home");
 
 			report.startLevel("Calling to : " + phoneNumber);
-			devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Phone");
 			Thread.sleep(400);
 			//com.android.dialer
 			//com.android.service.telecom
@@ -3357,5 +3373,12 @@ public class CellroxDeviceOperations extends TestCase {
 	public void setExpectedNumber2(int expectedNumber2) {
 		this.expectedNumber2 = expectedNumber2;
 	}
+	public int getPlatformNew() { //added by Igor 09.02
+		return platformNew;
+	}
+	public void setPlatformNew(int platformNew) {  //added by Igor 09.02
+		this.platformNew = platformNew;
+	}
+	
 
 }

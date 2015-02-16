@@ -13,18 +13,8 @@
     <taskdef classname="com.aqua.anttask.jsystem.JSystemForTask" name="jsystemfor"/>
     <taskdef classname="com.aqua.anttask.jsystem.JSystemSetAntProperties" name="jsystemsetantproperties"/>
     <target name="execute scenario">
-        <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.63cfad37-4411-4a18-b3ee-4e74ceb1b322" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
-            <!--#Jsystem#-->
-            <sequential>
-                <echo message="Parameter: myVar=@{myVar}"/>
-                <var name="myVar" value="@{myVar}"/>
-                <jsystemsetantproperties>
-                    <!--Task for updating the ant parameters file - used for reference parameters-->
-                </jsystemsetantproperties>
-                <antcallback target="t0"/>
-                <antcallback target="t1"/>
-            </sequential>
-        </jsystemfor>
+        <antcallback target="t0"/>
+        <antcallback target="t1"/>
         <antcallback target="t2"/>
         <antcallback target="t3"/>
         <antcallback target="t4"/>
@@ -41,237 +31,131 @@
         <antcallback target="t15"/>
         <antcallback target="t16"/>
         <antcallback target="t17"/>
-        <antcallback target="t18"/>
-        <antcallback target="t19"/>
-        <antcallback target="t20"/>
-        <antcallback target="t21"/>
-        <antcallback target="t22"/>
-        <antcallback target="t23"/>
-        <antcallback target="t24"/>
-        <antcallback target="t25"/>
-        <antcallback target="t26"/>
-        <antcallback target="t27"/>
-        <antcallback target="t28"/>
-        <antcallback target="t29"/>
     </target>
     <target name="t0">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp.xml">
-            <property name="jsystem.uuid" value="8e95e20e-f95d-4931-827d-05457cfd00d0"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/PushAllApps_LP_Shamu.xml">
+            <property name="jsystem.uuid" value="7a0defe9-e509-401f-81db-4a568b4d0b99"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t1">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
-            <property name="jsystem.uuid" value="0b1c7d0b-464c-4ab9-a4a9-1af08accaf1b"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp.xml">
+            <property name="jsystem.uuid" value="647c2557-f088-458b-882b-6e93813ae996"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t2">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="04e1d17d-2df4-4425-a4f0-a061d80d5c63"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/WakeUpDevicesLP.xml">
+            <property name="jsystem.uuid" value="504f96d2-bc1c-4113-8c90-c0b2429e44df"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t3">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="3c94bbdf-19d8-49de-855f-c9a1a06c83da"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/UnitTests_LP_shamu.xml">
+            <property name="jsystem.uuid" value="653ff271-9dd4-45db-852f-8b33b9c79692"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t4">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="cb5cb42b-7db6-43a5-85bb-6b342a0a0082"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
+            <property name="jsystem.uuid" value="af749453-2748-4294-bd20-04da5820dd87"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t5">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="1f4e03e2-ca62-4876-8de2-aa6e8a72c56b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/New_Call_and_Answer_LP_shamu.xml">
+            <property name="jsystem.uuid" value="8fe4e4ca-435f-4629-9646-0daca70d0917"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t6">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="1496c664-5db5-4bfa-8cd8-ee215f832621"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLogin"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/AutoLockAllPersonas_LP_shamu.xml">
+            <property name="jsystem.uuid" value="9235fd7d-0e07-4f28-b918-29c987f511de"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t7">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="313d875c-d684-403b-8698-c188f2511141"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/New_UX-Switch_Personas_LP_shamu.xml">
+            <property name="jsystem.uuid" value="d12ab44f-3ac2-4171-a7ae-bf5051bf120a"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t8">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
-            <property name="jsystem.uuid" value="5d609993-c909-40ae-91bc-4676429e8513"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Feedback_Create_lp_shamu.xml">
+            <property name="jsystem.uuid" value="cf45b14a-8864-4e7e-9355-ab71d7b1d305"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t9">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="b2d40126-5898-4e17-b7bf-1087600ae60c"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.swipeAndLoginSecondary"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Legal_shamu.xml">
+            <property name="jsystem.uuid" value="6358ba31-ea6b-463c-bb25-54ddaa231e37"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t10">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="d7600751-a94d-4977-8ed8-866485f50f65"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.enterPassword"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2_Hammerhead_LP_shamu.xml">
+            <property name="jsystem.uuid" value="d6d6d79f-4bd6-4809-9e67-88a720559336"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t11">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/PushAllApps_LP.xml">
-            <property name="jsystem.uuid" value="39c746c2-95e8-4baa-99e6-20692b8bdce6"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/GPS_ON_OFF_LP_shamu.xml">
+            <property name="jsystem.uuid" value="8f0da80f-6648-4326-b086-6d177dea6493"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t12">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp.xml">
-            <property name="jsystem.uuid" value="e22a8322-49cc-4985-9026-f1ee8daabe2a"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/BT_ON_OFF_lp_shamu.xml">
+            <property name="jsystem.uuid" value="486a1caf-3cab-499d-86e7-a099ecb424e2"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t13">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/UnitTests_LP.xml">
-            <property name="jsystem.uuid" value="1e4260e7-564e-4888-a8c2-cbf8d20da575"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Developer_Options_Disabled_LP_shamu.xml">
+            <property name="jsystem.uuid" value="df436970-5575-45d9-86e7-fe7b7000a79f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t14">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
-            <property name="jsystem.uuid" value="d4b16b3a-1682-472b-b6bc-f4e88aa928bf"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/WIFI_ON_OFF_LP.xml">
+            <property name="jsystem.uuid" value="59d1b3f4-558c-4768-a589-177f22b49da2"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t15">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/New_UX-Switch_Personas_LP.xml">
-            <property name="jsystem.uuid" value="3262ae80-5f0e-4563-802d-6ef0fb572c92"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/AP_mode_on-off_LP_shamu.xml">
+            <property name="jsystem.uuid" value="4fd9ae26-d216-4ecf-b44e-01f128ada0e7"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t16">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Feedback_Create_lp.xml">
-            <property name="jsystem.uuid" value="1359cbdd-b2db-4563-b371-2f4a97ebbeb6"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
+            <property name="jsystem.uuid" value="292fa63d-535c-466f-bf62-c5bce492faa3"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t17">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Legal.xml">
-            <property name="jsystem.uuid" value="96a58b65-0093-463e-97e3-8f2b5a6c5aaa"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/SetDisplaySleepTime_shamu.xml">
+            <property name="jsystem.uuid" value="e2a78b77-3c02-4d02-bfbf-ce3a376d78eb"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
-    </target>
-    <target name="t18">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2_Hammerhead_LP.xml">
-            <property name="jsystem.uuid" value="3628f6b9-518c-45cd-83fe-c347d466c272"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t19">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Send_Sms.xml">
-            <property name="jsystem.uuid" value="b1816826-4bd5-4186-b69e-e84e40fece3e"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t20">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/GPS_ON_OFF_LP.xml">
-            <property name="jsystem.uuid" value="6f06d70b-bde7-485f-8d88-ac22f959fb17"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t21">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/BT_ON_OFF_lp.xml">
-            <property name="jsystem.uuid" value="13efe56e-7cbf-4d95-bb22-1f1eaa61f4da"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t22">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Add_Account_Disabled_LP.xml">
-            <property name="jsystem.uuid" value="78ea6176-a4a6-4b23-ac85-b1e11b74caec"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t23">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Developer_Optiones_Disabled_LP.xml">
-            <property name="jsystem.uuid" value="ca6cb8e2-703a-40b7-b122-12bcee19d4d4"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t24">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/AP_mode_on-off_LP.xml">
-            <property name="jsystem.uuid" value="ab34a0cc-ddb1-410a-99ee-de7efbe9aedf"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t25">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/AutoLockAllPersonas_LP.xml">
-            <property name="jsystem.uuid" value="960cd2fa-8b9b-4eb0-8c9b-c01b1b2e9856"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t26">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/SetDisplaySleepTime.xml">
-            <property name="jsystem.uuid" value="5fcbdc68-8f72-47ca-a90d-5138a3443c92"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t27">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
-            <property name="jsystem.uuid" value="36f40132-c1f1-4b9e-80f7-61a12c34cfad"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t28">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="c9aa158a-36c3-4e4b-8e40-f38e96fd6cf8"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.switchTheWiFi"/>
-        </jsystem>
-    </target>
-    <target name="t29">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="459fd909-70e1-4559-bba7-ee9544269b7a"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.switchTheWiFiLP"/>
-        </jsystem>
     </target>
 </project>

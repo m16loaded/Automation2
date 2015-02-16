@@ -81,6 +81,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private Set<String> processForCheck = new HashSet<String>();
 	private long upTime;
 	private Map<Persona, Integer> personaProcessIdMap = new HashMap<Persona, Integer>();
+	String platformNew;
 	// this boolean is only for showing the summary data in the Jsystem result
 	// sender
 	
