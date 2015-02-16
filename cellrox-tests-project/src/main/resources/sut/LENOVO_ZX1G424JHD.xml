@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><sut validators="">
+    <devicesMannager>
+        <class>com.cellrox.infra.CellRoxDeviceManager</class>
+        <privePort>3435</privePort>
+        <corpPort>4321</corpPort>
+        <deviceAsRootOnInit>true</deviceAsRootOnInit>
+	<otaFileLocation>/home/topq/main_jenkins/workspace/Automation_Nightly/artifacts/ota-nightly.zip</otaFileLocation>
+	<numberOfDevices>2</numberOfDevices>
+	<user>topq</user>
+	<password>Aa123456</password>
+	<runStatus>full</runStatus>
+	<primary>ZX1G424JHD</primary>
+	<secondery>08726194998cf3ad</secondery>
+    </devicesMannager>
+    <webDriver>
+        <class>com.cellrox.infra.WebDriverSO</class>
+        <chromWebDriverLocation>/home/topq/git/automation/cellrox-tests-project/chromedriver</chromWebDriverLocation>
+    </webDriver>
+</sut>
