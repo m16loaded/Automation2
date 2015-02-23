@@ -78,7 +78,7 @@
     </target>
     <target name="t6">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="200d7376-6506-4db0-a017-8b53623fec67"/>
+            <sysproperty key="jsystem.uuid" value="fb315d90-78b2-42a8-927f-528462563e99"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.openAppByPackageName"/>

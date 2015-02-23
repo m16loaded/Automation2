@@ -33,7 +33,7 @@
     </target>
     <target name="t0">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="3f9ddc3c-8972-425c-8aef-16296375077d"/>
+            <sysproperty key="jsystem.uuid" value="24dd1cd3-a5bc-4418-a0a8-c10c04fe8d82"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
