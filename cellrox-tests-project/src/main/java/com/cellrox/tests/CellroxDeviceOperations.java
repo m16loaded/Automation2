@@ -1261,6 +1261,7 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 
 	}
+<<<<<<< Updated upstream
 	
 		@Test   //added by Igor 14.01
 		@TestProperties(name = "Switch the wifi (LP) : ${onOff} Text on ${persona}", paramsInclude = { "currentDevice,persona,onOff" })
@@ -1298,6 +1299,81 @@ public class CellroxDeviceOperations extends TestCase {
 
 	
 		  //added by Igor 14.01
+=======
+	@Test   //added by Igor 14.01
+	@TestProperties(name = "Switch the wifi (LP) : ${onOff} Text on ${persona}", paramsInclude = { "currentDevice,persona,onOff" })
+	public void switchTheWiFiLP() throws Exception {
+
+		report.report("About to switch the the Wi-Fi to : " + onOff);
+
+//		if (onOff == State.ON)
+//			onOff = State.OFF;
+//		else
+//			onOff = State.ON;
+
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Settings");
+		
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription("WIRELESS & NETWORKS"), 10000);
+		devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription("Wireless & Networks"), 10000);
+//		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona)
+//				.getUiObject(new Selector().setClassName("android.widget.LinearLayout").setIndex(1));
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).click("Wi-Fi");
+//		try {
+//			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona)
+//					.childByText(new Selector().setScrollable(true), new Selector().setText("Wi-Fi"), "Wi-Fi", true);
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+//		devicesMannager.getDevice(currentDevice).getPersona(persona)
+//				.getUiObject(new Selector().setClassName("android.widget.LinearLayout").setIndex(0));
+		
+					
+		try {
+		Selector s = new Selector();
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Wi?Fi"));
+//		s.setText("Wi-Fi");
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+	
+		
+		
+		if (onOff == State.ON){
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).click("Off");
+			s.setText("Off");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+		}
+		else{
+			s.setText("On");
+			devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+		}
+		}
+
+//		String fatherInstance = devicesMannager.getDevice(currentDevice).getPersona(persona)
+//				.getUiObject(new Selector().setClassName("android.widget.LinearLayout").setIndex(1));
+		
+		 catch (Exception e) {
+			//report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+		}
+
+//		try {
+//			String objectId = devicesMannager.getDevice(currentDevice).getPersona(persona).getChild(fatherInstance, new Selector().setText(onOff.getValue()));
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).click(objectId);
+//		} catch (Exception e) {/*
+//								 * in this case we are on the correct condition
+//								 * of the wifi connection
+//								 */
+//		}
+//		Selector s = new Selector();
+//		s.setText(text);
+//		try {
+//			if (waitForNewWindow) {
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+//			} else {
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+//			}
+
+		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+
+	}  //added by Igor 14.01
+>>>>>>> Stashed changes
 
 	/**
 	 * This test is a full test from ping dns 1. Open the application 2. For
