@@ -1261,7 +1261,7 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 
 	}
-<<<<<<< Updated upstream
+//<<<<<<< Updated upstream
 	
 		@Test   //added by Igor 14.01
 		@TestProperties(name = "Switch the wifi (LP) : ${onOff} Text on ${persona}", paramsInclude = { "currentDevice,persona,onOff" })
@@ -1299,10 +1299,10 @@ public class CellroxDeviceOperations extends TestCase {
 
 	
 		  //added by Igor 14.01
-=======
+//=======
 	@Test   //added by Igor 14.01
 	@TestProperties(name = "Switch the wifi (LP) : ${onOff} Text on ${persona}", paramsInclude = { "currentDevice,persona,onOff" })
-	public void switchTheWiFiLP() throws Exception {
+	public void switchTheWiFiLP2() throws Exception {
 
 		report.report("About to switch the the Wi-Fi to : " + onOff);
 
@@ -1373,7 +1373,7 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
 
 	}  //added by Igor 14.01
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
 
 	/**
 	 * This test is a full test from ping dns 1. Open the application 2. For
