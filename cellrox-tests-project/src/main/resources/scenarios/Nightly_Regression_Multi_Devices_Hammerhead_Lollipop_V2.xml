@@ -35,6 +35,12 @@
         <antcallback target="t19"/>
         <antcallback target="t20"/>
         <antcallback target="t21"/>
+        <antcallback target="t22"/>
+        <antcallback target="t23"/>
+        <antcallback target="t24"/>
+        <antcallback target="t25"/>
+        <antcallback target="t26"/>
+        <antcallback target="t27"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/PushAllApps_LP.xml">
@@ -135,55 +141,97 @@
         </jsystem-ant>
     </target>
     <target name="t14">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Create_Shortcut_LP.xml">
+            <property name="jsystem.uuid" value="a611f6a5-2cbf-4683-9435-6d715c2431ac"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t15">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Storage_Verification_LP.xml">
+            <property name="jsystem.uuid" value="d59bea37-dbeb-4adc-bd77-af46b2b32570"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t16">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_Stills_LP.xml">
+            <property name="jsystem.uuid" value="bba00be7-dc8b-44d9-bcfd-95857f1032cf"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t17">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Shared_Date_LP.xml">
+            <property name="jsystem.uuid" value="0a1488c2-1460-4ab2-a018-16c0c5391b34"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t18">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Shared_Time_LP.xml">
+            <property name="jsystem.uuid" value="7e21d3c6-edf1-468b-8afb-d71863d9c1e7"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t19">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Corp_Developer_Optiones_Disabled_LP.xml">
             <property name="jsystem.uuid" value="96d0db53-fe21-4f8a-90d0-ea8e85acdad3"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t15">
+    <target name="t20">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Feedback_Upload.xml">
             <property name="jsystem.uuid" value="40d1478d-a039-4e57-bc53-5766ba9dd432"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t16">
+    <target name="t21">
         <jsystem-ant antfile="${scenarios.base}/scenarios/WIFI_LP.xml">
             <property name="jsystem.uuid" value="58a94228-00cc-40a7-a262-32df5afa06e2"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t17">
+    <target name="t22">
         <jsystem-ant antfile="${scenarios.base}/scenarios/3G_LP.xml">
             <property name="jsystem.uuid" value="448b255c-50b1-4727-be4c-a9c253215912"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t18">
+    <target name="t23">
         <jsystem-ant antfile="${scenarios.base}/scenarios/AP_mode_on-off_LP.xml">
             <property name="jsystem.uuid" value="05492cab-1f29-4f44-89b2-c7e8bf01e2f9"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t19">
+    <target name="t24">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Data_ON_OFF_LP.xml">
+            <property name="jsystem.uuid" value="9e6fdced-f6bf-4850-b721-ae55270a144e"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t25">
         <jsystem-ant antfile="${scenarios.base}/scenarios/AutoLockAllPersonas_LP.xml">
             <property name="jsystem.uuid" value="0e74d230-cfcd-41ec-b897-a26991ebd2bd"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t20">
+    <target name="t26">
         <jsystem-ant antfile="${scenarios.base}/scenarios/SetDisplaySleepTime.xml">
             <property name="jsystem.uuid" value="f3ed74b5-af84-4002-a4a6-9ab470716f7e"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t21">
+    <target name="t27">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/Reboot.xml">
             <property name="jsystem.uuid" value="a4b00a48-329f-45a5-81ab-7fac1511e07d"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
