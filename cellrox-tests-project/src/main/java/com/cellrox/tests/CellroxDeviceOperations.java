@@ -80,6 +80,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private int expectedNumber2;
 	private int platformNew;
 	private String PackageName;
+	private String Location;
 
 	/**
 	 * Validate that the automation servers are alive. If the automation servers
@@ -764,6 +765,35 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
 		}
 	}
+	
+//	//getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+//	@Test //added by Igor 04.03
+//	@TestProperties(name = "Scroll only ${Location} on ${persona}", paramsInclude = { "currentDevice,persona,Location" })
+//	public void scrollOnly() throws Exception {
+//
+//		try {
+//			int startX = 0;
+//			int startY = 0;
+//			int endX = 0;
+//			int endY = 0;
+//	if(Location == "UP"){
+//		startX = 500;
+//		startY = 1600;
+//		endX = 500;
+//		endY = 400;
+//		
+//		
+//	}
+//
+//			
+//			
+//			
+//			
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(startX, startY, endX, endY, 20);
+//		} catch (Exception e) {
+//			report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+//		}
+//	}
 
 	@Test
 	@TestProperties(name = "Click on UiObject by Description \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona,waitForNewWindow,exceptionThrower" })
@@ -2113,8 +2143,41 @@ public class CellroxDeviceOperations extends TestCase {
 				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
 				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
 				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
-				devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setTextContains(text), 10 * 1000);
-				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setTextContains(text), 10 * 1000);
+//				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setTextContains(text));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).waitForExists(new Selector().setDescription(text), 10 * 1000);
+	     		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription(text));
+				
+				//attempt to use clickByTextContains
+//				Selector s = new Selector();
+//				s.setTextContains(text);
+//				try {
+//					if (waitForNewWindow) {
+//						devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+//					} else {
+//						devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+//					}
+//				} catch (Exception e) {
+//					report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+//				}
+				
+				//attempt to click by Desc
+				
+				Selector s = new Selector();
+				s.setDescription(text);
+				try {
+					if (waitForNewWindow) {
+						devicesMannager.getDevice(currentDevice).getPersona(persona).clickAndWaitForNewWindow(s, 10000);
+					} else {
+						devicesMannager.getDevice(currentDevice).getPersona(persona).click(s);
+					}
+				} catch (Exception e) {
+					if (exceptionThrower) {
+						report.report("Could not find UiObject " + e.getMessage(), Reporter.FAIL);
+					} else {
+						report.report("Could not find UiObject " + e.getMessage());
+					}
+				}
 			} catch (Exception e) {
 				report.report("First time of open the app store didn't succeed, about to try for the seconed time.");
 				closeAppStoreAndOpenFromBegining(currentDevice, persona, appName, text);
@@ -2154,6 +2217,49 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 
 	}
+	
+	@Test //play    //added by Igor 16.03 
+	@TestProperties(name = "find the application in Play in LP: \"${appName}\" from google Store, on persona : ${persona}", paramsInclude = { "currentDevice,appName,text,persona" })
+	public void FindApplicationLP() throws Exception {
+
+		try {
+
+			report.startLevel("Install the application: " + text);
+			devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("home");
+			
+			//devicesMannager.getDevice(currentDevice).getPersona(persona).openApp("Play Store");
+			
+			String cliCommand ="monkey -p com.android.vending -c android.intent.category.LAUNCHER 1";
+			String text = "Events injected: 1" ;
+			devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, false, persona);
+			
+			long start = System.currentTimeMillis();
+			while (!devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("EDITORS' CHOICE"))) {
+				if (System.currentTimeMillis() - start > Integer.valueOf(10 * 1000)) {
+					report.report("Could not find UiObject with text EDITORS' CHOICE after " + Integer.valueOf(10 * 1000) / 1000 + " sec.");
+					break;
+				}
+				Thread.sleep(1500);
+			}
+			if (devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setText("Accept"))) {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Accept"));
+			}
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setDescription("Search Google Play"));
+				devicesMannager.getDevice(currentDevice).getPersona(persona).setText(new Selector().setTextContains("Search Google Play"), appName);
+				devicesMannager.getDevice(currentDevice).getPersona(persona).pressKey("enter");
+			
+			} finally {
+				report.stopLevel();
+			}
+			}
+		finally {
+			report.stopLevel();
+		}
+			
+		}
+	
+
 
 	/**
 	 * This function was written to reciver from situations of fallings of the
@@ -3455,6 +3561,12 @@ public class CellroxDeviceOperations extends TestCase {
 	public void setPlatformNew(int platformNew) {  //added by Igor 09.02
 		this.platformNew = platformNew;
 	}
+	public String getLocation() { //added by Igor 04.03
+		return Location;
+	}
+	public void setLocation(String Location) {  //added by Igor 04.03
+		this.Location = Location;
 	
+	}
 
 }
