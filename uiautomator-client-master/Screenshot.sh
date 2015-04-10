@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#Copy this file to /home/topq/AutoScripts/Screenshot.sh  in case your username is different than topq
 set -x
 
 
