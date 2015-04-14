@@ -8,7 +8,7 @@ if [ ! -d /home/$USER/AutoScripts/Screenshots ]; then
 	 mkdir /home/$USER/AutoScripts/Screenshots
 fi
 
-
+IGNORESERIAL="08726194998cf3ad"
 TIME=$(date "+%T")
 DATE=$(date "+%F")
 
@@ -16,6 +16,10 @@ DATE=$(date "+%F")
 
 
 
-adb pull /data/containers/priv/data/media/0/DCIM/100ANDRO 
+for SERIAL in $(adb devices | grep -v $IGNORESERIAL | cut -f 1);
+do
+adb -s $SERIAL root
+adb -s $SERIAL pull /data/containers/priv/data/media/0/DCIM/100ANDRO
+done
 mv screen.png /home/$USER/AutoScripts/Screenshots/$TIME.$DATE.png
 exit
