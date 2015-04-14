@@ -1,0 +1,22 @@
+{
+    "__version__": 1,
+
+    "general" : {
+        "autostart": false,
+        "primary": false,
+        "managed": false,
+        "name": "corp",
+        "id": 1,
+        "encrypted": true
+    },
+
+    "policy" : {
+        "content_sync" : false,
+        "shared_content": "none"
+    },
+
+    "public" : {
+        "display_name": "Work"
+    }
+}
+
