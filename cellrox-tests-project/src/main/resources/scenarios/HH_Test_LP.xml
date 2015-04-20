@@ -77,7 +77,7 @@
     </target>
     <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
-            <property name="jsystem.uuid" value="cebf8ffc-db34-43ad-8014-5b81d5e4e3e2"/>
+            <property name="jsystem.uuid" value="59bc4896-83c2-4cdc-b5ed-1485ec58ff6d"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
