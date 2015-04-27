@@ -209,15 +209,15 @@
         </jsystem-ant>
     </target>
     <target name="t23">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Feedback_Upload.xml">
-            <property name="jsystem.uuid" value="40d1478d-a039-4e57-bc53-5766ba9dd432"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
+            <property name="jsystem.uuid" value="48e40983-1e03-4e9b-8387-1167546f45cf"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t24">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
-            <property name="jsystem.uuid" value="65d7fa2b-0f3a-4ba9-b32f-fe66a0670575"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Feedback_Upload.xml">
+            <property name="jsystem.uuid" value="40d1478d-a039-4e57-bc53-5766ba9dd432"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
