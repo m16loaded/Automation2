@@ -1084,6 +1084,24 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 		Thread.sleep(2000);
 	}
+	
+	@Test
+	@TestProperties(name = "Reboot Recovery Shamu", paramsInclude = { "currentDevice,updateVersion, deviceEncrypted, deviceEncryptedPriv" })
+	public void rebootRecoveryShamu() throws Exception {
+
+		if (updateVersion) {
+			String version = runProperties.getRunProperty("adb.push.file.location");
+			report.report("New Version File " + version);
+			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /data/media/ota");
+			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /data/media/ota");
+		}
+		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		// here i check if the p
+		if (!isUp) {
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		}
+		Thread.sleep(2000);
+	}
 
 	@Test
 	@TestProperties(name = "Press on Button ${button} on ${persona}", paramsInclude = { "currentDevice,button,persona" })
