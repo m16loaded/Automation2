@@ -1087,13 +1087,15 @@ public class CellroxDeviceOperations extends TestCase {
 	
 	@Test
 	@TestProperties(name = "Reboot Recovery Shamu", paramsInclude = { "currentDevice,updateVersion, deviceEncrypted, deviceEncryptedPriv" })
-	public void rebootRecoveryShamu() throws Exception {
+	public void rebootRecoveryShamu() throws Exception { //added by Igor
 
 		if (updateVersion) {
 			String version = runProperties.getRunProperty("adb.push.file.location");
 			report.report("New Version File " + version);
-			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /data/media/ota");
-			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /data/media/ota");
+//			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /data/media/ota");
+//			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /data/media/ota");
+			devicesMannager.getDevice(currentDevice).executeCommandLocalCli("/home/topq/git/automation/uiautomator-client-master/cellrox-update-Igor.sh /home/topq/main_jenkins/workspace/Automation_Nightly_Hammerhead_Lollipop_SHAMU/artifacts/unit-tests.tgz");
+			//devicesMannager.getDevice(currentDevice).executeHostShellCommand("/home/topq/git/automation/uiautomator-client-master/cellrox-update-Igor.sh /home/topq/main_jenkins/workspace/Automation_Nightly_Hammerhead_Lollipop_ALT/artifacts/unit-tests.tgz");
 		}
 		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
 		// here i check if the p
