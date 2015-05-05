@@ -1106,6 +1106,17 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 		Thread.sleep(2000);
 	}
+	@Test
+	@TestProperties(name = "Report new version after ota", paramsInclude = { "currentDevice" })
+	public void newVersionReport() throws Exception {
+		try {
+			devicesMannager.getDevice(currentDevice).reportNewVersion();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+	
+	
 
 	@Test
 	@TestProperties(name = "Press on Button ${button} on ${persona}", paramsInclude = { "currentDevice,button,persona" })

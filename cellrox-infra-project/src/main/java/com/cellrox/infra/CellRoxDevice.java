@@ -816,6 +816,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	/**
 	 * Reboot Recovery the device, waits until personas are up
+	 * @throws Exception 
 	 * 
 	 * @throws TimeoutException
 	 *             in case of timeout on the connection.
@@ -823,6 +824,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *             if adb rejects the command
 	 * @throws IOException
 	 */
+	
+	public void reportNewVersion() throws Exception{ //added by Igor 05.05.15
+		report.report("Adding version ID to summary");
+		String prop1 = null;
+		cli.connect();
+		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+		executeCliCommand("getprop | fgrep ro.build.display.id");
+		prop1 = getPropFromCli(cli.getTestAgainstObject().toString());
+		Summary.getInstance().setProperty("Build_display_id", prop1);// propToParse.split(":")[1].trim());
+	}
 	public boolean rebootRecoveryDevice(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
 		sync();
 		device.executeShellCommand("reboot recovery");
