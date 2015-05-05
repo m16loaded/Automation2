@@ -73,7 +73,7 @@
     </target>
     <target name="t4">
         <jsystem-ant antfile="${scenarios.base}/scenarios/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu.xml">
-            <property name="jsystem.uuid" value="0b7b7987-8352-4095-8bfc-93993a57f83d"/>
+            <property name="jsystem.uuid" value="509d3d73-00a5-4b46-a11a-8dedeaf548b8"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
