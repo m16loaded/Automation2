@@ -45,6 +45,7 @@
         <antcallback target="t29"/>
         <antcallback target="t30"/>
         <antcallback target="t31"/>
+        <antcallback target="t32"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -300,6 +301,14 @@
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.getUptime"/>
+        </jsystem>
+    </target>
+    <target name="t32">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="b05d5702-642d-413d-9ba5-453d46fd79d0"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.newVersionReport"/>
         </jsystem>
     </target>
 </project>
