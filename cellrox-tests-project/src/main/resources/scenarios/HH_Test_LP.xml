@@ -14,61 +14,10 @@
     <taskdef classname="com.aqua.anttask.jsystem.JSystemSetAntProperties" name="jsystemsetantproperties"/>
     <target name="execute scenario">
         <antcallback target="t0"/>
-        <antcallback target="t1"/>
-        <antcallback target="t2"/>
-        <antcallback target="t3"/>
-        <antcallback target="t4"/>
-        <antcallback target="t5"/>
-        <antcallback target="t6"/>
     </target>
     <target name="t0">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="04e1d17d-2df4-4425-a4f0-a061d80d5c63"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.configureDevice"/>
-        </jsystem>
-    </target>
-    <target name="t1">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="3c94bbdf-19d8-49de-855f-c9a1a06c83da"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t2">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
-            <property name="jsystem.uuid" value="cdf89b8b-0d55-4221-9491-e6c5a38ff752"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t3">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="5c3f9efc-96e8-42b6-8c7c-045ebb28b236"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
-        </jsystem>
-    </target>
-    <target name="t4">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/WIFI_LP.xml">
-            <property name="jsystem.uuid" value="d1ac506f-765a-4391-bb6f-990bb6683f49"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t5">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/3G_LP.xml">
-            <property name="jsystem.uuid" value="59ca7eab-f0b4-4034-bb11-9f76ca8777e0"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t6">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
-            <property name="jsystem.uuid" value="ea8cbde1-551e-4cbd-ac6f-8e7e8b756adf"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/TestingName.xml">
+            <property name="jsystem.uuid" value="c03847a5-3317-4c0e-a889-979550c82085"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>

@@ -4,7 +4,7 @@
     "general" : {
         "autostart": false,
         "primary": false,
-        "managed": false,
+        "managed": true,
         "name": "corp",
         "id": 1,
         "encrypted": true
