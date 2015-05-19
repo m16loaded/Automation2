@@ -14,10 +14,66 @@
     <taskdef classname="com.aqua.anttask.jsystem.JSystemSetAntProperties" name="jsystemsetantproperties"/>
     <target name="execute scenario">
         <antcallback target="t0"/>
+        <antcallback target="t1"/>
+        <antcallback target="t2"/>
+        <antcallback target="t3"/>
+        <antcallback target="t4"/>
+        <antcallback target="t5"/>
+        <antcallback target="t6"/>
+        <antcallback target="t7"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/TestingName.xml">
             <property name="jsystem.uuid" value="c03847a5-3317-4c0e-a889-979550c82085"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t1">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="94419809-083e-4d35-a65e-80fb23b8977b"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t2">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="e5295d6b-1c29-444f-8525-fa63ffc044ec"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t3">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="7cb4bff2-6f7c-45b8-b44d-be3f189fe2b0"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t4">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="537cd6eb-6658-4129-8ff2-be29be148090"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t5">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="9b38cb82-08db-4180-b64d-3f0ecf208ba2"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t6">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="419a99a5-a0f1-4773-a961-e664e606a953"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t7">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Camera_video_LP.xml">
+            <property name="jsystem.uuid" value="bb179909-7f98-46c9-9ac0-c945f15d708f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
