@@ -7,7 +7,8 @@
         "managed": true,
         "name": "corp",
         "id": 1,
-        "encrypted": true
+        "encrypted": true,
+        "secondary":true
     },
 
     "policy" : {
