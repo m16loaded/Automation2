@@ -53,14 +53,14 @@
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp.xml">
-            <property name="jsystem.uuid" value="8bc0d6a7-27a7-4c42-8b0d-7c89fcb496ee"/>
+            <property name="jsystem.uuid" value="e64c39ce-fb7e-438d-a4b6-da0065cc82e0"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t1">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/PmInstallAppFromCell.xml">
-            <property name="jsystem.uuid" value="6f97c7c1-bfea-4954-b102-9ea1f01abb5b"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/PmInstallAppFromCell.xml">
+            <property name="jsystem.uuid" value="5d98ea2e-cb37-465b-b7a9-7eb91bc6c5b1"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
