@@ -18,6 +18,7 @@
         <antcallback target="t2"/>
         <antcallback target="t3"/>
         <antcallback target="t4"/>
+        <antcallback target="t5"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -36,20 +37,27 @@
         </jsystem>
     </target>
     <target name="t2">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/WIFI_LP.xml">
+            <property name="jsystem.uuid" value="5b3f0c50-ca5b-43ed-b2a3-d0efa281a80a"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t3">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP/Agent_Unit-tests_LP.xml">
             <property name="jsystem.uuid" value="1efa3792-3f1e-42f8-934f-8c453180eb61"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t3">
+    <target name="t4">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP/Interface_Unit-tests_LP.xml">
             <property name="jsystem.uuid" value="7137ea03-977c-45f5-86ee-b3b86c17651f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t4">
+    <target name="t5">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP/Movius_Unit-tests_LP.xml">
             <property name="jsystem.uuid" value="532bc31b-70a0-4855-9e96-204fd64ad187"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
