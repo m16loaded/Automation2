@@ -9,7 +9,8 @@ set -x
 IGNORESERIAL="08726194998cf3ad"
 UPDSRC="$1"
 UPDSRC2="/home/topq/main_jenkins/workspace/Automation_Nightly_Hammerhead_Lollipop_SHAMU/artifacts/ota-nightly.zip"
-SERIAL="ZX1G424LDD"
+#SERIAL="ZX1G424LDD" #old bricked device
+SERIAL="ZX1G2249XF"
 
 ADB=${ADB:-adb}
 DLOAD_DIR=${DLOAD_DIR:-/data/media/ota}
