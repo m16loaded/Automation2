@@ -115,57 +115,57 @@
         </jsystem-ant>
     </target>
     <target name="t9">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Vellamo3_HH_LP.xml">
-            <property name="jsystem.uuid" value="68e676ad-0e05-4f74-a13d-c024e0fd4da9"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t10">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2_Hammerhead_LP.xml">
-            <property name="jsystem.uuid" value="e28390ad-5e4f-40cc-840c-66d42c2da5d6"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t11">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
-            <property name="jsystem.uuid" value="48e40983-1e03-4e9b-8387-1167546f45cf"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t12">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/UninstallAllApps_LP.xml">
-            <property name="jsystem.uuid" value="424ba6ad-29ab-412c-98f8-5b556c1774b6"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t13">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/New_Call_and_Answer_LP.xml">
-            <property name="jsystem.uuid" value="2c63fdbd-b6c5-4f62-96f4-59d180d85f37"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t14">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/New_UX-Switch_Personas_LP.xml">
-            <property name="jsystem.uuid" value="97fc0a03-bd9d-4417-bc53-688c323f1551"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t15">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/WIFI_LP.xml">
             <property name="jsystem.uuid" value="d5fa51b0-4614-4f54-92e4-77f499bdcf6f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t16">
+    <target name="t10">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/3G_LP.xml">
             <property name="jsystem.uuid" value="d5ec6226-3961-4a9a-adf0-a96d6bc6e546"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t11">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Vellamo3_HH_LP.xml">
+            <property name="jsystem.uuid" value="68e676ad-0e05-4f74-a13d-c024e0fd4da9"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t12">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/Nenamark2_Hammerhead_LP.xml">
+            <property name="jsystem.uuid" value="e28390ad-5e4f-40cc-840c-66d42c2da5d6"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t13">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/SpeedtestHH_LP_V2.xml">
+            <property name="jsystem.uuid" value="48e40983-1e03-4e9b-8387-1167546f45cf"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t14">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/UninstallAllApps_LP.xml">
+            <property name="jsystem.uuid" value="424ba6ad-29ab-412c-98f8-5b556c1774b6"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t15">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/New_Call_and_Answer_LP.xml">
+            <property name="jsystem.uuid" value="2c63fdbd-b6c5-4f62-96f4-59d180d85f37"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t16">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/New_UX-Switch_Personas_LP.xml">
+            <property name="jsystem.uuid" value="97fc0a03-bd9d-4417-bc53-688c323f1551"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
