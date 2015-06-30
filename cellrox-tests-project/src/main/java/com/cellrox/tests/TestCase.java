@@ -70,7 +70,7 @@ public class TestCase extends SystemTestCase4 {
 	public void tearDown() throws Exception {
 		try {
 			// get Oren's magic code
-			getPrintkMessage();
+			//getPrintkMessage(); //commented out by Igor 30.06 due to questionable benefit and mock fails/warnings
 			getUnexpectedErrorScreenshot();
 			report.startLevel("After");
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
