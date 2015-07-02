@@ -74,8 +74,8 @@
         </jsystem-ant>
     </target>
     <target name="t5">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
-            <property name="jsystem.uuid" value="af749453-2748-4294-bd20-04da5820dd87"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/PersonaSwitchx50.xml">
+            <property name="jsystem.uuid" value="7d9fe2f3-5c40-4281-885d-531518d38d69"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
