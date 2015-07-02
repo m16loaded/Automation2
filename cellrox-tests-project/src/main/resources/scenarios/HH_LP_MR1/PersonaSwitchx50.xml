@@ -15,7 +15,7 @@
     <target name="execute scenario">
         <antcallback target="t0"/>
         <antcallback target="t1"/>
-        <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.d04dd069-772f-4705-9bd8-413888213b85" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
+        <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.8805db1e-a07a-41a0-815b-6cdeeba4d480" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
             <!--#Jsystem#-->
             <sequential>
                 <echo message="Parameter: myVar=@{myVar}"/>
@@ -24,12 +24,13 @@
                     <!--Task for updating the ant parameters file - used for reference parameters-->
                 </jsystemsetantproperties>
                 <antcallback target="t2"/>
+                <antcallback target="t3"/>
             </sequential>
         </jsystemfor>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="b5cfe640-43e5-430a-8165-5245d6db4839"/>
+            <sysproperty key="jsystem.uuid" value="65e23257-88ef-4f79-ac23-329092e2b885"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
@@ -37,17 +38,26 @@
     </target>
     <target name="t1">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="2dcec706-dee2-4910-844e-1d80a6b7ac9e"/>
+            <sysproperty key="jsystem.uuid" value="11cd890f-a2d8-438a-b076-fdf328abb1f1"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
         </jsystem>
     </target>
     <target name="t2">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/Sanity/PersonaSwitch.xml">
-            <property name="jsystem.uuid" value="61ea4eda-91b3-48f2-8198-04da11bd6771"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="c496ce0b-3ea9-4f0f-925a-67dcdfb55e7a"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
+        </jsystem>
+    </target>
+    <target name="t3">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="42451b39-7d08-4d39-98cc-8cb871234df3"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>
+        </jsystem>
     </target>
 </project>
