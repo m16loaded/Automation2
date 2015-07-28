@@ -1443,12 +1443,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public Persona getForegroundPersona() throws Exception {
-		String output = device.executeShellCommand("cat /proc/dev_ns/ns_tag");
-		FindText findText = new FindText("tag:\\s*(.*)", true, false, 2);
-		findText.setTestAgainst(output);
-		findText.analyze();
-		String perona = findText.getCounter();
+//		String output = device.executeShellCommand("cat /proc/dev_ns/ns_tag"); Commented out by Igor 28.7
+//		FindText findText = new FindText("tag:\\s*(.*)", true, false, 2);
+//		findText.setTestAgainst(output);
+//		findText.analyze();
+//		String perona = findText.getCounter();
+		String output = device.executeShellCommand("cell list|grep -f /proc/dev_ns/active_ns_pid|awk -F'(' '{print $1}'");
+		String perona = output;
 		return Persona.valueOf(perona.toUpperCase().trim());
+		
 	}
 
 	/**
