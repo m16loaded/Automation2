@@ -1058,6 +1058,12 @@ public class CellroxDeviceOperations extends TestCase {
 	public void rebootDevice() throws Exception {
 		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 	}
+	
+	@Test
+	@TestProperties(name = "Enter Text '${text}' via ADB", paramsInclude = { "persona,text" })
+	public void enterTextFromADB() throws Exception{
+		devicesMannager.getDevice(currentDevice).enterTextFromADB(text, persona);
+	}
 
 	@Test
 	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "currentDevice,timeout, deviceEncrypted,deviceEncryptedPriv" })

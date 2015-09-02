@@ -1043,7 +1043,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.disconnect();
 		report.stopLevel();
 	}
+	
+	public void enterTextFromADB(String text, Persona persona) throws Exception{
+		cli.connect();
+	
+		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 
+		Thread.sleep(200);
+		cli.switchToPersona(getPersonaName(persona));
+		executeCliCommand("input text "+text.replace(" ", "%s"));
+		cli.disconnect();
+	}
+
+	
+	
 	/**
 	 * This function tries to make the device root, if it can't, perform reboot
 	 * and try again
