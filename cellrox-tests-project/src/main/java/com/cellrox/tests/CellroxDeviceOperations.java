@@ -18,6 +18,8 @@ import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
 import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
@@ -576,6 +578,15 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("Couldn't open the application : " + text, Reporter.FAIL);
 		}
 	}
+	
+
+	@Test
+	@TestProperties(name = "Click by Resource ID '${text}'", paramsInclude = { "currentDevice,text,persona" })
+	public void clickByResourceId() throws UiObjectNotFoundException {
+		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setResourceId(text));
+	}
+	
+	
 	@Test //vv
 	@TestProperties(name = "Open apps 2 \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,persona" })
 	public void openApp2() throws UiObjectNotFoundException {
