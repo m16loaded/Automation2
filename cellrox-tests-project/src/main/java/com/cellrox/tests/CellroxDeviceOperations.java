@@ -2,8 +2,6 @@ package com.cellrox.tests;
 
 import java.io.File;
 import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,15 +14,11 @@ import jsystem.framework.report.Summary;
 import jsystem.framework.scenario.UseProvider;
 
 import org.junit.Test;
-import org.python.core.exceptions;
 import org.topq.uiautomator.ObjInfo;
 import org.topq.uiautomator.Selector;
 
-import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.android.uiautomator.core.UiSelector;
 import com.cellrox.infra.CellRoxDevice;
-import com.cellrox.infra.StaticUtils;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.ElementAttributes;
@@ -81,6 +75,10 @@ public class CellroxDeviceOperations extends TestCase {
 	private int platformNew;
 	private String PackageName;
 	private String Location;
+	private int startX;
+	private int startY;
+	private int endX;
+	private int endY;
 
 	/**
 	 * Validate that the automation servers are alive. If the automation servers
@@ -91,8 +89,8 @@ public class CellroxDeviceOperations extends TestCase {
 	public void beforeTestConfigureConnectValidation() throws Exception {
 		report.report("Validate that the automation servers are alive.");
 		try {
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).ping();
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).ping();
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).ping();
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).ping();
 		} catch (Exception e) {
 			report.report("Error with the automation servers, about to configure and connect.");
 			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
@@ -259,7 +257,7 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Validate Personas Boot Time", paramsInclude = { "currentDevice,deviceEncrypted,deviceEncryptedPriv,expectedDurationHostCorp,expectedDurationHostPriv" })
 	public void getLodingTime() throws Exception {
 		devicesMannager.getDevice(currentDevice).getbootingDeviceTime(10 * 60 * 1000, deviceEncrypted, deviceEncryptedPriv, expectedDurationHostCorp,
-				expectedDurationHostPriv, Persona.PRIV, Persona.CORP);
+				expectedDurationHostPriv, Persona.priv, Persona.corp);
 	}
 
 	public long getExpectedDurationHostCorp() {
@@ -362,8 +360,8 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "pressPower", paramsInclude = { "currentDevice" })
 	public void pressPower() throws Exception {
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).excuteCommand("input keyevent 26");
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).excuteCommand("input keyevent 26");
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).excuteCommand("input keyevent 26");
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).excuteCommand("input keyevent 26");
 	}
 
 	/**
@@ -457,10 +455,10 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "Verify Uiautomator Server Status on ${currentDevice} Device (Configure if Necessary)",paramsInclude={"currentDevice"})
 	public void isDeviceConnectedToServer() throws Exception {
 		try {
-			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).ping() == null){
+			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).ping() == null){
 				throw new Exception();
 			}
-			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).ping() == null){
+			if (devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).ping() == null){
 				throw new Exception();
 			}
 		} catch (Exception e) {
@@ -648,7 +646,7 @@ public class CellroxDeviceOperations extends TestCase {
 	@TestProperties(name = "push ${localLocation} to ${persona}", paramsInclude = { "currentDevice,localLocation,persona" })
 	public void pushApplicationTo() throws Exception {
 		String location;
-		if (persona == Persona.PRIV)
+		if (persona == Persona.priv)
 			location = "/data/containers/priv/data/app/";
 		else
 			location = "/data/containers/corp/data/app/";
@@ -670,7 +668,7 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Wait Until Device is Online", paramsInclude = { "currentDevice" })
 	public void validateDeviceIsOnline() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, false, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, false, Persona.priv, Persona.corp);
 	}
 
 	/**
@@ -680,7 +678,7 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(paramsInclude = { "deviceEncrypted, deviceEncryptedPriv" })
 	public void validateDeviceCanBeRoot() throws Exception {
-		devicesMannager.getDevice(currentDevice).validateDeviceCanBeRoot(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceCanBeRoot(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 	}
 
 	@Test
@@ -1058,13 +1056,13 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Reboot Device", paramsInclude = { "deviceEncrypted,deviceEncryptedPriv" })
 	public void rebootDevice() throws Exception {
-		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 	}
 
 	@Test
 	@TestProperties(name = "Reboot Device - Check The Times", paramsInclude = { "currentDevice,timeout, deviceEncrypted,deviceEncryptedPriv" })
 	public void rebootDeviceTimout() throws Exception {
-		devicesMannager.getDevice(currentDevice).rebootDevice(Integer.valueOf(timeout), deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(Integer.valueOf(timeout), deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 	}
 
 	@Test
@@ -1077,10 +1075,10 @@ public class CellroxDeviceOperations extends TestCase {
 			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo 'boot-recovery ' > /cache/recovery/command");
 			devicesMannager.getDevice(currentDevice).executeHostShellCommand("echo '--update_package=" + version + "'>> /cache/recovery/command");
 		}
-		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 		// here i check if the p
 		if (!isUp) {
-			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 		}
 		Thread.sleep(2000);
 	}
@@ -1099,10 +1097,10 @@ public class CellroxDeviceOperations extends TestCase {
 			//devicesMannager.getDevice(currentDevice).executeHostShellCommand("/home/topq/git/automation/uiautomator-client-master/cellrox-update-Igor.sh /home/topq/main_jenkins/workspace/Automation_Nightly_Hammerhead_Lollipop_ALT/artifacts/unit-tests.tgz");
 			report.report("after script ");
 		}
-		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		boolean isUp = devicesMannager.getDevice(currentDevice).rebootRecoveryDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 		// here i check if the p
 		if (!isUp) {
-			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 		}
 		Thread.sleep(2000);
 	}
@@ -1131,9 +1129,15 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Switch Persona to ${persona}", paramsInclude = { "currentDevice,persona" })
 	public void switchPersona() throws Exception {
+		System.out.println("");
 		devicesMannager.getDevice(currentDevice).switchPersona(persona);
 		
 	
+	}
+	@Test
+	@TestProperties(name = "Swipe Screen of ${persona} by Coordinates", paramsInclude = { "currentDevice,persona,startX, startY, endX, endY" })
+	public void swipeByXY() throws Exception {
+		devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(startX, startY, endX, endY, 50);
 	}
 
 	/**
@@ -1865,7 +1869,7 @@ public class CellroxDeviceOperations extends TestCase {
 		report.report("Erase everything");
 		devicesMannager.getDevice(currentDevice).getPersona(persona).click(new Selector().setText("Erase everything"));
 		sleep(2000);
-		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 		devicesMannager.getDevice(currentDevice).setDataAfterReboot();
 	}
 
@@ -1947,7 +1951,7 @@ public class CellroxDeviceOperations extends TestCase {
 	@Test
 	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
 	public void waitforLineInLogcat() throws Exception {
-		devicesMannager.getDevice(currentDevice).waitForLineInTomcat(expectedLine, Integer.valueOf(timeout), interval);
+		devicesMannager.getDevice(currentDevice).waitForLineInLogcat(expectedLine, Integer.valueOf(timeout), interval);
 	}
 //	@Test //added by Igor 27.01
 //	@TestProperties(name = "Wait For \"${expectedLine}\" in LOGMUX", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
@@ -3009,26 +3013,26 @@ public class CellroxDeviceOperations extends TestCase {
 			report.report("Device : " + devicesMannager.getDevice(currentDevice).getDeviceSerial());
 			// last_kmsg
 			devicesMannager.getDevice(currentDevice).printLastKmsg();
-			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+			devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 			report.report("There is an error, the device is offline or had unwanted reboot. Going to reboot.");
 			// sleep
 			devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(System.currentTimeMillis(), 5 * 60 * 1000, deviceEncrypted, deviceEncryptedPriv,
-					Persona.PRIV, Persona.CORP);
+					Persona.priv, Persona.corp);
 			// configure
 			devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 			// connect
 			devicesMannager.getDevice(currentDevice).connectToServers();
 			// to wake up and type password
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).wakeUp();
-			devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
-			devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
-			devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
-			devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).wakeUp();
+			devicesMannager.getDevice(currentDevice).switchPersona(Persona.corp);
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setDescription("Enter"));
+			devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).wakeUp();
+			devicesMannager.getDevice(currentDevice).switchPersona(Persona.priv);
+			devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.priv);
 			try {
 				devicesMannager.getDevice(currentDevice).validateDoaCrash();
 			} catch (Exception e1) {
@@ -3600,6 +3604,38 @@ public class CellroxDeviceOperations extends TestCase {
 	public void setLocation(String Location) {  //added by Igor 04.03
 		this.Location = Location;
 	
+	}
+
+	public int getStartX() {
+		return startX;
+	}
+
+	public void setStartX(int startX) {
+		this.startX = startX;
+	}
+
+	public int getStartY() {
+		return startY;
+	}
+
+	public void setStartY(int startY) {
+		this.startY = startY;
+	}
+
+	public int getEndX() {
+		return endX;
+	}
+
+	public void setEndX(int endX) {
+		this.endX = endX;
+	}
+
+	public int getEndY() {
+		return endY;
+	}
+
+	public void setEndY(int endY) {
+		this.endY = endY;
 	}
 
 }

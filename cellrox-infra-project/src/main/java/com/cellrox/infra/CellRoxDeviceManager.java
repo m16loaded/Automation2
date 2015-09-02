@@ -29,6 +29,11 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
     private String primary;
     private String secondery;
     private USBDevice[] devices;
+    //add support for non-default persona name
+    private String primaryPriv = "priv";
+    private String primaryCorp = "corp";
+    private String secPriv = "priv";
+    private String secCorp = "corp";
   
 
 	private AdbController adbController;
@@ -56,13 +61,13 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 	    	
 	    	//get primary device
 	    	USBDevice primaryDevice = getDeviceById(primary);
-	    	cellroxDevicesList[DeviceNumber.PRIMARY.ordinal()] = new CellRoxDevice(privePort, corpPort, otaFileLocation, primaryDevice.getSerialNumber(), user, password, runStatus);
+	    	cellroxDevicesList[DeviceNumber.PRIMARY.ordinal()] = new CellRoxDevice(privePort, corpPort, otaFileLocation, primaryDevice.getSerialNumber(), user, password, runStatus,primaryPriv,primaryCorp);
 	    	report.report("Primary Device: "+ getDevice(DeviceNumber.PRIMARY).getDeviceSerial(),ReportAttribute.BOLD);
 	    	
-	    	//get secondery device - if exists
+	    	//get secondary device - if exists
 	    	if (numberOfDevices>1){
 		    	USBDevice secondeyDevice = getDeviceById(secondery);
-		    	cellroxDevicesList[DeviceNumber.SECONDARY.ordinal()] = new CellRoxDevice(privePort + DeviceNumber.SECONDARY.ordinal(), corpPort + DeviceNumber.SECONDARY.ordinal(), otaFileLocation,secondeyDevice.getSerialNumber(), user, password, runStatus);
+		    	cellroxDevicesList[DeviceNumber.SECONDARY.ordinal()] = new CellRoxDevice(privePort + DeviceNumber.SECONDARY.ordinal(), corpPort + DeviceNumber.SECONDARY.ordinal(), otaFileLocation,secondeyDevice.getSerialNumber(), user, password, runStatus,secPriv,secCorp);
 		    	report.report("SECONDARY Device: "+ getDevice(DeviceNumber.SECONDARY).getDeviceSerial(),ReportAttribute.BOLD);
 	    	
 	    	}
@@ -177,6 +182,38 @@ public class CellRoxDeviceManager extends SystemObjectImpl {
 
 	public void setSecondery(String secondery) {
 		this.secondery = secondery;
+	}
+
+	public String getPrimaryPriv() {
+		return primaryPriv;
+	}
+
+	public void setPrimaryPriv(String primaryPriv) {
+		this.primaryPriv = primaryPriv;
+	}
+
+	public String getPrimaryCorp() {
+		return primaryCorp;
+	}
+
+	public void setPrimaryCorp(String primaryCorp) {
+		this.primaryCorp = primaryCorp;
+	}
+
+	public String getSecPriv() {
+		return secPriv;
+	}
+
+	public void setSecPriv(String secPriv) {
+		this.secPriv = secPriv;
+	}
+
+	public String getSecCorp() {
+		return secCorp;
+	}
+
+	public void setSecCorp(String secCorp) {
+		this.secCorp = secCorp;
 	}
 
 }

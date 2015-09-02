@@ -98,7 +98,7 @@ public class TestCase extends SystemTestCase4 {
 	private void getUnexpectedErrorScreenshot() throws Exception {
 		for (CellRoxDevice device : devicesMannager.getCellroxDevicesList()) {
 			try {
-				getScreenShot(device, Persona.PRIV, Persona.CORP);
+				getScreenShot(device, Persona.priv, Persona.corp);
 			} catch (Exception e) {
 				// do nothing
 			}
@@ -110,12 +110,12 @@ public class TestCase extends SystemTestCase4 {
 		for (Persona persona : personas) {
 			// get the screenshot from device and save it to current test's
 			// folder
-			device.pullFileFromDevice("/data/containers/" + persona + "/data/local/tmp/wathcer.png", report.getCurrentTestFolder() + "/" + persona.toString()
+			device.pullFileFromDevice("/data/containers/" + device.getPersonaName(persona) + "/data/local/tmp/wathcer.png", report.getCurrentTestFolder() + "/" + device.getPersonaName(persona)
 					+ "_unexpectedError.png");
 			// add a reporter link
-			report.addLink("Click Here for Unexpected Error Window Screenshot for Persona " + persona+" Device Serial = "+device.getDeviceSerial(), persona.toString() + "_unexpectedError.png");
+			report.addLink("Click Here for Unexpected Error Window Screenshot for Persona " + device.getPersonaName(persona)+" Device Serial = "+device.getDeviceSerial(), device.getPersonaName(persona) + "_unexpectedError.png");
 			// delete screenshot from device for later use
-			device.deleteFile("/data/containers/" + persona + "/data/local/tmp/wathcer.png");
+			device.deleteFile("/data/containers/" + device.getPersonaName(persona) + "/data/local/tmp/wathcer.png");
 			
 		}
 	}
@@ -204,7 +204,7 @@ public class TestCase extends SystemTestCase4 {
 				// last_kmsg
 
 				// here im doning all the thing beside the reboot
-				device.validateDeviceIsOnline(System.currentTimeMillis(), 5 * 60 * 1000, deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+				device.validateDeviceIsOnline(System.currentTimeMillis(), 5 * 60 * 1000, deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 				device.setDeviceAsRoot();
 				device.setUpTime(device.getCurrentUpTime());
 				device.setPsString(device.getPs());
@@ -236,14 +236,14 @@ public class TestCase extends SystemTestCase4 {
 					device.getPs(true);
 					mapPerPrNew = device.getPersonaProcessIdMap();
 					try {
-						if (!mapPerPrNew.get(Persona.PRIV).equals(mapPerPrOld.get(Persona.PRIV))) {
+						if (!mapPerPrNew.get(Persona.priv).equals(mapPerPrOld.get(Persona.priv))) {
 							report.report("Error, persona Priv crashed.", Reporter.FAIL);
 						}
 					} catch (Exception e) {
 						report.report("Error, persona Priv crashed.", Reporter.FAIL);
 					}
 					try {
-						if (!mapPerPrNew.get(Persona.CORP).equals(mapPerPrOld.get(Persona.CORP))) {
+						if (!mapPerPrNew.get(Persona.corp).equals(mapPerPrOld.get(Persona.corp))) {
 							report.report("Error, persona CORP crashed.", Reporter.FAIL);
 						}
 					} catch (Exception e) {
@@ -253,7 +253,7 @@ public class TestCase extends SystemTestCase4 {
 					// since last K message will not help up in this case - we'll look in logcat
 					stopSysLogAndValidateInDevice();
 					report.report("There is an error, the device is offline or had unwanted reboot. Rebooting Device...");
-					device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.PRIV, Persona.CORP);
+					device.rebootDevice(deviceEncrypted, deviceEncryptedPriv, Persona.priv, Persona.corp);
 				}
 
 			}
@@ -276,15 +276,15 @@ public class TestCase extends SystemTestCase4 {
 				// connect
 				device.connectToServers();
 				// to wake up and type password
-				device.getPersona(Persona.CORP).wakeUp();
-				device.switchPersona(Persona.CORP);
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setText("1"));
-				device.getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
-				device.getPersona(Persona.PRIV).wakeUp();
-				device.switchPersona(Persona.PRIV);
+				device.getPersona(Persona.corp).wakeUp();
+				device.switchPersona(Persona.corp);
+				device.getPersona(Persona.corp).click(new Selector().setText("1"));
+				device.getPersona(Persona.corp).click(new Selector().setText("1"));
+				device.getPersona(Persona.corp).click(new Selector().setText("1"));
+				device.getPersona(Persona.corp).click(new Selector().setText("1"));
+				device.getPersona(Persona.corp).click(new Selector().setDescription("Enter"));
+				device.getPersona(Persona.priv).wakeUp();
+				device.switchPersona(Persona.priv);
 				report.stopLevel(); // stop device / persona crash
 			}
 

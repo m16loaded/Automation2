@@ -20,7 +20,7 @@ public class AdbConnection extends LinuxDefaultCliConnection{
 	}
 	
 	
-	public void switchToPersona(Persona persona) throws Exception{
+	public void switchToPersona(String persona) throws Exception{
 		handleCliCommand("switching to "+persona, new CliCommand("cell console "+persona));
 		handleCliCommand("validate persona change",new CliCommand("getprop | grep cellname"));
 		analyze(new FindText("[ro.cellrox.cellname]: ["+persona+"]"));

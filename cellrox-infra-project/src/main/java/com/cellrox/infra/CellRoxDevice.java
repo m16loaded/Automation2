@@ -2,6 +2,7 @@ package com.cellrox.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.RetentionPolicy;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,7 +55,9 @@ import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.log.Log.LogTypes;
 
 public class CellRoxDevice extends SystemObjectImpl {
-	
+
+	private static final String LOG_COMMAND = "logmux";
+
 	private static final String LOGCAT_TIME_FORMAT = "MM-dd hh:mm:ss.SSS";
 
 	// init from the SUT
@@ -65,12 +68,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private String user = "topq";
 	private String password = "Aa123456";
 	private boolean deviceAsRootOnInit = false;
+	private String corpName;
+	private String privName;
 	// will not be init from the SUT
 	private AdbController adbController;
 	private USBDevice device;
 	private AdbConnection cli;
 	private String deviceSerial;
-	List<AutomatorService> uiClient = Collections.synchronizedList(new ArrayList<AutomatorService>());
+	List<AutomatorService> uiClient = Collections
+			.synchronizedList(new ArrayList<AutomatorService>());
 	private boolean afterCrush = false;
 	private ExecutorService executor;
 	// the otaFileLocation is for the jenkins/the local run to know where is the
@@ -84,24 +90,37 @@ public class CellRoxDevice extends SystemObjectImpl {
 	String platformNew;
 	// this boolean is only for showing the summary data in the Jsystem result
 	// sender
-	
+	// this map is for persona name mapping back to Persona Enum
+	Map<String , Persona> personaEnum = new HashMap<String, Persona>();
+
 	private LogManager logManager;
-	
+
 	boolean online = false;
 
-	public CellRoxDevice(int privePort, int corpPort, String otaFileLocation, String serialNumber, String user, String password, String runStatus)
-			throws Exception {
-		//ListenerstManager.getInstance().addListener(new CellroxTestListenr());
+	public CellRoxDevice(int privePort, int corpPort, String otaFileLocation,
+			String serialNumber, String user, String password,
+			String runStatus, String privName, String corpName)
+
+	throws Exception {
+		// ListenerstManager.getInstance().addListener(new
+		// CellroxTestListenr());
 		this.privePort = privePort;
 		this.corpPort = corpPort;
 		this.otaFileLocation = otaFileLocation;
 		this.deviceSerial = serialNumber;
 		this.user = user;
 		this.password = password;
+		// set priv and corp name
+		this.privName = privName;
+		this.corpName = corpName;
+		// set the personas names in map
+		personaEnum.put(privName, Persona.priv);
+		personaEnum.put(corpName, Persona.corp);
 
 		adbController = AdbController.getInstance();
 		device = adbController.waitForDeviceToConnect(serialNumber);
-		cli = new AdbConnection("127.0.0.1", getUser(), getPassword(), serialNumber);
+		cli = new AdbConnection("127.0.0.1", getUser(), getPassword(),
+				serialNumber);
 		cli.setExitTimeout(60 * 1000);
 		cli.connect();
 
@@ -122,43 +141,51 @@ public class CellRoxDevice extends SystemObjectImpl {
 			initProcessesForCheck();
 			setPsString(getPs());
 		}
-		
+
 	}
-	
-	public CellRoxDevice(String serialNumber, String user, String password) throws Exception {
-		
+
+	public CellRoxDevice(String serialNumber, String user, String password)
+			throws Exception {
+
 		this.deviceSerial = serialNumber;
 		this.user = user;
 		this.password = password;
-		
+
 		adbController = AdbController.getInstance();
 		device = adbController.waitForDeviceToConnect(serialNumber);
-		cli = new AdbConnection("127.0.0.1", getUser(), getPassword(), serialNumber);
+		cli = new AdbConnection("127.0.0.1", getUser(), getPassword(),
+				serialNumber);
 		cli.setExitTimeout(60 * 1000);
-		
+
 		setDeviceAsRoot();
-		
+
 		// INIT test logs - for kitkat
-//		logManager = new LogManager();
-//		logManager.addLog(new Log("testRadioLogcat","adb -s " + getDeviceSerial() + " logcat -b radio -v time -T 0",LogTypes.ADB));
-//		logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial() + " logcat -v time -T 0",LogTypes.ADB));
-//		logManager.addLog(new Log("testKmsg","adb -s " + getDeviceSerial() + " shell cat /proc/kmsg",LogTypes.ADB));
-		
-		//TODO Lollipop - INIT test logs (logmux)
-		
+		// logManager = new LogManager();
+		// logManager.addLog(new Log("testRadioLogcat","adb -s " +
+		// getDeviceSerial() + " logcat -b radio -v time -T 0",LogTypes.ADB));
+		// logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial()
+		// + " logcat -v time -T 0",LogTypes.ADB));
+		// logManager.addLog(new Log("testKmsg","adb -s " + getDeviceSerial() +
+		// " shell cat /proc/kmsg",LogTypes.ADB));
+
+		// TODO Lollipop - INIT test logs (logmux)
+
 		logManager = new LogManager();
-		report.report("adb -s " + getDeviceSerial() + " shell logmux -b radio -v threadtime -T 0");
-		logManager.addLog(new Log("testRadioLogcat","adb -s " + getDeviceSerial() + " shell logmux -b radio -v threadtime -T 0",LogTypes.ADB));
-		logManager.addLog(new Log("testLogcat","adb -s " + getDeviceSerial() + " shell logmux -v threadtime -T 0",LogTypes.ADB));
-		logManager.addLog(new Log("testKmsg","adb -s " + getDeviceSerial() + " shell cat /proc/kmsg",LogTypes.ADB));
-		
-		
-		
-//		logManager.populateLogManager();
-		
+		report.report("adb -s " + getDeviceSerial()
+				+ " shell logmux -b radio -v threadtime -T 0");
+		logManager.addLog(new Log("testRadioLogcat", "adb -s "
+				+ getDeviceSerial()
+				+ " shell logmux -b radio -v threadtime -T 0", LogTypes.ADB));
+		logManager.addLog(new Log("testLogcat", "adb -s " + getDeviceSerial()
+				+ " shell logmux -v threadtime -T 0", LogTypes.ADB));
+		logManager.addLog(new Log("testKmsg", "adb -s " + getDeviceSerial()
+				+ " shell cat /proc/kmsg", LogTypes.ADB));
+
+		// logManager.populateLogManager();
+
 	}
-	
-	private void initSyslogs() throws Exception{
+
+	private void initSyslogs() throws Exception {
 		report.startLevel("Cleaining System Logs");
 		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_kmsg.txt");
 		device.executeShellCommand("echo \"\" > /data/agent/syslogs/system_logcat-radio.txt");
@@ -174,53 +201,53 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	public void initProcessesForCheck() {
 		processForCheck.add("system_server");
-//		processForCheck.add("/init");
-//		processForCheck.add("/sbin/ueventd");
-//		processForCheck.add("/system/bin/servicemanager");
-//		processForCheck.add("/system/bin/vold");
-//		processForCheck.add("/system/bin/netd");
-//		processForCheck.add("/system/bin/debuggerd");
-//		processForCheck.add("/system/bin/surfaceflinger");
-//		processForCheck.add("zygote");
-//		processForCheck.add("/system/bin/drmserver");
-//		processForCheck.add("/system/bin/mediaserver.cellrox");
-//		processForCheck.add("/system/bin/installd");
-//		processForCheck.add("/system/bin/keystore");
-//		processForCheck.add("/system/bin/surface_monitor");
-//		processForCheck.add("/system/bin/sdcard");
-//		//processForCheck.add("/sbin/adbd");
-//		processForCheck.add("system_server");
-//		processForCheck.add("com.android.systemui");
-//		processForCheck.add("android.process.media");
-//		processForCheck.add("com.android.phasebeam");
-//		processForCheck.add("com.android.inputmethod.latin");
-//		processForCheck.add("com.android.phone");
-//		processForCheck.add("com.cellrox.cellroxservice");
-//		processForCheck.add("com.android.launcher");
-//		processForCheck.add("android.process.acore");
-//		processForCheck.add("com.android.settings");
-//		processForCheck.add("com.android.printspooler");
-//		processForCheck.add("com.android.smspush");
-//		processForCheck.add("com.android.music");
-//		processForCheck.add("com.android.dialer");
-//		processForCheck.add("com.android.bluetooth");
-//		processForCheck.add("com.android.providers.calendar");
-//		processForCheck.add("com.android.mms");
-//		processForCheck.add("com.android.onetimeinitializer");
-//		processForCheck.add("com.android.voicedialer");
-//		processForCheck.add("com.android.calendar");
-//		processForCheck.add("com.android.deskclock");
-//		processForCheck.add("com.android.email");
-//		processForCheck.add("com.android.exchange");
+		// processForCheck.add("/init");
+		// processForCheck.add("/sbin/ueventd");
+		// processForCheck.add("/system/bin/servicemanager");
+		// processForCheck.add("/system/bin/vold");
+		// processForCheck.add("/system/bin/netd");
+		// processForCheck.add("/system/bin/debuggerd");
+		// processForCheck.add("/system/bin/surfaceflinger");
+		// processForCheck.add("zygote");
+		// processForCheck.add("/system/bin/drmserver");
+		// processForCheck.add("/system/bin/mediaserver.cellrox");
+		// processForCheck.add("/system/bin/installd");
+		// processForCheck.add("/system/bin/keystore");
+		// processForCheck.add("/system/bin/surface_monitor");
+		// processForCheck.add("/system/bin/sdcard");
+		// //processForCheck.add("/sbin/adbd");
+		// processForCheck.add("system_server");
+		// processForCheck.add("com.android.systemui");
+		// processForCheck.add("android.process.media");
+		// processForCheck.add("com.android.phasebeam");
+		// processForCheck.add("com.android.inputmethod.latin");
+		// processForCheck.add("com.android.phone");
+		// processForCheck.add("com.cellrox.cellroxservice");
+		// processForCheck.add("com.android.launcher");
+		// processForCheck.add("android.process.acore");
+		// processForCheck.add("com.android.settings");
+		// processForCheck.add("com.android.printspooler");
+		// processForCheck.add("com.android.smspush");
+		// processForCheck.add("com.android.music");
+		// processForCheck.add("com.android.dialer");
+		// processForCheck.add("com.android.bluetooth");
+		// processForCheck.add("com.android.providers.calendar");
+		// processForCheck.add("com.android.mms");
+		// processForCheck.add("com.android.onetimeinitializer");
+		// processForCheck.add("com.android.voicedialer");
+		// processForCheck.add("com.android.calendar");
+		// processForCheck.add("com.android.deskclock");
+		// processForCheck.add("com.android.email");
+		// processForCheck.add("com.android.exchange");
 	}
-	
 
 	/**
 	 * This function send command to the agent and check that the expectedLine
 	 * returned.<br>
 	 * The function will return the command till the timeout.
 	 * */
-	public void validateInAgent(String cmd, String expectedLine, int timeout) throws Exception {
+	public void validateInAgent(String cmd, String expectedLine, int timeout)
+			throws Exception {
 
 		boolean isPass = false;
 
@@ -234,13 +261,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 			executeCliCommand(cmd);
 			if (expectedLine == null) {
 				isPass = true;
-			} else if (cli.getTestAgainstObject().toString().contains(expectedLine)) {
+			} else if (cli.getTestAgainstObject().toString()
+					.contains(expectedLine)) {
 				isPass = true;
 			}
-		} while (((System.currentTimeMillis() - startTime) < timeout) && (!isPass));
+		} while (((System.currentTimeMillis() - startTime) < timeout)
+				&& (!isPass));
 
 		if (!isPass) {
-			report.report(expectedLine + " wasn't return from the agent from the server.", Reporter.FAIL);
+			report.report(expectedLine
+					+ " wasn't return from the agent from the server.",
+					Reporter.FAIL);
 		}
 
 		cli.disconnect();
@@ -327,7 +358,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		executeCliCommand("date");
-		String output = cli.getTestAgainstObject().toString().replace("date", "").trim().split(" ")[4];
+		String output = cli.getTestAgainstObject().toString()
+				.replace("date", "").trim().split(" ")[4];
 
 		cli.disconnect();
 
@@ -340,13 +372,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * personas and check the the wanted groups (etc (\s*),(\d+:\d+),(\S*),(\w*)
 	 * and much more) inside of the expression is equal.
 	 * */
-	public void compareResultsCorpAndPriv(String cmd, String regularExpression) throws Exception {
+	public void compareResultsCorpAndPriv(String cmd, String regularExpression)
+			throws Exception {
 
 		String[] outputPrivGroupArr = null, outputCorpGroupArr = null;
 
-		String outputPriv = getPersona(Persona.PRIV).excuteCommand(cmd).trim();
+		String outputPriv = getPersona(Persona.priv).excuteCommand(cmd).trim();
 		report.report(outputPriv);
-		String outputCorp = getPersona(Persona.CORP).excuteCommand(cmd).trim();
+		String outputCorp = getPersona(Persona.corp).excuteCommand(cmd).trim();
 		report.report(outputCorp);
 
 		// check the priv
@@ -359,7 +392,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 				outputPrivGroupArr[i] = matcher.group(i + 1);
 			}
 		} else {
-			report.report("Matcher isn't match : " + regularExpression + " to " + outputPriv + " on priv persona.", Reporter.FAIL);
+			report.report("Matcher isn't match : " + regularExpression + " to "
+					+ outputPriv + " on priv persona.", Reporter.FAIL);
 		}
 
 		// check the corp
@@ -372,16 +406,19 @@ public class CellRoxDevice extends SystemObjectImpl {
 				outputCorpGroupArr[i] = matcher.group(i + 1);
 			}
 		} else {
-			report.report("Matcher isn't match : " + regularExpression + " to " + outputCorp + " on corp persona.", Reporter.FAIL);
+			report.report("Matcher isn't match : " + regularExpression + " to "
+					+ outputCorp + " on corp persona.", Reporter.FAIL);
 		}
 
 		// compare the data from the two maches
 		if (outputCorpGroupArr.length != outputPrivGroupArr.length) {
-			report.report("Error the macher isn't equal in the personas", Reporter.FAIL);
+			report.report("Error the macher isn't equal in the personas",
+					Reporter.FAIL);
 		}
 		for (int i = 0; i < outputCorpGroupArr.length; i++) {
 			if (!outputCorpGroupArr[i].equals(outputPrivGroupArr[i])) {
-				report.report("The data isn't equal : " + outputCorpGroupArr[i] + " to " + outputPrivGroupArr[i], Reporter.FAIL);
+				report.report("The data isn't equal : " + outputCorpGroupArr[i]
+						+ " to " + outputPrivGroupArr[i], Reporter.FAIL);
 			}
 		}
 
@@ -393,12 +430,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * This function use the get logs to returns the logs to the wanted
 	 * location.
 	 * */
-	public void getTheLogs(LogcatHandler loggerType, String logLocation) throws Exception {
+	public void getTheLogs(LogcatHandler loggerType, String logLocation)
+			throws Exception {
 		cli.connect();
-		executeCliCommand("adb -s " + getDeviceSerial() + " shell rm -R /data/agent/logs/adb");
-		executeCliCommand("adb -s " + getDeviceSerial() + " shell mkdir -p /data/agent/logs/adb/ 2>&1 >/dev/null");
-		executeCliCommand("adb -s " + getDeviceSerial() + " shell bash /system/etc/logcollector.sh " + loggerType.toString() + " \"adb/\" 2>&1 >/dev/null");
-		executeCliCommand("adb -s " + getDeviceSerial() + " pull /data/agent/logs/adb " + logLocation);
+		executeCliCommand("adb -s " + getDeviceSerial()
+				+ " shell rm -R /data/agent/logs/adb");
+		executeCliCommand("adb -s " + getDeviceSerial()
+				+ " shell mkdir -p /data/agent/logs/adb/ 2>&1 >/dev/null");
+		executeCliCommand("adb -s " + getDeviceSerial()
+				+ " shell bash /system/etc/logcollector.sh "
+				+ loggerType.toString() + " \"adb/\" 2>&1 >/dev/null");
+		executeCliCommand("adb -s " + getDeviceSerial()
+				+ " pull /data/agent/logs/adb " + logLocation);
 		executeCliCommand("date");
 		report.report("Logs saved in : " + logLocation);
 
@@ -412,15 +455,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 		String upTime = "";
 		String retAns = executeHostShellCommand("uptime");
 
-		upTime = retAns.toString().replace("uptime", "").replace("shell@mako:/ $", "").replace("root@mako:/ #", "").trim();
+		upTime = retAns.toString().replace("uptime", "")
+				.replace("shell@mako:/ $", "").replace("root@mako:/ #", "")
+				.trim();
 
 		report.report("Current up time : " + upTime);
 
-		String upTimeTry = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
+		String upTimeTry = upTime.split(",")[0].replace("up time: ", "").trim()
+				.replace(":", "");
 		if (upTimeTry.contains("days")) {
-			upTime = upTime.split(",")[1].replace("up time: ", "").trim().replace(":", "");
+			upTime = upTime.split(",")[1].replace("up time: ", "").trim()
+					.replace(":", "");
 		} else {
-			upTime = upTime.split(",")[0].replace("up time: ", "").trim().replace(":", "");
+			upTime = upTime.split(",")[0].replace("up time: ", "").trim()
+					.replace(":", "");
 		}
 		upTime = upTime.replace("time", "").trim();
 		return Long.parseLong(upTime);
@@ -434,9 +482,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void validateConnectivity() throws Exception {
 		cli.connect();
 		executeCliCommand("adb devices");
-		//TODO: add validation for device status i.e. offline
+		// TODO: add validation for device status i.e. offline
 		if (!cli.getTestAgainstObject().toString().contains(getDeviceSerial())) {
-			throw new Exception("no connection, the device" + getDeviceSerial() + " isn't online.");
+			throw new Exception("no connection, the device" + getDeviceSerial()
+					+ " isn't online.");
 		}
 		cli.disconnect();
 	}
@@ -450,8 +499,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		executeCliCommand("cell list state");
-		if (!((cli.getTestAgainstObject().toString().contains("priv (3)")) && (cli.getTestAgainstObject().toString().contains("corp (3)")))) {
-			throw new Exception("DOA, the device" + getDeviceSerial() + " isn't online.");
+		if (!((cli.getTestAgainstObject().toString().contains(privName+" (3)")) && (cli
+				.getTestAgainstObject().toString().contains(corpName+" (3)")))) {
+			throw new Exception("DOA, the device" + getDeviceSerial()
+					+ " isn't online.");
 		}
 		cli.disconnect();
 	}
@@ -460,11 +511,13 @@ public class CellRoxDevice extends SystemObjectImpl {
 		boolean isReady = true;
 		try {
 			cli.connect();
-			cli.switchToPersona(Persona.CORP);
+			cli.switchToPersona(corpName);
 			cli.switchToHost();
-			cli.switchToPersona(Persona.PRIV);
+			cli.switchToPersona(privName);
 		} catch (Exception e) {
-			report.report("The device isn't ready for automation, the runs will stop", Reporter.FAIL);
+			report.report(
+					"The device isn't ready for automation, the runs will stop",
+					Reporter.FAIL);
 			return false;
 		}
 		return isReady;
@@ -487,10 +540,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 		prop = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_sdk_version", prop);// propToParse.split(":")[1].trim());
 
-//		// add Build_display_id prop
-//		executeCliCommand("getprop | fgrep ro.build.display.id");
-//		prop = getPropFromCli(cli.getTestAgainstObject().toString());
-//		Summary.getInstance().setProperty("Build_display_id", prop);// propToParse.split(":")[1].trim());
+		// // add Build_display_id prop
+		// executeCliCommand("getprop | fgrep ro.build.display.id");
+		// prop = getPropFromCli(cli.getTestAgainstObject().toString());
+		// Summary.getInstance().setProperty("Build_display_id", prop);//
+		// propToParse.split(":")[1].trim());
 
 		// add Build_date prop
 		executeCliCommand("getprop | fgrep ro.build.date]");
@@ -509,15 +563,16 @@ public class CellRoxDevice extends SystemObjectImpl {
 			executeCliCommand("netcfg | grep wlan0");
 			String propToParse = cli.getTestAgainstObject().toString();
 			propToParse = propToParse.replace("netcfg | grep wlan0", "");
-			Pattern p = Pattern.compile("[^\\.]wlan0\\s*UP\\s*(\\d*\\.\\d*\\.\\d*\\.\\d*.\\d*)\\s*(\\S*)\\s*(.*)");
+			Pattern p = Pattern
+					.compile("[^\\.]wlan0\\s*UP\\s*(\\d*\\.\\d*\\.\\d*\\.\\d*.\\d*)\\s*(\\S*)\\s*(.*)");
 			Matcher m = p.matcher(propToParse);
 			if (m.find()) {
 				String macAddress = m.group(3);
 				Summary.getInstance().setProperty("MAC_Address", macAddress);
 				// calculate the IMEI from the MAC Address
 				macAddress = macAddress.replace(":", "");
-				long imei =new BigInteger(macAddress, 16).longValue();
-				Summary.getInstance().setProperty("IMEI", ""+imei);
+				long imei = new BigInteger(macAddress, 16).longValue();
+				Summary.getInstance().setProperty("IMEI", "" + imei);
 			}
 		} else {
 			// in this case bring the IMIE
@@ -537,17 +592,22 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * 
 	 * @throws Exception
 	 * */
-	public void validateCliCommandOutputExistsOnTheScreen(String command, Persona persona) throws Exception {
+	public void validateCliCommandOutputExistsOnTheScreen(String command,
+			Persona persona) throws Exception {
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		executeCliCommand(command);
-		String output = cli.getTestAgainstObject().toString().replace(command, "").replace("\n", "").replace("root@mako:/ #", "").trim();
+		String output = cli.getTestAgainstObject().toString()
+				.replace(command, "").replace("\n", "")
+				.replace("root@mako:/ #", "").trim();
 
 		if (getPersona(persona).exist(new Selector().setTextContains(output))) {
-			report.report("The uiobject is found with the text : " + output + ".");
+			report.report("The uiobject is found with the text : " + output
+					+ ".");
 		} else {
-			report.report("Couldn't find the uiobject with the text : " + output + ".", Reporter.FAIL);
+			report.report("Couldn't find the uiobject with the text : "
+					+ output + ".", Reporter.FAIL);
 		}
 	}
 
@@ -558,7 +618,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * */
 	public void printLastKmsg() throws IOException {
 		try {
-			pullFileFromDevice("/proc/last_kmsg", report.getCurrentTestFolder() + "/last_kmsg.txt");
+			pullFileFromDevice("/proc/last_kmsg", report.getCurrentTestFolder()
+					+ "/last_kmsg.txt");
 			report.addLink("Click Here for Last Kmsg Log", "last_kmsg.txt");
 		} catch (Exception e) {
 		}
@@ -578,7 +639,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		executeCliCommand("pkill -KILL uiautomator");
 		executeCliCommand("ps | grep nc");
-		String[] retStringArr = cli.getTestAgainstObject().toString().split("\n");
+		String[] retStringArr = cli.getTestAgainstObject().toString()
+				.split("\n");
 		String expectedLine = "root\\s*(\\d*)\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\S*\\s*\\S*\\s*\\S\\s*(\\S*)\\s*";
 		for (String retLine : retStringArr) {
 			Pattern pattern = Pattern.compile(expectedLine);
@@ -586,7 +648,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 			if (matcher.find()) {
 				if (matcher.group(2).toString().equals("nc")) {
-					executeCliCommand("kill -KILL " + Integer.valueOf(matcher.group(1)));
+					executeCliCommand("kill -KILL "
+							+ Integer.valueOf(matcher.group(1)));
 				}
 			}
 		}
@@ -621,7 +684,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * This function will configure a device with all the pipes needed for port
 	 * forwarding between the host and the cells
 	 */
-	public void configureDeviceForAutomation(boolean runServer) throws Exception {
+	public void configureDeviceForAutomation(boolean runServer)
+			throws Exception {
 		report.startLevel("Configure Device For Automation");
 
 		killAllAutomaionProcesses();
@@ -631,7 +695,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 
 		Thread.sleep(200);
-		cli.switchToPersona(Persona.PRIV);
+		cli.switchToPersona(privName);
 		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
@@ -641,14 +705,15 @@ public class CellRoxDevice extends SystemObjectImpl {
 			executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
 
-//		cli.switchToHost();
-//		executeCliCommand("adb -s " + getDeviceSerial() + " root");
-//		executeCliCommand("rm /data/local/tmp/local_pipe");
-//		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
-//		executeCliCommand("nc -lk " + privePort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
+		// cli.switchToHost();
+		// executeCliCommand("adb -s " + getDeviceSerial() + " root");
+		// executeCliCommand("rm /data/local/tmp/local_pipe");
+		// executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+		// executeCliCommand("nc -lk " + privePort +
+		// " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
 
 		cli.switchToHost();
-		cli.switchToPersona(Persona.CORP);
+		cli.switchToPersona(corpName);
 		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
@@ -660,16 +725,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		cli.switchToHost();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
-		
+
 		// configure priv pipes on host
 		executeCliCommand("rm /data/local/tmp/local_pipe");
 		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
-		executeCliCommand("nc -lk " + privePort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
-		
-		//configure corp pipes on host
+		executeCliCommand("nc -lk "
+				+ privePort
+				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/"+privName+"/data/unix_soc >/data/local/tmp/local_pipe &");
+
+		// configure corp pipes on host
 		executeCliCommand("rm /data/local/tmp/local_pipe");
 		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
-		executeCliCommand("nc -lk " + corpPort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/corp/data/unix_soc >/data/local/tmp/local_pipe &");
+		executeCliCommand("nc -lk "
+				+ corpPort
+				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/"+corpName+"/data/unix_soc >/data/local/tmp/local_pipe &");
 
 		report.stopLevel();
 		cli.disconnect();
@@ -682,14 +751,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		killAllAutomaionProcesses();
 
-		report.startLevel("Configure Device For Automation Priv");
+		report.startLevel("Configure Device For Automation "+privName);
 
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 
 		Thread.sleep(200);
-		cli.switchToPersona(Persona.PRIV);
+		cli.switchToPersona(privName);
 		Thread.sleep(200);
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
@@ -703,7 +772,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("rm /data/local/tmp/local_pipe");
 		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
-		executeCliCommand("nc -lk " + privePort + " < /data/local/tmp/local_pipe  | nc -U /data/containers/priv/data/unix_soc >/data/local/tmp/local_pipe &");
+		executeCliCommand("nc -lk "
+				+ privePort
+				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/"+privName+"/data/unix_soc >/data/local/tmp/local_pipe &");
 
 		report.stopLevel();
 		cli.disconnect();
@@ -716,7 +787,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *            on local file system
 	 * @param reinstall
 	 */
-	public void installPackage(String apkLocation, boolean reinstall) throws InstallException {
+	public void installPackage(String apkLocation, boolean reinstall)
+			throws InstallException {
 		try {
 			device.installPackage(apkLocation, reinstall);
 		} catch (InstallException e) {
@@ -733,11 +805,13 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *             if adb rejects the command
 	 * @throws IOException
 	 */
-	public void rebootDevice(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+	public void rebootDevice(boolean isEncrypted, boolean isEncryptedPriv,
+			Persona... personas) throws Exception {
 		rebootDevice(5 * 60 * 1000, isEncrypted, isEncryptedPriv, personas);
 	}
 
-	public void rebootDevice(int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+	public void rebootDevice(int timeout, boolean isEncrypted,
+			boolean isEncryptedPriv, Persona... personas) throws Exception {
 		long currentTime = System.currentTimeMillis();
 		try {
 			sync();
@@ -747,13 +821,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 		} catch (Exception e) {
 		}
 
-		validateDeviceIsOnline(currentTime, timeout, isEncrypted, isEncryptedPriv, personas);
+		validateDeviceIsOnline(currentTime, timeout, isEncrypted,
+				isEncryptedPriv, personas);
 		setDeviceAsRoot();
 		upTime = getCurrentUpTime();
 		setPsString(getPs());
 	}
-	
-	public void getbootingDeviceTime(int timeout, boolean isEncrypted, boolean isEncryptedPriv, long expectedDurationHostCorp, long expectedDurationHostPriv,Persona... personas) throws Exception {
+
+	public void getbootingDeviceTime(int timeout, boolean isEncrypted,
+			boolean isEncryptedPriv, long expectedDurationHostCorp,
+			long expectedDurationHostPriv, Persona... personas)
+			throws Exception {
 		long currentTime = System.currentTimeMillis();
 		try {
 			report.startLevel("Rebooting device... ");
@@ -761,43 +839,71 @@ public class CellRoxDevice extends SystemObjectImpl {
 			device.reboot();
 			report.report("reboot command was sent");
 			Thread.sleep(5000);
-			device  = adbController.waitForDeviceToConnect(getDeviceSerial());
+			device = adbController.waitForDeviceToConnect(getDeviceSerial());
 			Thread.sleep(5000);
-			setDeviceAsRoot();	
+			setDeviceAsRoot();
 			report.stopLevel();
-			//first line is the host upload time
-			String hostBoot = waitAndReturnLineFromTomcat("I/Vold",".*I/Vold\\s*\\(\\s*\\d*\\):\\s*Vold.*", 10 * 60 * 1000, 2000);
-			//priv boot animation finished
-			String privAnimatedFinish = waitAndReturnLineFromTomcat("Boot animation finished",".*\\(priv\\): Boot animation finished", 10 * 60 * 1000, 2000);
-			//Wait for Device with Encrypted Corp Persona to Turn Online
+			// first line is the host upload time
+			String hostBoot = waitAndReturnLineFromLogcat("I/Vold",
+					".*I/Vold\\s*\\(\\s*\\d*\\):\\s*Vold.*", 10 * 60 * 1000,
+					2000);
+			// priv boot animation finished
+			String privAnimatedFinish = waitAndReturnLineFromLogcat(
+					"Boot animation finished",
+					".*\\("+privName+"\\): Boot animation finished", 10 * 60 * 1000,
+					2000);
+			// Wait for Device with Encrypted Corp Persona to Turn Online
 			report.startLevel("Wait for Device with Encrypted Corp Persona to Turn Online");
-			validateDeviceIsOnline(currentTime, timeout, isEncrypted, isEncryptedPriv, personas);
+			validateDeviceIsOnline(currentTime, timeout, isEncrypted,
+					isEncryptedPriv, personas);
 			report.stopLevel();
-			//corp boot animation finished
-			String corpAnimatedFinish = waitAndReturnLineFromTomcat("Boot animation finished",".*\\(corp\\): Boot animation finished", 10 * 60 * 1000, 1000);
+			// corp boot animation finished
+			String corpAnimatedFinish = waitAndReturnLineFromLogcat(
+					"Boot animation finished",
+					".*\\("+corpName+"\\): Boot animation finished", 10 * 60 * 1000,
+					1000);
 			// get the date of host boot
-			Date hostBootTime = StaticUtils.getTimeFromLogcat(hostBoot, LOGCAT_TIME_FORMAT);
-			//get the date of corp animation finish time
-			Date corpAnimationFinishTime = StaticUtils.getTimeFromLogcat(corpAnimatedFinish, LOGCAT_TIME_FORMAT);
-			//get the date of priv animation finish time
-			Date privAnimationFinishTime = StaticUtils.getTimeFromLogcat(privAnimatedFinish, LOGCAT_TIME_FORMAT);
+			Date hostBootTime = StaticUtils.getTimeFromLogcat(hostBoot,
+					LOGCAT_TIME_FORMAT);
+			// get the date of corp animation finish time
+			Date corpAnimationFinishTime = StaticUtils.getTimeFromLogcat(
+					corpAnimatedFinish, LOGCAT_TIME_FORMAT);
+			// get the date of priv animation finish time
+			Date privAnimationFinishTime = StaticUtils.getTimeFromLogcat(
+					privAnimatedFinish, LOGCAT_TIME_FORMAT);
 			// get the duration between host and corp
-			long durationHostCorp = TimeUnit.MILLISECONDS.toSeconds(corpAnimationFinishTime.getTime() - hostBootTime.getTime());
+			long durationHostCorp = TimeUnit.MILLISECONDS
+					.toSeconds(corpAnimationFinishTime.getTime()
+							- hostBootTime.getTime());
 			// get the duration between host and priv
-			long durationHostPriv = TimeUnit.MILLISECONDS.toSeconds(privAnimationFinishTime.getTime() - hostBootTime.getTime());
-			//report to Summary
-			Summary.getInstance().setProperty("hostCorpDuration", ""+durationHostCorp);
-			Summary.getInstance().setProperty("hostPrivDuration", ""+durationHostPriv);
-			//analyze and report
-			if (durationHostCorp>expectedDurationHostCorp){
-				report.report("Duration Between Boot and Corp Animation Finish Time was "+durationHostCorp+" sec. and not "+expectedDurationHostCorp+" sec. as Expected",false);
-			}else{
-				report.report("Duration Between Boot and Corp Animation Finish Time was "+durationHostCorp+" sec. as Expected");
+			long durationHostPriv = TimeUnit.MILLISECONDS
+					.toSeconds(privAnimationFinishTime.getTime()
+							- hostBootTime.getTime());
+			// report to Summary
+			Summary.getInstance().setProperty("hostCorpDuration",
+					"" + durationHostCorp);
+			Summary.getInstance().setProperty("hostPrivDuration",
+					"" + durationHostPriv);
+			// analyze and report
+			if (durationHostCorp > expectedDurationHostCorp) {
+				report.report(
+						"Duration Between Boot and Corp Animation Finish Time was "
+								+ durationHostCorp + " sec. and not "
+								+ expectedDurationHostCorp
+								+ " sec. as Expected", false);
+			} else {
+				report.report("Duration Between Boot and Corp Animation Finish Time was "
+						+ durationHostCorp + " sec. as Expected");
 			}
-			if (durationHostPriv>expectedDurationHostPriv){
-				report.report("Duration Between Boot and Priv Animation Finish Time was "+durationHostPriv+" sec. and not "+expectedDurationHostPriv+" sec. as Expected",false);
-			}else{
-				report.report("Duration Between Boot and Priv Animation Finish Time was "+durationHostPriv+" sec. as Expected");
+			if (durationHostPriv > expectedDurationHostPriv) {
+				report.report(
+						"Duration Between Boot and Priv Animation Finish Time was "
+								+ durationHostPriv + " sec. and not "
+								+ expectedDurationHostPriv
+								+ " sec. as Expected", false);
+			} else {
+				report.report("Duration Between Boot and Priv Animation Finish Time was "
+						+ durationHostPriv + " sec. as Expected");
 			}
 		} catch (Exception e) {
 		}
@@ -816,7 +922,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	/**
 	 * Reboot Recovery the device, waits until personas are up
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 * 
 	 * @throws TimeoutException
 	 *             in case of timeout on the connection.
@@ -824,8 +931,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *             if adb rejects the command
 	 * @throws IOException
 	 */
-	
-	public void reportNewVersion() throws Exception{ //added by Igor 05.05.15
+
+	public void reportNewVersion() throws Exception { // added by Igor 05.05.15
 		report.report("Adding version ID to summary");
 		String prop1 = null;
 		cli.connect();
@@ -835,17 +942,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 		prop1 = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_display_id", prop1);// propToParse.split(":")[1].trim());
 	}
-	public boolean rebootRecoveryDevice(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+
+	public boolean rebootRecoveryDevice(boolean isEncrypted,
+			boolean isEncryptedPriv, Persona... personas) throws Exception {
 		sync();
 		device.executeShellCommand("reboot recovery");
 		report.report("reboot recovery command was sent");
 		Thread.sleep(60000);
-		boolean isUp = validateDeviceIsOnline(isEncrypted, isEncryptedPriv, personas);
+		boolean isUp = validateDeviceIsOnline(isEncrypted, isEncryptedPriv,
+				personas);
 		// device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		upTime = getCurrentUpTime();
 		setPsString(getPs());
-		
-		//Add version name after OTA is done
+
+		// Add version name after OTA is done
 		report.report("Adding version ID to summary");
 		String prop1 = null;
 		cli.connect();
@@ -855,7 +965,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		prop1 = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_display_id", prop1);// propToParse.split(":")[1].trim());
 		//
-		
+
 		return isUp;
 	}
 
@@ -869,15 +979,19 @@ public class CellRoxDevice extends SystemObjectImpl {
 		return device.executeShellCommand(shellCommand);
 	}
 
-	public boolean validateDeviceIsOnline(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
-		return validateDeviceIsOnline(System.currentTimeMillis(), 10 * 60 * 1000, isEncrypted, isEncryptedPriv, personas);
+	public boolean validateDeviceIsOnline(boolean isEncrypted,
+			boolean isEncryptedPriv, Persona... personas) throws Exception {
+		return validateDeviceIsOnline(System.currentTimeMillis(),
+				10 * 60 * 1000, isEncrypted, isEncryptedPriv, personas);
 	}
 
 	// TODO to add isEncryptedPriv do something
-	public boolean validateDeviceIsOnline(long beginTime, int timeout, boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+	public boolean validateDeviceIsOnline(long beginTime, int timeout,
+			boolean isEncrypted, boolean isEncryptedPriv, Persona... personas)
+			throws Exception {
 		// validateDeviceIsOffline(personas);
 		Thread.sleep(60000);
-		
+
 		device = adbController.waitForDeviceToConnect(getDeviceSerial());
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
@@ -936,20 +1050,25 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * 
 	 * @throws Exception
 	 * */
-	public void validateDeviceCanBeRoot(boolean isEncrypted, boolean isEncryptedPriv, Persona... personas) throws Exception {
+	public void validateDeviceCanBeRoot(boolean isEncrypted,
+			boolean isEncryptedPriv, Persona... personas) throws Exception {
 
 		cli.connect();
 		Thread.sleep(2000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		String rootAnswer = cli.getTestAgainstObject().toString();
-		if (!rootAnswer.contains("adbd cannot run as root in production builds")) {
-			report.report("Device : " + this.getDeviceSerial() + " is root now.");
+		if (!rootAnswer
+				.contains("adbd cannot run as root in production builds")) {
+			report.report("Device : " + this.getDeviceSerial()
+					+ " is root now.");
 		} else {
-			report("adbd cannot run as root in production builds for : " + this.getDeviceSerial() + " , going to reboot.", Reporter.WARNING);
+			report("adbd cannot run as root in production builds for : "
+					+ this.getDeviceSerial() + " , going to reboot.",
+					Reporter.WARNING);
 			rebootDevice(isEncrypted, isEncryptedPriv, personas);
 			configureDeviceForAutomation(true);
 			connectToServers();
-			Persona persona = Persona.CORP;
+			Persona persona = Persona.corp;
 			getPersona(persona).wakeUp();
 			switchPersona(persona);
 			getPersona(persona).click(new Selector().setText("1"));
@@ -959,13 +1078,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 			getPersona(persona).click(new Selector().setDescription("Enter"));
 			getPersona(persona).pressKey("home");
 
-			switchPersona(Persona.PRIV);
+			switchPersona(Persona.priv);
 			cli.connect();
 			Thread.sleep(2000);
 			executeCliCommand("adb -s " + getDeviceSerial() + " root");
 			rootAnswer = cli.getTestAgainstObject().toString();
-			if (rootAnswer.contains("adbd cannot run as root in production builds")) {
-				report.report("Device : " + this.getDeviceSerial() + " is not root for the seconed time- check this, the tests are going to fall.",
+			if (rootAnswer
+					.contains("adbd cannot run as root in production builds")) {
+				report.report(
+						"Device : "
+								+ this.getDeviceSerial()
+								+ " is not root for the seconed time- check this, the tests are going to fall.",
 						Reporter.FAIL);
 			}
 		}
@@ -990,7 +1113,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 					continue;
 				}
 				for (Persona persona : personas) {
-					if (result.contains(persona.toString())) {
+					if (result.contains(getPersonaName(persona))) {
 						found++;
 					}
 
@@ -1014,7 +1137,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param personas
 	 * @throws Exception
 	 */
-	public boolean validatePersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+	public boolean validatePersonasAreOnline(long beginTime, int timeout,
+			Persona... personas) throws Exception {
 		String result = null;
 		int found = 0;
 		report.startLevel("Validating Device is Online");
@@ -1023,7 +1147,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 			if (timeout < System.currentTimeMillis() - beginTime) {
 				report.stopLevel();
-				report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
+				report.report(
+						"Fail due to timeout in validating the personas are on.",
+						Reporter.FAIL);
 				return false;
 			}
 			try {
@@ -1036,7 +1162,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 				continue;
 			}
 			for (Persona persona : personas) {
-				if (result.contains(persona.toString() + " (3)")) {
+				if (result.contains(getPersonaName(persona) + " (3)")) {
 					found++;
 				}
 			}
@@ -1048,7 +1174,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 		report.setSilent(false);
 		report.stopLevel();
-		report.report("device is online, its took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000 + " seconds.");
+		report.report("device is online, its took : "
+				+ ((float) (System.currentTimeMillis() - beginTime)) / 1000
+				+ " seconds.");
 		Thread.sleep(7000);
 		return true;
 	}
@@ -1059,7 +1187,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param personas
 	 * @throws Exception
 	 */
-	public void validateEncryptedCorpPersonasAreOnline(long beginTime, int timeout, Persona... personas) throws Exception {
+	public void validateEncryptedCorpPersonasAreOnline(long beginTime,
+			int timeout, Persona... personas) throws Exception {
 		Thread.sleep(60000);
 		report.report("about to connect to  CLI after reboot recovery");
 		cli.connect();
@@ -1073,7 +1202,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 			Thread.sleep(800);
 			if (timeout < System.currentTimeMillis() - beginTime) {
 				report.stopLevel();
-				report.report("Fail due to timeout in validating the personas are on.", Reporter.FAIL);
+				report.report(
+						"Fail due to timeout in validating the personas are on.",
+						Reporter.FAIL);
 				return;
 			}
 
@@ -1093,7 +1224,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 		report.setSilent(false);
 		report.stopLevel();
-		report.report("device is online, it took : " + ((float) (System.currentTimeMillis() - beginTime)) / 1000 + " seconds.");
+		report.report("device is online, it took : "
+				+ ((float) (System.currentTimeMillis() - beginTime)) / 1000
+				+ " seconds.");
 		Thread.sleep(2000);
 	}
 
@@ -1116,7 +1249,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 			return false;
 		}
 		for (Persona persona : personas) {
-			if (result.contains(persona.toString())) {
+			if (result.contains(getPersonaName(persona))) {
 				found++;
 			}
 		}
@@ -1150,11 +1283,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 *            file name on the device
 	 * @throws Exception
 	 */
-	public void pushFileToDevice(String localLocation, String remotefileLocation) throws Exception {
+	public void pushFileToDevice(String localLocation, String remotefileLocation)
+			throws Exception {
 		try {
 			device.pushFileToDevice(remotefileLocation, localLocation);
 		} catch (Exception e) {
-			report.report("Error while pushing the file " + localLocation + " to " + remotefileLocation + e.getMessage(), Reporter.FAIL);
+			report.report("Error while pushing the file " + localLocation
+					+ " to " + remotefileLocation + e.getMessage(),
+					Reporter.FAIL);
 		}
 	}
 
@@ -1174,11 +1310,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @see FileListingService.FileEntry
 	 * @see #getNullProgressMonitor()
 	 */
-	public void pullFileFromDevice(String remoteFilepath, String localFilename) throws Exception {
+	public void pullFileFromDevice(String remoteFilepath, String localFilename)
+			throws Exception {
 		try {
 			device.pullFileFromDevice(remoteFilepath, localFilename);
 		} catch (Exception e) {
-			throw new Exception("Error while pulling the file " + remoteFilepath + " to " + localFilename + "\n" + e.getMessage());
+			throw new Exception("Error while pulling the file "
+					+ remoteFilepath + " to " + localFilename + "\n"
+					+ e.getMessage());
 		}
 	}
 
@@ -1190,7 +1329,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param remotePort
 	 * @throws Exception
 	 */
-	public void setPortForwarding(int localPort, int remotePort) throws Exception {
+	public void setPortForwarding(int localPort, int remotePort)
+			throws Exception {
 		device.setPortForwarding(localPort, remotePort);
 	}
 
@@ -1210,10 +1350,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.connect();
 		executeCliCommand("adb -s " + deviceSerial + " shell");
 		executeCliCommand("ps > /data/local/tmp/ps.txt", true, 4 * 60 * 1000);
-		pullFileFromDevice("/data/local/tmp/ps.txt", report.getCurrentTestFolder() + "/ps.txt");
+		pullFileFromDevice("/data/local/tmp/ps.txt",
+				report.getCurrentTestFolder() + "/ps.txt");
 		report.addLink("Click Here for PS List", "ps.txt");
 		getPsInitPrivCorp(isInit);
-		String psList = FileUtils.read(report.getCurrentTestFolder() + "/ps.txt");
+		String psList = FileUtils.read(report.getCurrentTestFolder()
+				+ "/ps.txt");
 		return psList.toString().split("com.android.phone")[0];
 	}
 
@@ -1223,7 +1365,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * processes ids
 	 * */
 
-	public Map<Persona, Integer> getPsInitPrivCorp(boolean initVars) throws Exception {
+	public Map<Persona, Integer> getPsInitPrivCorp(boolean initVars)
+			throws Exception {
 		int privId = -2, corpId = -2;
 		report.startLevel("Getting Personas PID");
 		Map<Persona, Integer> mapOfProcessLocal = new HashMap<Persona, Integer>();
@@ -1234,18 +1377,22 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + deviceSerial + " shell");
 
 		executeCliCommand("cell list");
-		String[] retAnswerArr = cli.getTestAgainstObject().toString().trim().split("\n");
+		String[] retAnswerArr = cli.getTestAgainstObject().toString().trim()
+				.split("\n");
 		for (String retAnswer : retAnswerArr) {
-			if (retAnswer.contains("priv")) {
-				privId = Integer.valueOf(retAnswer.replace("priv", "").replace("(", "").replace(")", "").trim());
+			if (retAnswer.contains(privName)) {
+				privId = Integer.valueOf(retAnswer.replace(privName, "")
+						.replace("(", "").replace(")", "").trim());
 			}
-			if (retAnswer.contains("corp")) {
-				corpId = Integer.valueOf(retAnswer.replace("corp", "").replace("(", "").replace(")", "").trim());
+			if (retAnswer.contains(corpName)) {
+				corpId = Integer.valueOf(retAnswer.replace(corpName, "")
+						.replace("(", "").replace(")", "").trim());
 			}
 		}
 
 		executeCliCommand("ps | grep /init");
-		String[] retStringArr = cli.getTestAgainstObject().toString().split("\n");
+		String[] retStringArr = cli.getTestAgainstObject().toString()
+				.split("\n");
 		String expectedLine = "root\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\d*)\\s*(\\S*)\\s*(\\S*)\\s*S\\s*";
 		int counterOfPersonas = 0;
 		for (String retLine : retStringArr) {
@@ -1259,17 +1406,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 				if (localId == privId) {
 					report.report("Priv PID: " + localId);
 					if (initVars) {
-						personaProcessIdMap.put(Persona.PRIV, localId);
+						personaProcessIdMap.put(Persona.priv, localId);
 					} else {
-						mapOfProcessLocal.put(Persona.PRIV, localId);
+						mapOfProcessLocal.put(Persona.priv, localId);
 					}
 				} else if (localId == corpId) {
 					System.out.println("");
 					report.report("Corp PID: " + localId);
 					if (initVars) {
-						personaProcessIdMap.put(Persona.CORP, localId);
+						personaProcessIdMap.put(Persona.corp, localId);
 					} else {
-						mapOfProcessLocal.put(Persona.CORP, localId);
+						mapOfProcessLocal.put(Persona.corp, localId);
 					}
 				}
 			}
@@ -1281,7 +1428,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	/**
 	 * This function check or uncheck all the checkboxes in the screen
 	 * */
-	public void checkUncheckAllCheckBoxes(Persona persona, State isCheck) throws UiObjectNotFoundException {
+	public void checkUncheckAllCheckBoxes(Persona persona, State isCheck)
+			throws UiObjectNotFoundException {
 
 		try {
 			String object;
@@ -1292,7 +1440,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 			while (true) {
 				try {
-					object = getPersona(persona).getUiObject(new Selector().setClassName("android.widget.CheckBox").setChecked(action).setEnabled(true));
+					object = getPersona(persona).getUiObject(
+							new Selector()
+									.setClassName("android.widget.CheckBox")
+									.setChecked(action).setEnabled(true));
 				} catch (Exception e) {
 					break;
 				}
@@ -1305,7 +1456,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 				clickOnSelectorByUi(object, persona);
 			}
 		} catch (Exception e) {
-			System.out.println("Exception nothing really happened, i waited for it.");
+			System.out
+					.println("Exception nothing really happened, i waited for it.");
 		}
 	}
 
@@ -1351,16 +1503,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (map1.equals(map2)) {
 			return true;
 		} else {
-			report.startLevel("Process Diffrencess",EnumReportLevel.MainFrame);
-			report.report("The Following processes could not be found:",report.FAIL);
+			report.startLevel("Process Diffrencess", EnumReportLevel.MainFrame);
+			report.report("The Following processes could not be found:",
+					report.FAIL);
 			for (Entry<String, String> entery : map1.entrySet()) {
 				if (!map2.containsKey(entery.getKey())) {
 					report.report(entery.getKey() + "," + entery.getValue());
 				}
 			}
-			report.report("PS Map Before Fail : ",ReportAttribute.BOLD);
+			report.report("PS Map Before Fail : ", ReportAttribute.BOLD);
 			printMap(map1);
-			report.report("PS Map After Fail : ",ReportAttribute.BOLD);
+			report.report("PS Map After Fail : ", ReportAttribute.BOLD);
 			printMap(map2);
 			report.stopLevel();
 			return false;
@@ -1378,7 +1531,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * Open logcat termianl that print it all the logcat
 	 * */
 	public void openLogcatTerminal() throws IOException {
-		String[] cmdss1 = { "gnome-terminal", "-x", "adb", "-s", deviceSerial, "logcat", "-v", "pidns" };
+		String[] cmdss1 = { "gnome-terminal", "-x", "adb", "-s", deviceSerial,
+				LOG_COMMAND, "-v", "pidns" };
 		/* Process proc = */Runtime.getRuntime().exec(cmdss1, null);
 	}
 
@@ -1388,7 +1542,10 @@ public class CellRoxDevice extends SystemObjectImpl {
 		report.report("Device is online");
 		setPortForwarding(privePort, privePort);
 		// connect client to server
-		uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
+		uiClient.add(
+				Persona.priv.ordinal(),
+				DeviceClient.getUiAutomatorClient("http://localhost:"
+						+ privePort));
 	}
 
 	/**
@@ -1406,33 +1563,50 @@ public class CellRoxDevice extends SystemObjectImpl {
 		setPortForwarding(privePort, privePort);
 		setPortForwarding(corpPort, corpPort);
 		// connect client to server
-		uiClient.add(Persona.PRIV.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + privePort));
-		uiClient.add(Persona.CORP.ordinal(), DeviceClient.getUiAutomatorClient("http://localhost:" + corpPort));
+		uiClient.add(
+				Persona.priv.ordinal(),
+				DeviceClient.getUiAutomatorClient("http://localhost:"
+						+ privePort));
+		uiClient.add(
+				Persona.corp.ordinal(),
+				DeviceClient.getUiAutomatorClient("http://localhost:"
+						+ corpPort));
 		addWatchers();
 
 	}
 
 	private void addWatchers() throws Exception {
 		// addding watcher for unxpected stopped application on priv
-		uiClient.get(Persona.PRIV.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP",
-				new Selector[] { new Selector().setTextContains("Unfortunately") }, new Selector().setText("OK"));
+		uiClient.get(Persona.priv.ordinal()).registerClickUiObjectWatcher(
+				"CLICK_UNEXPEXTED_STOP",
+				new Selector[] { new Selector()
+						.setTextContains("Unfortunately") },
+				new Selector().setText("OK"));
 
 		// addding watcher for unxpected stopped application on corp
-		uiClient.get(Persona.CORP.ordinal()).registerClickUiObjectWatcher("CLICK_UNEXPEXTED_STOP",
-				new Selector[] { new Selector().setTextContains("Unfortunately") }, new Selector().setText("OK"));
+		uiClient.get(Persona.corp.ordinal()).registerClickUiObjectWatcher(
+				"CLICK_UNEXPEXTED_STOP",
+				new Selector[] { new Selector()
+						.setTextContains("Unfortunately") },
+				new Selector().setText("OK"));
 
 		// adding launcher selection watcher for priv
-		uiClient.get(Persona.PRIV.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION",
+		uiClient.get(Persona.priv.ordinal()).registerClickMultiUiObjectWatcher(
+				"LAUNCHER_SELECTION",
 				new Selector[] { new Selector().setText("Select a home app") },
-				new Selector[] { new Selector().setTextMatches("Launcher"), new Selector().setText("Always") });
+				new Selector[] { new Selector().setTextMatches("Launcher"),
+						new Selector().setText("Always") });
 
 		// adding launcher selection watcher for corp
-		uiClient.get(Persona.CORP.ordinal()).registerClickMultiUiObjectWatcher("LAUNCHER_SELECTION",
+		uiClient.get(Persona.corp.ordinal()).registerClickMultiUiObjectWatcher(
+				"LAUNCHER_SELECTION",
 				new Selector[] { new Selector().setText("Select a home app") },
-				new Selector[] { new Selector().setText("Launcher").setIndex(1), new Selector().setText("Always") });
+				new Selector[] {
+						new Selector().setText("Launcher").setIndex(1),
+						new Selector().setText("Always") });
 
-		uiClient.get(Persona.PRIV.ordinal()).runWatchers();
-		uiClient.get(Persona.CORP.ordinal()).runWatchers();
+		uiClient.get(Persona.priv.ordinal()).runWatchers();
+		uiClient.get(Persona.corp.ordinal()).runWatchers();
 
 	}
 
@@ -1443,30 +1617,37 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @throws Exception
 	 */
 	public Persona getForegroundPersona() throws Exception {
-		String type = device.executeShellCommand("getprop ro.build.version.release");
-		if(type.contains("4.4.2")){ //added by Igor 05.08		
-		String output = device.executeShellCommand("cat /proc/dev_ns/ns_tag"); 
-		FindText findText = new FindText("tag:\\s*(.*)", true, false, 2);
-		findText.setTestAgainst(output);
-		findText.analyze();
-		String perona = findText.getCounter();		
-		return Persona.valueOf(perona.toUpperCase().trim()); //added by Igor 05.08		
-		}		
-		String output = device.executeShellCommand("cell list|grep -f /proc/dev_ns/active_ns_pid|awk -F'(' '{print $1}'");
-		String perona = output;
-		return Persona.valueOf(perona.toUpperCase().trim());//added by Igor 05.08	
+		String persona = null;
+		String type = device
+				.executeShellCommand("getprop ro.build.version.release");
+		if (type.contains("4.4.2")) { // added by Igor 05.08
+			String output = device
+					.executeShellCommand("cat /proc/dev_ns/ns_tag");
+			FindText findText = new FindText("tag:\\s*(.*)", true, false, 2);
+			findText.setTestAgainst(output);
+			findText.analyze();
+			persona = findText.getCounter();
+			
+		}else{
+		persona = device
+				.executeShellCommand("cell list|grep -f /proc/dev_ns/active_ns_pid|awk -F'(' '{print $1}'");
+		}
 		
+		return personaEnum.get(persona.trim()); // added by Igor 05.08
+
 	}
 
 	/**
 	 * init logs (logcat, radio, kmsg)
 	 */
 	public void initLogs() throws Exception {
-		report.report("Clear and Start Recording All Logs",ReportAttribute.BOLD);
+		report.report("Clear and Start Recording All Logs",
+				ReportAttribute.BOLD);
 		cli.connect();
-		
-		//executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c", true);
-		
+
+		// executeCliCommand("adb -s " + getDeviceSerial() + " logcat -c",
+		// true);
+
 		logManager.populateLogManager();
 		logManager.startWritingAllLogs();
 	}
@@ -1475,9 +1656,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * get logs (logcat , logcat-radio, kmsg)
 	 */
 	public void getLogs(LogParser parser) throws Exception {
-		
+
 		logManager.stopWritingAllLogs(parser);
-		
+
 	}
 
 	/**
@@ -1485,33 +1666,44 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * 
 	 * @throws Exception
 	 */
-	public void getLogsOfRun(LogParser parser, boolean kmsgSearch, boolean logcatSearch) throws Exception {
-		// these line did not work with jenkins... 
-		//String userHome = "";//System.getProperty("user.home");
+	public void getLogsOfRun(LogParser parser, boolean kmsgSearch,
+			boolean logcatSearch) throws Exception {
+		// these line did not work with jenkins...
+		// String userHome = "";//System.getProperty("user.home");
 		// get the files
-		//device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", userHome + "/system_kmsg.txt");
-		//device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", userHome + "/system_logcat-radio.txt");
-		//device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", userHome + "/system_logcat.txt");
-		
-		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt", "system_kmsg.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt", "system_logcat-radio.txt");
-		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt", "system_logcat.txt");
-		
-		File logcat = new File("system_logcat.txt");//(userHome + "/system_logcat.txt");
-		File kmsg = new File("system_kmsg.txt");//(userHome + "/system_kmsg.txt");
-		File radioLogcat = new File("system_logcat-radio.txt");//(userHome + "/system_logcat-radio.txt");
+		// device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt",
+		// userHome + "/system_kmsg.txt");
+		// device.pullFileFromDevice("/data/agent/syslogs/system_logcat-radio.txt",
+		// userHome + "/system_logcat-radio.txt");
+		// device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt",
+		// userHome + "/system_logcat.txt");
+
+		device.pullFileFromDevice("/data/agent/syslogs/system_kmsg.txt",
+				"system_kmsg.txt");
+		device.pullFileFromDevice(
+				"/data/agent/syslogs/system_logcat-radio.txt",
+				"system_logcat-radio.txt");
+		device.pullFileFromDevice("/data/agent/syslogs/system_logcat.txt",
+				"system_logcat.txt");
+
+		File logcat = new File("system_logcat.txt");// (userHome +
+													// "/system_logcat.txt");
+		File kmsg = new File("system_kmsg.txt");// (userHome +
+												// "/system_kmsg.txt");
+		File radioLogcat = new File("system_logcat-radio.txt");// (userHome +
+																// "/system_logcat-radio.txt");
 		// set logs to validate
 
 		if (kmsgSearch && logcatSearch) {
-			//parser.setLogs(logcat, kmsg);
-			parser.addLogFile("logcat", logcat);
+			// parser.setLogs(logcat, kmsg);
+			parser.addLogFile(LOG_COMMAND, logcat);
 			parser.addLogFile("kmsg", kmsg);
 		} else if (kmsgSearch) {
-//			parser.setLogs(kmsg);
+			// parser.setLogs(kmsg);
 			parser.addLogFile("kmsg", kmsg);
 		} else {
-//			parser.setLogs(logcat);
-			parser.addLogFile("logcat", logcat);
+			// parser.setLogs(logcat);
+			parser.addLogFile(LOG_COMMAND, logcat);
 		}
 		parser.validateLogs();
 		// delete all logs locally
@@ -1539,7 +1731,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		executeCliCommand("ps | grep uiautomator");
-		String retPs = cli.getTestAgainstObject().toString().replace("ps | grep uiautomator", "");
+		String retPs = cli.getTestAgainstObject().toString()
+				.replace("ps | grep uiautomator", "");
 		if (retPs.split("uiautomator").length != 3) {
 			report.report("The uiautomator not connect.");
 			report.report("About to configure new device for the automation and to connect to the servers.");
@@ -1566,20 +1759,28 @@ public class CellRoxDevice extends SystemObjectImpl {
 		for (int i = 0; i < numberOfRootAttempts; i++) {
 			executeCliCommand("adb -s " + getDeviceSerial() + " root", true);
 			retString = cli.getTestAgainstObject().toString();
-			if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found")
-					|| retString.contains("adbd cannot run as root in production builds")) {
-				executeCliCommand("adb -s " + getDeviceSerial() + " kill-server");
+			if (retString.contains("error: device unauthorized.")
+					|| retString.contains("offline")
+					|| retString.contains("device not found")
+					|| retString
+							.contains("adbd cannot run as root in production builds")) {
+				executeCliCommand("adb -s " + getDeviceSerial()
+						+ " kill-server");
 			} else {
 				if (retString.contains("?????")) {
 					cli.disconnect();
-					throw new Exception("error: device is ?????, couldn't make adb root.");
+					throw new Exception(
+							"error: device is ?????, couldn't make adb root.");
 				} else {
 					break;
 				}
 			}
 		}
-		if (retString.contains("error: device unauthorized.") || retString.contains("offline") || retString.contains("device not found")
-				|| retString.contains("adbd cannot run as root in production builds")) {
+		if (retString.contains("error: device unauthorized.")
+				|| retString.contains("offline")
+				|| retString.contains("device not found")
+				|| retString
+						.contains("adbd cannot run as root in production builds")) {
 			cli.disconnect();
 			throw new Exception("adb error, couldn't make adb root.");
 		}
@@ -1587,12 +1788,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.disconnect();
 	}
 
-	public String uploadRomOldServer(String serverHost, String imgFile, String version, String adminToken, String md5sum) throws Exception {
+	public String uploadRomOldServer(String serverHost, String imgFile,
+			String version, String adminToken, String md5sum) throws Exception {
 		cli.connect();
 		CliCommand cmd = new CliCommand();
 		cmd.setCommand(String
 				.format("curl -i -k -H \"Accept: application/json\" -F \"auth_token=%s\" -F \"rom[version]=%s\" -F \"rom[argument_attributes][attachment]=@%s\" -F \"rom[argument_attributes][md5]=%s\" https://%s/roms | tee /tmp/upload.result | tail -1 | sed 's/,/\\\"/g' | sed 's/://g' | awk -F\\\" '{ print $14\"/\"$10}'",
-						adminToken, version, imgFile, md5sum, serverHost).replace("\r\n", ""));
+						adminToken, version, imgFile, md5sum, serverHost)
+				.replace("\r\n", ""));
 		// timeout up to 30 min.
 		cmd.setTimeout(1800000);
 		cli.handleCliCommand("Uploading image " + imgFile, cmd);
@@ -1609,15 +1812,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 		return result;
 	}
 
-	public String remoteUpdateOldServer(String result, String serverUrl, String deviceId, String md5, String fileSize, String version, String adminToken)
-			throws Exception {
+	public String remoteUpdateOldServer(String result, String serverUrl,
+			String deviceId, String md5, String fileSize, String version,
+			String adminToken) throws Exception {
 
-		String command = String.format("COMMAND DOWNLOAD %s %s %s %s", version, result, md5, fileSize);
+		String command = String.format("COMMAND DOWNLOAD %s %s %s %s", version,
+				result, md5, fileSize);
 		String description = "Remote Update " + version;
 		String date = getDate();
 		String remoteUpdateCmd = String
 				.format("curl -k -H \"Accept: application/json\" -X POST https://%s/devices/%s/messages.json -d \"auth_token=%s\" -d \"message[due_at]=%s\" -d \"message[payload]=%s\" -d \"message[description]=%s\" 2>&1 | tee post.result | tail -1 | sed 's/,/\\n/g' | sed 's/[{}]/\\n/g'\r\n",
-						serverUrl, deviceId, adminToken, date, command, description);
+						serverUrl, deviceId, adminToken, date, command,
+						description);
 		CliCommand cmd = new CliCommand(remoteUpdateCmd);
 		cmd.setTimeout(1800000);
 		cli.connect();
@@ -1638,7 +1844,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	public String md5sum(String fileName) throws Exception {
 		cli.connect();
-		CliCommand cmd = new CliCommand(String.format("echo -n R ; md5sum %s | awk '{print \"esult: \" $1}'", fileName));
+		CliCommand cmd = new CliCommand(String.format(
+				"echo -n R ; md5sum %s | awk '{print \"esult: \" $1}'",
+				fileName));
 		cmd.setSuppressEcho(true);
 		cmd.addErrors("No such file or directory");
 		cli.handleCliCommand("getting image file MD5SUM", cmd);
@@ -1661,39 +1869,46 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean waitForLineInTomcat(String line, long timeout, long interval) throws Exception {
+	public boolean waitForLineInLogcat(String line, long timeout, long interval)
+			throws Exception {
 		final long start = System.currentTimeMillis();
-		while (!getLogcatLastLines(500).contains(line)) {
+		String currentLog = "";
+		while (!currentLog.contains(line)) {
 			if (System.currentTimeMillis() - start > timeout) {
 				report.report("Could not find the line " + line, Reporter.FAIL);
 				return false;
 			}
 			Thread.sleep(interval);
+			currentLog = getLogcatLastLines(500);
 		}
-		String log = getLogcatLastLines(50).replace("\n", "<br>").replace(line, "<b>" + line + "</b>");
-		report.report("Click Here to See Logcat Result", log, ReportAttribute.HTML);
+		String log = currentLog.replace("\n", "<br>").replace(line,
+				"<b>" + line + "</b>");
+		report.report("Click Here to See Logcat Result", log,
+				ReportAttribute.HTML);
 		return true;
 	}
-	
+
 	/**
 	 * This fucntion will return the requested line
+	 * 
 	 * @param line
 	 * @param timeout
 	 * @param interval
 	 * @return
 	 * @throws Exception
 	 */
-	public String waitAndReturnLineFromTomcat(String filter, String line, long timeout, long interval) throws Exception {
+	public String waitAndReturnLineFromLogcat(String filter, String line,
+			long timeout, long interval) throws Exception {
 		final long start = System.currentTimeMillis();
 		String actualLine = "";
-		line = "("+line+")";
-		report.startLevel("Wait for "+line+" in Logcat");
+		line = "(" + line + ")";
+		report.startLevel("Wait for " + line + " in Logcat");
 		while (!actualLine.matches(line)) {
 			Pattern p = Pattern.compile(line);
 			Matcher m = p.matcher(actualLine);
-			if (m.find()){
+			if (m.find()) {
 				report.stopLevel();
-				report.report("Found in Logcat \""+m.group(1)+"\n");
+				report.report("Found in Logcat \"" + m.group(1) + "\n");
 				return m.group(1);
 			}
 			if (System.currentTimeMillis() - start > timeout) {
@@ -1701,14 +1916,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 				report.report("Could not find the line " + line, Reporter.FAIL);
 				return null;
 			}
-			executeCommandAdb(String.format("logcat -v time -d | grep \"%s\"", filter));
+			executeCommandAdb(String.format(LOG_COMMAND+" -v time -d | grep \"%s\"",
+					filter));
 			actualLine = cli.getTestAgainstObject().toString();
 			Thread.sleep(interval);
 		}
 		return null;
 	}
-	
-	
+
 	public void deleteFile(String file) throws Exception {
 		report.startLevel("Deleting File " + file);
 		cli.connect();
@@ -1737,7 +1952,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 */
 	private String getLogcatLastLines(int lines) throws Exception {
 		// logcat -v time -d | tail -n 10 | grep corp
-		String logcat = device.executeShellCommand(String.format("logcat -v time -d | tail -n %d", lines));
+		String logcat = device.executeShellCommand(String.format(
+				LOG_COMMAND+" -v time -d | tail -n %d", lines));
 		System.out.println(logcat);
 		return logcat;
 	}
@@ -1752,8 +1968,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param isRegularExpression
 	 *            - is this expression is a regular expression
 	 * */
-	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell, int numberOfTries)
-			throws Exception {
+	public void validateExpressionCliCommand(String cliCommand,
+			String expression, boolean isRegularExpression, boolean isShell,
+			int numberOfTries) throws Exception {
 		boolean isPass = false;
 		cli.connect();
 
@@ -1771,23 +1988,32 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 
 		if (!isPass) {
-			report.report("Couldn't find the text : " + expression, Reporter.FAIL);
+			report.report("Couldn't find the text : " + expression,
+					Reporter.FAIL);
 		}
 
 		cli.disconnect();
 
 	}
 
-	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, boolean isShell) throws Exception {
-		validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, 1);
+	public void validateExpressionCliCommand(String cliCommand,
+			String expression, boolean isRegularExpression, boolean isShell)
+			throws Exception {
+		validateExpressionCliCommand(cliCommand, expression,
+				isRegularExpression, true, 1);
 	}
 
-	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression) throws Exception {
-		validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, 1);
+	public void validateExpressionCliCommand(String cliCommand,
+			String expression, boolean isRegularExpression) throws Exception {
+		validateExpressionCliCommand(cliCommand, expression,
+				isRegularExpression, true, 1);
 	}
 
-	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, int numberOfTries) throws Exception {
-		validateExpressionCliCommand(cliCommand, expression, isRegularExpression, true, numberOfTries);
+	public void validateExpressionCliCommand(String cliCommand,
+			String expression, boolean isRegularExpression, int numberOfTries)
+			throws Exception {
+		validateExpressionCliCommand(cliCommand, expression,
+				isRegularExpression, true, numberOfTries);
 	}
 
 	/**
@@ -1802,7 +2028,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @param persona
 	 *            - the cell console and the wanted persona
 	 * */
-	public void validateExpressionCliCommand(String cliCommand, String expression, boolean isRegularExpression, Persona persona) throws Exception {
+	public void validateExpressionCliCommand(String cliCommand,
+			String expression, boolean isRegularExpression, Persona persona)
+			throws Exception {
 
 		try {
 			report.report(cliCommand);
@@ -1816,10 +2044,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 				if (matcher.find())
 					report.report("Find : " + expression + " in : " + responce);
 				else
-					report.report("Couldnt find : " + expression + " in : " + responce, Reporter.FAIL);
+					report.report("Couldnt find : " + expression + " in : "
+							+ responce, Reporter.FAIL);
 			} else {
 				if (!responce.contains(expression))
-					report.report("Couldnt find : " + expression + " in : " + responce, Reporter.FAIL);
+					report.report("Couldnt find : " + expression + " in : "
+							+ responce, Reporter.FAIL);
 				else
 					report.report("Find : " + expression + " in : " + responce);
 			}
@@ -1829,16 +2059,17 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	}
 
-	public void validateExpressionCliCommandCell(String cliCommand, boolean isRegularExpression, Persona persona, int numberOfTries, String[] expressions)
-			throws Exception {
+	public void validateExpressionCliCommandCell(String cliCommand,
+			boolean isRegularExpression, Persona persona, int numberOfTries,
+			String[] expressions) throws Exception {
 		boolean isPass = false;
 
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-		if (persona == Persona.PRIV) {
-			executeCliCommand("cell console priv");
+		if (persona == Persona.priv) {
+			executeCliCommand("cell console "+privName);
 		} else {
-			executeCliCommand("cell console corp");
+			executeCliCommand("cell console "+corpName);
 		}
 		executeCliCommand(" ");
 		executeCliCommand(" ");
@@ -1849,7 +2080,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		while (numberOfTries > 0 && !isPass) {
 			for (String expression : expressions) {
 				executeCliCommand(cliCommand);
-				FindText findText = new FindText(expression, isRegularExpression);
+				FindText findText = new FindText(expression,
+						isRegularExpression);
 				findText.setTestAgainst(cli.getTestAgainstObject());
 				findText.analyze();
 				if (findText.getStatus()) {
@@ -1867,22 +2099,31 @@ public class CellRoxDevice extends SystemObjectImpl {
 			for (String expression : expressions) {
 				longExpression.append(expression + ", ");
 			}
-			report.report("Couldn't find the texts : " + longExpression, Reporter.FAIL);
+			report.report("Couldn't find the texts : " + longExpression,
+					Reporter.FAIL);
 		}
 		cli.disconnect();
 
 	}
-	
-	public void executeCommandLocalCli(String cmd) throws Exception { //added by Igor 19.11  (to CellRoxDevice)
-        cli.connect();
-        Runtime.getRuntime().exec(cmd);
-        executeCliCommand(cmd);
-    }    //added by Igor 19.11
 
-	public void pushApplication(String appFullPath, String locationForPushing) throws Exception {
+	public void executeCommandLocalCli(String cmd) throws Exception { // added
+																		// by
+																		// Igor
+																		// 19.11
+																		// (to
+																		// CellRoxDevice)
 		cli.connect();
-		report.report("about to do : adb -s " + getDeviceSerial() + " push " + appFullPath + " " + locationForPushing);
-		executeCliCommand("adb -s " + getDeviceSerial() + " push " + appFullPath + " " + locationForPushing);
+		Runtime.getRuntime().exec(cmd);
+		executeCliCommand(cmd);
+	} // added by Igor 19.11
+
+	public void pushApplication(String appFullPath, String locationForPushing)
+			throws Exception {
+		cli.connect();
+		report.report("about to do : adb -s " + getDeviceSerial() + " push "
+				+ appFullPath + " " + locationForPushing);
+		executeCliCommand("adb -s " + getDeviceSerial() + " push "
+				+ appFullPath + " " + locationForPushing);
 		cli.disconnect();
 	}
 
@@ -1891,16 +2132,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 		Thread.sleep(500);
 	}
 
-	private void executeCliCommand(String Command, boolean silent) throws Exception {
+	private void executeCliCommand(String Command, boolean silent)
+			throws Exception {
 		executeCliCommand(Command, silent, defaultCliTimeout);
 	}
 
-	private void executeCliCommand(String Command, boolean silent, long timeout) throws Exception {
+	private void executeCliCommand(String Command, boolean silent, long timeout)
+			throws Exception {
 		executeCliCommand(Command, silent, defaultCliTimeout, false, 2);
 	}
 
-	private void executeCliCommand(String Command, boolean silent, long timeout, boolean ignoreErrors, int numOfTries) throws Exception {
-		if (!cli.isConnected()){
+	private void executeCliCommand(String Command, boolean silent,
+			long timeout, boolean ignoreErrors, int numOfTries)
+			throws Exception {
+		if (!cli.isConnected()) {
 			cli.connect();
 		}
 		CliCommand cmd = new CliCommand(Command);
@@ -1912,7 +2157,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// this part is for checking if the adb is down, if so it will restart
 		// the connection
 		/** TODO if offline etc. status repets - add here the retrys **/
-		if (cli.getTestAgainstObject().toString().contains("error: protocol fault (no status)")) { 
+		if (cli.getTestAgainstObject().toString()
+				.contains("error: protocol fault (no status)")) {
 			if (numOfTries > 1) {
 				cli.connect();
 				cmd = new CliCommand("adb kill-server");
@@ -1933,20 +2179,27 @@ public class CellRoxDevice extends SystemObjectImpl {
 	/**
 	 * The following functions click on the button by the x y cordinate
 	 * */
-	public void clickOnSelectorByUi(ObjInfo info, Persona persona, Direction dir) throws UiObjectNotFoundException {
+	public void clickOnSelectorByUi(ObjInfo info, Persona persona, Direction dir)
+			throws UiObjectNotFoundException {
 		int horizon = -9, vertical = -3;
 		if (dir == null) {
-			horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
-			vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+			horizon = (info.getVisibleBounds().getRight() + info
+					.getVisibleBounds().getLeft()) / 2;
+			vertical = (info.getVisibleBounds().getTop() + info
+					.getVisibleBounds().getBottom()) / 2;
 		} else if (dir.equals(Direction.MIDDLE)) {
-			horizon = (info.getVisibleBounds().getRight() + info.getVisibleBounds().getLeft()) / 2;
-			vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+			horizon = (info.getVisibleBounds().getRight() + info
+					.getVisibleBounds().getLeft()) / 2;
+			vertical = (info.getVisibleBounds().getTop() + info
+					.getVisibleBounds().getBottom()) / 2;
 		} else if (dir.equals(Direction.LEFT)) {
 			horizon = info.getVisibleBounds().getLeft();
-			vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+			vertical = (info.getVisibleBounds().getTop() + info
+					.getVisibleBounds().getBottom()) / 2;
 		} else if (dir.equals(Direction.RIGHT)) {
 			horizon = info.getVisibleBounds().getRight() - 1;
-			vertical = (info.getVisibleBounds().getTop() + info.getVisibleBounds().getBottom()) / 2;
+			vertical = (info.getVisibleBounds().getTop() + info
+					.getVisibleBounds().getBottom()) / 2;
 		}
 		report.report("About to click point at : " + horizon + "," + vertical);
 		getPersona(persona).click(horizon, vertical);
@@ -1956,29 +2209,35 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * The next 4 functions are for clicking on ui object by it location. All
 	 * function are going to the same last function.
 	 * */
-	public void clickOnSelectorByUi(String id, Persona persona) throws UiObjectNotFoundException {
+	public void clickOnSelectorByUi(String id, Persona persona)
+			throws UiObjectNotFoundException {
 		clickOnSelectorByUi(id, persona, Direction.MIDDLE);
 	}
 
-	public void clickOnSelectorByUi(String id, Persona persona, Direction dir) throws UiObjectNotFoundException {
+	public void clickOnSelectorByUi(String id, Persona persona, Direction dir)
+			throws UiObjectNotFoundException {
 		ObjInfo obj = getPersona(persona).objInfo(id);
 		clickOnSelectorByUi(obj, persona, dir);
 	}
 
-	public void clickOnSelectorByUi(Selector s, Persona persona) throws UiObjectNotFoundException {
+	public void clickOnSelectorByUi(Selector s, Persona persona)
+			throws UiObjectNotFoundException {
 		clickOnSelectorByUi(s, persona, Direction.MIDDLE);
 	}
 
-	public void clickOnSelectorByUi(Selector s, Persona persona, Direction dir) throws UiObjectNotFoundException {
+	public void clickOnSelectorByUi(Selector s, Persona persona, Direction dir)
+			throws UiObjectNotFoundException {
 		String id = getPersona(persona).getUiObject(s);
 		clickOnSelectorByUi(id, persona, dir);
 	}
 
-	public void clickOnSelectorByUi(Selector s, Persona persona, Direction dir, int indexOfElement) throws UiObjectNotFoundException {
+	public void clickOnSelectorByUi(Selector s, Persona persona, Direction dir,
+			int indexOfElement) throws UiObjectNotFoundException {
 
 		ObjInfo[] objs = getPersona(persona).objInfoOfAllInstances(s);
 		if (indexOfElement >= objs.length) {
-			report.report("Error, the element : " + indexOfElement + " isn't exists.", Reporter.FAIL);
+			report.report("Error, the element : " + indexOfElement
+					+ " isn't exists.", Reporter.FAIL);
 		} else {
 			clickOnSelectorByUi(objs[indexOfElement], persona, dir);
 		}
@@ -1987,7 +2246,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void validateWantedPersona(Persona persona) throws Exception {
 		Persona current = getForegroundPersona();
 		if (current != persona) {
-			report.report("Persona " + persona + " isn't in the Foreground", Reporter.FAIL);
+			report.report("Persona " + persona + " isn't in the Foreground",
+					Reporter.FAIL);
 		} else {
 			report.report("Persona " + persona + " is in the Foreground");
 		}
@@ -2003,25 +2263,31 @@ public class CellRoxDevice extends SystemObjectImpl {
 	public void switchPersona(Persona persona) throws Exception {
 		Persona current = getForegroundPersona();
 		if (current == persona) {
-			report.report("Persona " + persona + " is Already in the Foreground");
+			report.report("Persona " + persona
+					+ " is Already in the Foreground");
 		} else {
-			String output = device.executeShellCommand("cell switch "+persona.getValue());				
+			String output = device.executeShellCommand("cell switch "
+					+ getPersonaName(persona));
 			current = getForegroundPersona();
 			if (current == persona && output.contains("OK")) {
-				report.report("Switched to " + persona+" from CLI");
+				report.report("Switched to " + persona + " from CLI");
 
 			} else {
-				report.report("Could not Switch to " + persona + " for the first time.");
+				report.report("Could not Switch to " + persona
+						+ " for the first time.");
 				current = getForegroundPersona();
 				if (current == persona) {
-					report.report("Persona " + persona + " is in the Foreground");
+					report.report("Persona " + persona
+							+ " is in the Foreground");
 				} else {
-					output = device.executeShellCommand("cell switch "+persona.getValue());				
+					output = device.executeShellCommand("cell switch "
+							+ getPersonaName(persona));
 					current = getForegroundPersona();
 					if (current == persona && output.contains("OK")) {
 						report.report("Switch to " + persona);
 					} else {
-						report.report("Could not Switch to " + persona, Reporter.FAIL);
+						report.report("Could not Switch to " + persona,
+								Reporter.FAIL);
 					}
 				}
 			}
@@ -2030,43 +2296,64 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	/**
 	 * This was modified to Lollipop (swiping from buttom to top)
-	 *	 
-	 *
+	 * 
+	 * 
 	 */
+	//TODO IGOR - add if for android version
 	public void unlockBySwipe(Persona persona) throws Exception {
+		ObjInfo oInfo ;
 		try {
-			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setClassName("android.widget.ScrollView"));
+			
+			 oInfo = getPersona(persona).objInfo(
+					new Selector().setClassName("android.widget.ScrollView"));
+		} catch (Exception e) {
+			oInfo = getPersona(persona).objInfo(
+					new Selector().setDescription("Slide area."));
+		}
 
-			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
-			//int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-			getPersona(persona).swipe(middleX, oInfo.getBounds().getBottom(), middleX, oInfo.getBounds().getTop(), 20);
+			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds()
+					.getRight()) / 2;
+			// int middleY = (oInfo.getBounds().getTop() +
+			// oInfo.getBounds().getBottom()) / 2;
+			getPersona(persona).swipe(middleX, oInfo.getBounds().getBottom(),
+					middleX, oInfo.getBounds().getTop(), 20);
 
 			getPersona(persona).pressKey("home");
-		} catch (Exception e) {
-			report.report("Error in unlocking the device.");
-		}
+		
 	}
-	public void unlockBySwipeSecondary(Persona persona) throws Exception { //added by Igor 13.01
-		try {
-			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
 
-			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
-			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-			getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+	public void unlockBySwipeSecondary(Persona persona) throws Exception { // added
+																			// by
+																			// Igor
+																			// 13.01
+		try {
+			ObjInfo oInfo = getPersona(persona).objInfo(
+					new Selector().setDescription("Slide area."));
+
+			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds()
+					.getRight()) / 2;
+			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds()
+					.getBottom()) / 2;
+			getPersona(persona).swipe(middleX, middleY,
+					oInfo.getBounds().getLeft() + 3, middleY, 20);
 
 			getPersona(persona).pressKey("home");
 		} catch (Exception e) {
 			report.report("Error in unlocking the device.");
 		}
-	}                                                                             //added by Igor 13.01
+	} // added by Igor 13.01
 
 	public void answerCall(Persona persona) throws Exception {
 		try {
-			ObjInfo oInfo = getPersona(persona).objInfo(new Selector().setDescription("Slide area."));
+			ObjInfo oInfo = getPersona(persona).objInfo(
+					new Selector().setDescription("Slide area."));
 
-			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds().getRight()) / 2;
-			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds().getBottom()) / 2;
-			getPersona(persona).swipe(middleX, middleY, oInfo.getBounds().getLeft() + 3, middleY, 20);
+			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds()
+					.getRight()) / 2;
+			int middleY = (oInfo.getBounds().getTop() + oInfo.getBounds()
+					.getBottom()) / 2;
+			getPersona(persona).swipe(middleX, middleY,
+					oInfo.getBounds().getLeft() + 3, middleY, 20);
 		} catch (Exception e) {
 			report.report("Error in answer.");
 		}
@@ -2076,7 +2363,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 	/**
 	 * This function runs apply update script
 	 * */
-	public void runApplayUpdateScript(String applyUpdateLocation, String otaFileLocation) throws Exception {
+	public void runApplayUpdateScript(String applyUpdateLocation,
+			String otaFileLocation) throws Exception {
 		cli.connect();
 		cli.setExitTimeout(10 * 60 * 1000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
@@ -2086,6 +2374,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand(applyUpdateLocation + " " + otaFileLocation);
 		Thread.sleep(100 * 1000);
 		cli.disconnect();
+	}
+
+	public String getPersonaName(Persona persona) {
+		switch (persona) {
+		case priv:
+			return privName;
+			
+		case corp:
+			return corpName;
+			
+		}
+		return null;
 	}
 
 	/**
@@ -2212,6 +2512,22 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	public void setPersonaProcessIdMap(Map<Persona, Integer> personaProcessIdMap) {
 		this.personaProcessIdMap = personaProcessIdMap;
+	}
+
+	public String getCorpName() {
+		return corpName;
+	}
+
+	public void setCorpName(String corpName) {
+		this.corpName = corpName;
+	}
+
+	public String getPrivName() {
+		return privName;
+	}
+
+	public void setPrivName(String privName) {
+		this.privName = privName;
 	}
 
 }
