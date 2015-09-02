@@ -71,7 +71,7 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).executeHostShellCommand("reboot");
 
 		// wait for
-		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, false, Persona.PRIV);
+		devicesMannager.getDevice(currentDevice).validateDeviceIsOnline(false, false, Persona.priv);
 		// init the data of the devices
 		Thread.sleep(40000);
 		devicesMannager.getDevice(currentDevice).setUpTime(devicesMannager.getDevice(currentDevice).getCurrentUpTime());
@@ -82,9 +82,9 @@ public class MDMOperation extends TestCase {
 		devicesMannager.getDevice(currentDevice).configureDeviceForPriv(true);
 		devicesMannager.getDevice(currentDevice).connectToServerPriv();
 		// to try to switch persona
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).wakeUp();
-		devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.PRIV);
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5, 5);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).wakeUp();
+		devicesMannager.getDevice(currentDevice).unlockBySwipe(Persona.priv);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(5, 5);
 //		// validate the activation screen is in
 //		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("PERSONA ACTIVATION"), 7 * 1000)) {
 //			report.report("The Persona activation screen wan't found.", Reporter.FAIL);
@@ -175,32 +175,32 @@ public class MDMOperation extends TestCase {
 		//
 		// devicesMannager.getDevice(currentDevice).connectToServerPriv();
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5,5);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(5,5);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Next"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(new Selector().setText("Next"));
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(0), activationCode.substring(0, 4));
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(2), activationCode.substring(4, 8));
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(4), activationCode.substring(8, 12));
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(3), "p.cellrox.com");
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).pressKey("back");
 		Thread.sleep(400);
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
 		boolean isReboot = true;
 		try {
-			isReboot = devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 60 * 1000);
+			isReboot = devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).waitForExists(new Selector().setText("Reboot"), 60 * 1000);
 		} catch (Exception e) {
 			report.report("The reboot button does not exist.", Reporter.FAIL);
 			isReboot = false;
@@ -209,11 +209,11 @@ public class MDMOperation extends TestCase {
 		if (isReboot) {
 			report.report("The device activated");
 		} else {
-			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("Error")), Reporter.FAIL);
+			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).getText(new Selector().setTextContains("Error")), Reporter.FAIL);
 			report.report("The device fail to activate.", Reporter.FAIL);
 		}
 		// TODO device encrypted for priv after change
-		devicesMannager.getDevice(currentDevice).rebootDevice(true, false, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(true, false, Persona.priv, Persona.corp);
 
 		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
@@ -240,32 +240,32 @@ public class MDMOperation extends TestCase {
 
 		String activationCode = (String) Summary.getInstance().getProperty("IMEI");
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(5,5);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(5,5);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setText("Next"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(new Selector().setText("Next"));
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(0), activationCode.substring(0, 4));
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(2), activationCode.substring(4, 8));
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(4), activationCode.substring(8, 12));
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV)
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 				.setText(new Selector().setClassName("android.widget.EditText").setIndex(3), "demo");
 		sleep(500);
 
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).pressKey("back");
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).pressKey("back");
 		Thread.sleep(400);
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).click(new Selector().setClassName("android.widget.RelativeLayout").setIndex(2));
 		boolean isReboot = true;
 		try {
-			isReboot = devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).waitForExists(new Selector().setText("Reboot"), 60 * 1000);
+			isReboot = devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).waitForExists(new Selector().setText("Reboot"), 60 * 1000);
 		} catch (Exception e) {
 			report.report("The reboot button does not exist.", Reporter.FAIL);
 			isReboot = false;
@@ -274,11 +274,11 @@ public class MDMOperation extends TestCase {
 		if (isReboot) {
 			report.report("The device activated");
 		} else {
-			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.PRIV).getText(new Selector().setTextContains("Error")), Reporter.FAIL);
+			report.report(devicesMannager.getDevice(currentDevice).getPersona(Persona.priv).getText(new Selector().setTextContains("Error")), Reporter.FAIL);
 			report.report("The device fail to activate.", Reporter.FAIL);
 		}
 		// TODO device encrypted for priv after change
-		devicesMannager.getDevice(currentDevice).rebootDevice(true, false, Persona.PRIV, Persona.CORP);
+		devicesMannager.getDevice(currentDevice).rebootDevice(true, false, Persona.priv, Persona.corp);
 
 		devicesMannager.getDevice(currentDevice).configureDeviceForAutomation(true);
 		devicesMannager.getDevice(currentDevice).connectToServers();
@@ -303,20 +303,20 @@ public class MDMOperation extends TestCase {
 
 		// step 4
 		// open
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).wakeUp();
-		devicesMannager.getDevice(currentDevice).switchPersona(Persona.CORP);
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setText("1"));
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).click(new Selector().setDescription("Enter"));
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).pressKey("home");
-		devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).pressKey("back");
-		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.CORP).exist(new Selector().setDescription("Apps"))) {
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).wakeUp();
+		devicesMannager.getDevice(currentDevice).switchPersona(Persona.corp);
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setText("1"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).click(new Selector().setDescription("Enter"));
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).pressKey("home");
+		devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).pressKey("back");
+		if (!devicesMannager.getDevice(currentDevice).getPersona(Persona.corp).exist(new Selector().setDescription("Apps"))) {
 			report.report("The screen is off or .", Reporter.FAIL);
 		}
 
-		devicesMannager.getDevice(currentDevice).switchPersona(Persona.PRIV);
+		devicesMannager.getDevice(currentDevice).switchPersona(Persona.priv);
 
 		CellroxAutomationDevicesAbstractPage devicesPage = new CellroxAutomationDevicesAbstractPage(driver, siteUrl);
 
