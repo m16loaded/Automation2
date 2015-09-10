@@ -2315,14 +2315,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 	//TODO IGOR - add if for android version
 	public void unlockBySwipe(Persona persona) throws Exception {
 		ObjInfo oInfo ;
+		String type = device
+		.executeShellCommand("getprop ro.build.version.release");
 		try {
 			
 			 oInfo = getPersona(persona).objInfo(
 					new Selector().setClassName("android.widget.ScrollView"));
-		} catch (Exception e) {
+		
+			 if (type.contains("4.4.2")) {
 			oInfo = getPersona(persona).objInfo(
 					new Selector().setDescription("Slide area."));
-		}
+			 }
+		
 
 			int middleX = (oInfo.getBounds().getLeft() + oInfo.getBounds()
 					.getRight()) / 2;
@@ -2330,10 +2334,19 @@ public class CellRoxDevice extends SystemObjectImpl {
 			// oInfo.getBounds().getBottom()) / 2;
 			getPersona(persona).swipe(middleX, oInfo.getBounds().getBottom(),
 					middleX, oInfo.getBounds().getTop(), 20);
+		
 
 			getPersona(persona).pressKey("home");
+		}
+			catch (Exception e) {
+				report.report("Error in unlocking the device.");
+			}
 		
 	}
+	
+//	String type = device
+//			.executeShellCommand("getprop ro.build.version.release");
+//	if (type.contains("4.4.2")) { // 
 
 	public void unlockBySwipeSecondary(Persona persona) throws Exception { // added
 																			// by
