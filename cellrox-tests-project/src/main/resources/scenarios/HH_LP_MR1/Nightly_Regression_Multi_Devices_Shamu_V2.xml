@@ -53,36 +53,36 @@
         </jsystem-ant>
     </target>
     <target name="t2">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/WakeUpDevicesLP.xml">
-            <property name="jsystem.uuid" value="504f96d2-bc1c-4113-8c90-c0b2429e44df"/>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/WakeUpDevicesLP.xml">
+            <property name="jsystem.uuid" value="3fd1d111-6e01-471f-88e9-13c2000a97fd"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
     <target name="t3">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/New_Call_and_Answer_LP_shamu.xml">
+            <property name="jsystem.uuid" value="aa6a9030-f66e-40eb-9009-d78eb1a2ee38"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t4">
         <jsystem-ant antfile="${scenarios.base}/scenarios/UnitTests_LP_shamu.xml">
             <property name="jsystem.uuid" value="653ff271-9dd4-45db-852f-8b33b9c79692"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t4">
+    <target name="t5">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Interface_Unit-tests_LP_shamu.xml">
             <property name="jsystem.uuid" value="55cd7505-5256-42a4-a586-99c3c2fbcc0c"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t5">
+    <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/PersonaSwitchx50.xml">
             <property name="jsystem.uuid" value="9e5bbe98-d324-42dc-87e2-decb143bb00e"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t6">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/New_Call_and_Answer_LP_shamu.xml">
-            <property name="jsystem.uuid" value="f30c796f-388b-40b9-82b1-c7875f8a36b2"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
