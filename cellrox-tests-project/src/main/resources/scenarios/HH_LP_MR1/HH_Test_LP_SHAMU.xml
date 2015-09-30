@@ -15,6 +15,11 @@
     <target name="execute scenario">
         <antcallback target="t0"/>
         <antcallback target="t1"/>
+        <antcallback target="t2"/>
+        <antcallback target="t3"/>
+        <antcallback target="t4"/>
+        <antcallback target="t5"/>
+        <antcallback target="t6"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/New_Call_and_Answer_LP_shamu.xml">
@@ -29,5 +34,42 @@
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
+    </target>
+    <target name="t2">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/PushAppsIntoSystem_LP.xml">
+            <property name="jsystem.uuid" value="aeab7a27-96be-4918-93b4-ba9cec4b483c"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t3">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="5c82d886-010c-4c59-99e6-8a6d805eba28"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
+        </jsystem>
+    </target>
+    <target name="t4">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/vellamo3_SHAMU.xml">
+            <property name="jsystem.uuid" value="8697de76-e53a-48d5-9df1-167fea874a91"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t5">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/RemoveAppsFromSystem_LP.xml">
+            <property name="jsystem.uuid" value="0fbe7f43-07fd-4607-aaef-788616daa86f"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t6">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="b31aa7a8-8994-4b7f-a055-bf8ce8a3d194"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
+        </jsystem>
     </target>
 </project>
