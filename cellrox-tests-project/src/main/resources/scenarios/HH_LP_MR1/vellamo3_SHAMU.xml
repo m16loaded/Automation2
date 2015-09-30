@@ -69,6 +69,8 @@
         <antcallback target="t53"/>
         <antcallback target="t54"/>
         <antcallback target="t55"/>
+        <antcallback target="t56"/>
+        <antcallback target="t57"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -516,6 +518,22 @@
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.pressBtn"/>
+        </jsystem>
+    </target>
+    <target name="t56">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="da2eae2c-c197-4e6e-b627-d9f6f87c934a"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.validateExpressionCpuCliCommand"/>
+        </jsystem>
+    </target>
+    <target name="t57">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="68343dd7-8f07-4996-a297-e61d1a8e4b83"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.validateExpressionCpuCliCommand"/>
         </jsystem>
     </target>
 </project>
