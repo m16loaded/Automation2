@@ -854,5 +854,33 @@ public interface AutomatorService {
 	 *            The target UiObjects should be clicked if all conditions match.
 	 */
 	void registerClickMultiUiObjectWatcher(String name, Selector[] conditions, Selector[] targets);
-	
+
+
+    /* Notification handling
+	 *
+	 *
+	 */
+
+
+    /**
+     *
+     * @param title
+     * @param text
+     * @return
+     */
+
+    @JsonRpcErrors({
+            @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
+    public boolean isNotificationExist(boolean title, String text) throws NotImplementedException;  //check if notification exists//check if the string is a title
+
+    /**
+     *
+     * @param isTitle
+     * @param titles
+     * @return
+     */
+
+    @JsonRpcErrors({
+            @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
+    public boolean clearNotifications(boolean isTitle, String ... titles)throws NotImplementedException;     //get 0 or more strings//check if the string is a title
 }
