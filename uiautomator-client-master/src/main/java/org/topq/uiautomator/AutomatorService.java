@@ -7,8 +7,7 @@ import com.googlecode.jsonrpc4j.JsonRpcError;
 import com.googlecode.jsonrpc4j.JsonRpcErrors;
 
 public interface AutomatorService {
-	final static int ERROR_CODE_BASE = -32000;
-
+	final static int ERROR_CODE_BASE = -32000;	
 	
 	
 	/**
@@ -1396,5 +1395,43 @@ public interface AutomatorService {
 	 */
 	
 	public void registerClickMultiUiObjectWatcher(String name, Selector[] conditions, Selector[] targets);
+	
+	
+	/* Notification handling
+	 * 
+	 * 
+	 */
+	
+	
+	/**
+	 * 
+	 * @param title
+	 * @param text
+	 * @return
+	 */
+	
+	@JsonRpcErrors({
+		@JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2),
+		@JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
+	public boolean isNotificationExist(boolean title, String text) throws UiObjectNotFoundException, NotImplementedException;  //check if notification exists//check if the string is a title
+	
+	/**
+	 * 
+	 * @param isTitle
+	 * @param titles
+	 * @return
+	 */
+	
+	@JsonRpcErrors({
+		@JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2),
+		@JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
+	public boolean clearNotifications(boolean isTitle, String ... titles)throws UiObjectNotFoundException, NotImplementedException;     //get 0 or more strings//check if the string is a title
+
+
+	
+	
+	
+	
+	
 	
 }

@@ -81,6 +81,9 @@ public class CellroxDeviceOperations extends TestCase {
 	private int startY;
 	private int endX;
 	private int endY;
+	private boolean title;
+
+	
 
 	/**
 	 * Validate that the automation servers are alive. If the automation servers
@@ -1064,6 +1067,22 @@ public class CellroxDeviceOperations extends TestCase {
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
+	
+	@Test //added by Igor 6.10.15 
+	@TestProperties(name = "Find \"${text}\" notification(is a title =\"${text}\")  on ${persona}", paramsInclude = { "currentDevice,text,title,persona" })
+	public void notificationExists() throws Exception {
+		devicesMannager.getDevice(currentDevice).getPersona(persona).isNotificationExist(title,text);
+
+	
+	}
+	
+	@Test //added by Igor 6.10.15 
+	@TestProperties(name = "Find \"${text}\" notification on ${persona}", paramsInclude = { "currentDevice,text,title,persona" })
+	public void clearNotifications() throws Exception {
+		devicesMannager.getDevice(currentDevice).getPersona(persona).clearNotifications(title,text);
+
+	
+	}
 	@Test
 	@TestProperties(name = "Reboot Device", paramsInclude = { "deviceEncrypted,deviceEncryptedPriv" })
 	public void rebootDevice() throws Exception {
@@ -3653,6 +3672,14 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setEndY(int endY) {
 		this.endY = endY;
+	}
+	
+	public boolean isTitle() {
+		return title;
+	}
+
+	public void setTitle(boolean title) {
+		this.title = title;
 	}
 
 }
