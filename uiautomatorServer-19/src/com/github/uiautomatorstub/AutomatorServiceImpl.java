@@ -12,9 +12,13 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import android.app.Notification;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.RemoteException;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
 import android.view.KeyEvent;
 
 import com.android.uiautomator.core.UiCollection;
@@ -27,13 +31,23 @@ import com.github.uiautomatorstub.watcher.ClickMultiUiObjectsWatcher;
 import com.github.uiautomatorstub.watcher.ClickUiObjectWatcher;
 import com.github.uiautomatorstub.watcher.PressKeysWatcher;
 
-public class AutomatorServiceImpl implements AutomatorService {
+public class AutomatorServiceImpl extends NotificationListenerService implements AutomatorService {
 
 	final static String STORAGE_PATH = "/data/local/tmp/";
 	private final HashSet<String> watchers = new HashSet<String>();
 	private final ConcurrentHashMap<String, UiObject> uiObjects = new ConcurrentHashMap<String, UiObject>();
 
 	public AutomatorServiceImpl() {
+	}
+
+	@Override
+	public void onNotificationPosted(StatusBarNotification statusBarNotification) {
+		//Not Implemented
+	}
+
+	@Override
+	public void onNotificationRemoved(StatusBarNotification statusBarNotification) {
+		//Not Implemented
 	}
 
 	/**
@@ -405,6 +419,39 @@ public class AutomatorServiceImpl implements AutomatorService {
 			UiDevice.getInstance().registerWatcher(name, new ClickMultiUiObjectsWatcher(selectors, clickableTargets));
 			watchers.add(name);
 		}
+	}
+
+	@Override
+	public boolean isNotificationExist(boolean title, String text) throws NotImplementedException {
+		StatusBarNotification[] activeNotifications = getActiveNotifications();
+		Log.d("Looking for " + text + "in " + activeNotifications.length + " notifications");
+		for (StatusBarNotification sbn : activeNotifications) {
+			Bundle extras = sbn.getNotification().extras;
+			if (title) {
+				String titleStr = extras.getString(Notification.EXTRA_TITLE);
+				Log.d("found " + titleStr + " title");
+				if (titleStr.equalsIgnoreCase(text)) {
+					Log.d("Found a match!");
+					return true;
+				}
+			} else {
+				String textStr = extras.getString(Notification.EXTRA_INFO_TEXT);
+				Log.d("found " + textStr + " text");
+				if (textStr.equalsIgnoreCase(text)) {
+					Log.d("Found a match!");
+					return true;
+				}
+			}
+		}
+		Log.d("Didn't find a match!");
+		return false;
+	}
+
+	@Override
+	public boolean clearNotifications(boolean isTitle, String... titles) throws NotImplementedException {
+		Log.d("Clearing all notifications...");
+		cancelAllNotifications();
+		return true;
 	}
 
 	/**

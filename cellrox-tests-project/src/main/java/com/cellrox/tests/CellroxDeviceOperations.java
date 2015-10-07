@@ -81,6 +81,18 @@ public class CellroxDeviceOperations extends TestCase {
 	private int startY;
 	private int endX;
 	private int endY;
+	private boolean title;
+	private int numberOfRetries;
+
+	
+
+	public int getNumberOfRetries() {
+		return numberOfRetries;
+	}
+
+	public void setNumberOfRetries(int numberOfRetries) {
+		this.numberOfRetries = numberOfRetries;
+	}
 
 	/**
 	 * Validate that the automation servers are alive. If the automation servers
@@ -1089,6 +1101,23 @@ public class CellroxDeviceOperations extends TestCase {
 		isPass = devicesMannager.getDevice(currentDevice).getPersona(persona).setText(s, value);
 	}
 
+	
+	@Test //added by Igor 6.10.15 
+	@TestProperties(name = "Find \"${text}\" notification(is a title =\"${text}\")  on ${persona}", paramsInclude = { "currentDevice,text,title,persona" })
+	public void notificationExists() throws Exception {
+		devicesMannager.getDevice(currentDevice).getPersona(persona).isNotificationExist(title,text);
+
+	
+	}
+	
+	@Test //added by Igor 6.10.15 
+	@TestProperties(name = "Clear notifications on ${persona}", paramsInclude = { "currentDevice,text,title,persona" })
+	public void clearNotifications() throws Exception {
+		
+		devicesMannager.getDevice(currentDevice).getPersona(persona).clearNotifications(title,text);
+
+	
+	}
 	@Test
 	@TestProperties(name = "Reboot Device", paramsInclude = { "deviceEncrypted,deviceEncryptedPriv" })
 	public void rebootDevice() throws Exception {
@@ -1596,6 +1625,43 @@ public class CellroxDeviceOperations extends TestCase {
 			}
 		}
 	}
+	
+	@Test
+	@TestProperties(name = "Swipe Down Notification Bar with Automator on ${persona}, timeout = ${numberOfRetries}", paramsInclude = { "currentDevice,persona,numberOfRetries" })
+	public void openNotificationWithAutomator() throws Exception {
+		int numOfRetry = 1;
+		while (numOfRetry <= numberOfRetries) {
+			report.report("Openning notification with UI Automator (" + numOfRetry + " try)");
+			if (!devicesMannager.getDevice(currentDevice).getPersona(persona).openNotification()) {
+				report.report("Automator report swiped");
+				return;
+			}
+			numOfRetry++;
+			
+		}
+	}
+	
+	
+	@Test
+	@TestProperties(name = "Swipe Down Notification Bar with Swipe action on ${persona}, timeout = ${numberOfRetries}", paramsInclude = { "currentDevice,persona,numberOfRetries" })
+	public void openNotificationWithSwipe() throws Exception {
+		int numOfRetry = 1;
+		while (numOfRetry <= numberOfRetries) {
+			report.report("Openning notification with swipe (" + numOfRetry + " try)");
+			//Swipe
+			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(10, 0, 10, devicesMannager.getDevice(currentDevice).getPersona(persona).getScreenHeight(), 5);
+			
+			//Testing for the persona icon to appear
+			if(devicesMannager.getDevice(currentDevice).getPersona(persona).exist(new Selector().setResourceId("com.cellrox.ui:id/fg_persona"))) {
+				report.report("Found the persona icon");
+				return;
+			}
+			numOfRetry++;
+			
+		}
+	}
+	
+	
 
 	@Test
 	@TestProperties(name = "Validate UiObject with Description \"${text}\" Exists", paramsInclude = { "currentDevice,persona,text" })
@@ -3678,6 +3744,14 @@ public class CellroxDeviceOperations extends TestCase {
 
 	public void setEndY(int endY) {
 		this.endY = endY;
+	}
+	
+	public boolean isTitle() {
+		return title;
+	}
+
+	public void setTitle(boolean title) {
+		this.title = title;
 	}
 
 }
