@@ -337,6 +337,25 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		executeCliCommand(cmd);
 	}
+	//added by Igor 27.9
+	public String executeCommandAdbShellRootAndReturn(String cmd) throws Exception {
+//		cli.connect();
+//		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+//		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+//		executeCliCommand(cmd);
+		String output = device.executeShellCommand(cmd);
+		return output.valueOf(output.toUpperCase().trim());
+	}
+	//added by Igor 27.9
+	public String executeCommandAdbLOCALShellRootAndReturn(String cmd) throws Exception {
+//		cli.connect();
+//		executeCliCommand("adb -s " + getDeviceSerial() + " root");
+//		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
+//		executeCliCommand(cmd);
+//		String output = device.executeShellCommand("adb -s " + getDeviceSerial() + " root;" + "adb -s " + getDeviceSerial() + " shell " + cmd);
+		String output = device.executeShellCommand("adb -s " + getDeviceSerial() + " shell " + cmd);
+		return output.valueOf(output);
+	}
 
 	public void executeCommandAdbShell(String cmd) throws Exception {
 		cli.connect();
@@ -2129,6 +2148,20 @@ public class CellRoxDevice extends SystemObjectImpl {
 		Runtime.getRuntime().exec(cmd);
 		executeCliCommand(cmd);
 	} // added by Igor 19.11
+	
+	//added by Igor 27.9.15
+public String executeCommandLocalCliAndReturn(String cmd) throws Exception { 
+		
+cli.connect();
+
+String output=execCmd2(cmd);
+return output;
+} 
+	//added by Igor 27.9.15
+	public static String execCmd2(String cmd) throws java.io.IOException {
+        java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
 	public void pushApplication(String appFullPath, String locationForPushing)
 			throws Exception {
@@ -2143,7 +2176,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 	private void executeCliCommand(String Command) throws Exception {
 		executeCliCommand(Command, false);
 		Thread.sleep(500);
+		
 	}
+
 
 	private void executeCliCommand(String Command, boolean silent)
 			throws Exception {
@@ -2312,7 +2347,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * 
 	 * 
 	 */
-	//TODO IGOR - add if for android version
+	//TODO IGOR - add if for android version//done
 	public void unlockBySwipe(Persona persona) throws Exception {
 		ObjInfo oInfo ;
 		String type = device
