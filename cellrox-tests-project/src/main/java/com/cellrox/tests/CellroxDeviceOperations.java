@@ -204,6 +204,31 @@ public class CellroxDeviceOperations extends TestCase {
         
         }
         
+	//TODO - IGOR finish the cosmetics on compare CMD output scenario
+	@Test    //added by Igor 26.9.15
+    @TestProperties(name = "compare CMD output after CMD command  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedNumber2" })
+    public void compareCMDoutput() throws Exception {
+//        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
+        //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
+//        msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
+//        msg=msg.substring(0, 4);
+       String msg = devicesMannager.getDevice(currentDevice).executeCommandLocalCliAndReturn(text);
+       
+        
+        report.report(msg,ReportAttribute.BOLD);
+        int foo = Integer.parseInt(msg);
+            
+        if(foo<expectedNumber2){
+//        	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg +" - " + " is too low: "+(expectedNumber2-foo)+" points difference! "+ "\\");
+//        	report.report(msg+"is too low: "+(expectedNumber2-foo)+" points difference",Reporter.FAIL);
+        	report.report(msg+"is too low: "+(expectedNumber2-foo)+" points difference",Reporter.FAIL);
+        	
+        }
+        else{
+        Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
+        }
+        
+        }
       
      //added by Igor 6.11
 	@Test    //added by Igor 10.11
