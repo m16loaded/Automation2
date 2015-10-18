@@ -26,6 +26,7 @@ import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.ElementAttributes;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
+import com.cellrox.infra.enums.Platform;
 import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
@@ -83,8 +84,17 @@ public class CellroxDeviceOperations extends TestCase {
 	private int endY;
 	private boolean title;
 	private int numberOfRetries;
+	private String IncOut;
 
 	
+
+	public String getIncOut() {
+		return IncOut;
+	}
+
+	public void setIncOut(String incOut) {
+		IncOut = incOut;
+	}
 
 	public int getNumberOfRetries() {
 		return numberOfRetries;
@@ -2646,6 +2656,181 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 
 	}
+	//TODO Igor make a generic call scenario(WIP)//done
+	@Test //added by Igor 08.10.15
+	@TestProperties(name = "Create a ${IncOut} call on nexus ${platformNew} to target number: \"${phoneNumber}\" : ${persona} and answer.", paramsInclude = { "phoneNumber,persona,platformNew,IncOut" })
+	public void genericCall() throws Exception {
+		//platformNew should only accept 5 or 6 atm
+		try {
+
+			try {
+				devicesMannager.getDevice(currentDevice).getPersona(persona).wakeUp();
+			} catch (Exception e) {
+			}
+
+			DeviceNumber secDevice;
+			DeviceNumber primDevice;
+			Persona secPersona;
+			primDevice = DeviceNumber.PRIMARY;			
+    		secDevice = DeviceNumber.SECONDARY;
+    		secPersona=persona.priv;			
+    		
+    		  
+			//devicesMannager.getDevice(primDevice).switchPersona(persona); //commenting out as it doesn't work well with involuntery switch
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("home");
+	 		devicesMannager.getDevice(secDevice).switchPersona(secPersona); //only for the MAKO device//Always call from PRIV
+	 		devicesMannager.getDevice(secDevice).getPersona(secPersona).pressKey("home");
+	 		report.report("Before IFS");
+	if(platformNew==5 && IncOut.equals("i")){ //get incoming to N5 from N4	
+		
+		report.startLevel("Calling to : " + phoneNumber);
+		devicesMannager.getDevice(secDevice).getPersona(secPersona).openApp("Phone");
+		Thread.sleep(400);
+		devicesMannager.getDevice(secDevice).getPersona(secPersona)
+				.click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(1));
+		Thread.sleep(400);
+		devicesMannager.getDevice(secDevice).getPersona(secPersona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);	
+		report.report("Dailing...");
+		devicesMannager.getDevice(secDevice).getPersona(secPersona).click(new Selector().setDescription("dial"));
+
+		
+		report.report("Wait for incoming call.");
+		Thread.sleep(6000);
+		for(int i=0;i<8;i++){
+			report.report("Nexus 5");
+		devicesMannager.getDevice(primDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(86));
+		
+		Thread.sleep(500);
+		devicesMannager.getDevice(primDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+		
+		Thread.sleep(500);
+		devicesMannager.getDevice(primDevice).getPersona(persona).click(Integer.valueOf(550), Integer.valueOf(100));
+		}
+		
+
+		  if (devicesMannager.getDevice(primDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) { //waiting for the object in N4 dialer 
+			   devicesMannager.getDevice(primDevice).getPersona(persona).pressKeyCode(5);
+			   Thread.sleep(5000);
+			  		 } 
+		  report.report("hangup");
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("End"));//hangup from the specified device 
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("home");
+		}
+    			
+    		
+	else if(platformNew == 6 && IncOut.equals("i")){//get incoming to N6 from N4
+
+		report.startLevel("Calling to : " + phoneNumber);
+		devicesMannager.getDevice(secDevice).getPersona(secPersona).openApp("Phone");
+		Thread.sleep(400);
+		devicesMannager.getDevice(secDevice).getPersona(secPersona)
+				.click(new Selector().setClassName("android.widget.ImageButton").setPackageName("com.android.dialer").setIndex(1));
+		Thread.sleep(400);
+		devicesMannager.getDevice(secDevice).getPersona(secPersona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);	
+		report.report("Dailing...");
+		devicesMannager.getDevice(secDevice).getPersona(secPersona).click(new Selector().setDescription("dial"));
+
+		
+		report.report("Wait for incoming call.");
+		Thread.sleep(6000);
+		for(int i=0;i<8;i++){
+			report.report("Nexus 6");
+		devicesMannager.getDevice(primDevice).getPersona(persona).click(Integer.valueOf(570), Integer.valueOf(150));
+		
+		Thread.sleep(500);
+		devicesMannager.getDevice(primDevice).getPersona(persona).click(Integer.valueOf(600), Integer.valueOf(160));
+		
+		Thread.sleep(500);
+		devicesMannager.getDevice(primDevice).getPersona(persona).click(Integer.valueOf(660), Integer.valueOf(170));
+		}
+		
+		  if (devicesMannager.getDevice(primDevice).getPersona(persona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) { //waiting for the object 
+			   devicesMannager.getDevice(primDevice).getPersona(persona).pressKeyCode(5);
+			   Thread.sleep(5000);
+		 } 
+		  report.report("hangup");
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("End"));//hangup from the specified device 
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("home");
+		
+	}
+	else if(platformNew == 6 && IncOut.equals("o")){ //get incoming to N4 from N6			
+	
+
+			report.startLevel("Calling to : " + phoneNumber);
+
+			String cliCommand="monkey -p com.android.dialer -c android.intent.category.LAUNCHER 1" ;
+			String text = "Events injected: 1" ;
+			devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, false, persona);
+
+			Thread.sleep(400);
+
+			report.report("Dailing...");
+			
+
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("dial pad"));
+			devicesMannager.getDevice(primDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("dial"));
+			report.report("Call is outgoing...");
+			Thread.sleep(5000);
+			
+			  if (devicesMannager.getDevice(secDevice).getPersona(secPersona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) { //waiting for the object in N4 dialer in order to hangup
+				   devicesMannager.getDevice(secDevice).getPersona(secPersona).pressKeyCode(5);
+				   Thread.sleep(5000);
+			 } 
+			  report.report("hangup");
+				devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("End"));//hangup from the specified device 
+				devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("back");
+				devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("home");
+				
+	}
+	
+	else if(platformNew == 5 && IncOut.equals("o")){ //get incoming to N4 from N5			
+	
+
+			report.startLevel("Calling to : " + phoneNumber);
+
+			String cliCommand="monkey -p com.android.dialer -c android.intent.category.LAUNCHER 1" ;
+			String text = "Events injected: 1" ;
+			devicesMannager.getDevice(currentDevice).validateExpressionCliCommand(cliCommand, text, false, persona);
+
+			Thread.sleep(400);
+
+			report.report("Dailing...");
+			
+
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("dial pad"));
+			devicesMannager.getDevice(primDevice).getPersona(persona).setText(new Selector().setClassName("android.widget.EditText"), phoneNumber);
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("dial"));
+			report.report("Call is outgoing...");
+			
+			if (devicesMannager.getDevice(secDevice).getPersona(secPersona).waitForExists(new Selector().setText("Incoming call"), 60 * 1000)) { //waiting for the object in N4 dialer in order to hangup
+				   devicesMannager.getDevice(secDevice).getPersona(secPersona).pressKeyCode(5);
+				   Thread.sleep(5000);
+			 } 
+			report.report("hangup");
+			devicesMannager.getDevice(primDevice).getPersona(persona).click(new Selector().setDescription("End"));//hangup from the specified device 
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("back");
+			devicesMannager.getDevice(primDevice).getPersona(persona).pressKey("home");
+				
+
+		} 
+	else
+	{
+		report.report("Something is wrong");
+	}
+		} 
+		
+		
+		finally {
+			report.stopLevel();
+		}
+
+	}
+	
+	//TODO Igor make a generic call scenario(WIP)//done
+
 
 	
 	@Test //added by Igor 29.01

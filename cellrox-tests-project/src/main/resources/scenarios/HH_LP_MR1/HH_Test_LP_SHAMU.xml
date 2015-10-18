@@ -22,6 +22,7 @@
         <antcallback target="t6"/>
         <antcallback target="t7"/>
         <antcallback target="t8"/>
+        <antcallback target="t9"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/New_Call_and_Answer_LP_shamu.xml">
@@ -84,6 +85,13 @@
     <target name="t8">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/3G_LP_shamu.xml">
             <property name="jsystem.uuid" value="342e01f8-ff41-4003-bcc4-826a79b98788"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t9">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Virtual_Lines_by_SIM.xml">
+            <property name="jsystem.uuid" value="13801841-b574-4d07-aca2-2ecbccb315b8"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
