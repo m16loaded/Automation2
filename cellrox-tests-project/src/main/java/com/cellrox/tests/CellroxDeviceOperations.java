@@ -85,8 +85,50 @@ public class CellroxDeviceOperations extends TestCase {
 	private boolean title;
 	private int numberOfRetries;
 	private String IncOut;
+	private String expectedString;
+	//private boolean isItInteger;
+	private String isItInteger;
+	//private int expectedInt;
+	private float expectedFloat;
+	
+	
+	
 
 	
+
+
+
+	public float getExpectedFloat() {
+		return expectedFloat;
+	}
+
+	public void setExpectedFloat(float expectedFloat) {
+		this.expectedFloat = expectedFloat;
+	}
+
+//	public float getExpectedInt() {
+//		return expectedInt;
+//	}
+//
+//	public void setExpectedInt(int expectedInt) {
+//		this.expectedInt = expectedInt;
+//	}
+
+	public String getIsItInteger() {
+		return isItInteger;
+	}
+
+	public void setIsItInteger(String isItInteger) {
+		this.isItInteger = isItInteger;
+	}
+
+	public String getExpectedString() {
+		return expectedString;
+	}
+
+	public void setExpectedString(String expectedString) {
+		this.expectedString = expectedString;
+	}
 
 	public String getIncOut() {
 		return IncOut;
@@ -216,29 +258,67 @@ public class CellroxDeviceOperations extends TestCase {
         
 	//TODO - IGOR finish the cosmetics on compare CMD output scenario
 	@Test    //added by Igor 26.9.15
-    @TestProperties(name = "compare CMD output after CMD command  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedNumber2" })
-    public void compareCMDoutput() throws Exception {
-//        String msg = devicesMannager.getDevice(currentDevice).getPersona(persona).getText(new Selector().setTextContains(text));
-        //msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?","").trim();
-//        msg = msg.replace("You have not uploaded your score yet. Share it with the Vellamo community to see how ", "").replace(" compares to other popular devices.Upload it now?",""); //.trim();
-//        msg=msg.substring(0, 4);
+    @TestProperties(name = "compare CMD output STRING after CMD command  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedString" })
+    public void compareCMDoutputString() throws Exception {
        String msg = devicesMannager.getDevice(currentDevice).executeCommandLocalCliAndReturn(text);
+       report.report(msg,ReportAttribute.BOLD); //debugging purpose
+//       if(isItInteger.contains("y")){ //"y" or "n"
+//    	   report.report("BOBO",ReportAttribute.BOLD);//debugging purpose
+//    	   //int foo = Integer.parseInt(msg); 
+//    	   Integer foo = Integer.valueOf(msg);
+//    	   Integer ExpectedInt = Integer.valueOf(expectedString);
+//    	   report.report("BOBO+",ReportAttribute.BOLD);//debugging purpose
+//    	  // int ExpectedInt=Integer.parseInt(expectedString);
+//    	   report.report("BOBO++",ReportAttribute.BOLD);//debugging purpose
+//    	   if(foo>ExpectedInt){
+//    		   report.report("JOJO",ReportAttribute.BOLD);//debugging purpose
+//     	report.report(foo+"the result is too high: "+(foo-ExpectedInt)+" points difference",Reporter.FAIL);       	
+//          }
+//    	   report.report("The result is OK ",Reporter.PASS);
+       
+//       else if(isItInteger.contains("n")){//"y" or "n"
+       if(msg.contains(expectedString)){
+       report.report("Found the string",Reporter.PASS);
+           }
+       
+       else {
+    	   report.report("Didn't find the string",Reporter.FAIL);
+       }
+//        report.report(msg,ReportAttribute.BOLD); //debugging purpose  
+//        int foo = Integer.parseInt(msg);            
+//        if(foo<expectedString){
+//       	report.report(msg+"is too low: "+(expectedString-foo)+" points difference",Reporter.FAIL);       	
+//        }
+//        else{
+//        Summary.getInstance().setProperty("Memory test", Summary.getInstance().getProperty("Memory test") + msg + "\\");
+//        report.report("memory is OK",Reporter.PASS);
+//        }
        
         
-        report.report(msg,ReportAttribute.BOLD);
-        int foo = Integer.parseInt(msg);
-            
-        if(foo<expectedNumber2){
-//        	Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg +" - " + " is too low: "+(expectedNumber2-foo)+" points difference! "+ "\\");
-//        	report.report(msg+"is too low: "+(expectedNumber2-foo)+" points difference",Reporter.FAIL);
-        	report.report(msg+"is too low: "+(expectedNumber2-foo)+" points difference",Reporter.FAIL);
-        	
         }
-        else{
-        Summary.getInstance().setProperty("Vellamo_Results", Summary.getInstance().getProperty("Vellamo_Results") + msg + "\\");
-        }
-        
-        }
+	//TODO - IGOR finish the cosmetics on compare CMD output scenario
+	@Test    //added by Igor 26.9.15
+    @TestProperties(name = "compare CMD output FLOAT after CMD command  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedFloat" })
+    public void compareCMDoutputFloat() throws Exception {
+
+		String msg = devicesMannager.getDevice(currentDevice).executeCommandLocalCliAndReturn(text);
+		float foo = Float.parseFloat(msg);		
+       report.report(msg,ReportAttribute.BOLD); //debugging purpose
+          	 if(foo>expectedFloat){    			 
+    		 	report.report(msg+" the result is too high: "+(foo-expectedFloat)+" points difference",Reporter.FAIL); 
+    	 }
+    	   	 
+    	 else if(foo<expectedFloat)
+    	 {
+    	   report.report("The result is OK ",Reporter.PASS);
+    	 }
+       
+       else
+       {
+    	   report.report("Didn't find the string",Reporter.FAIL);
+       }
+
+    }
       
      //added by Igor 6.11
 	@Test    //added by Igor 10.11
@@ -3898,6 +3978,13 @@ public class CellroxDeviceOperations extends TestCase {
 		this.Location = Location;
 	
 	}
+//	public boolean get_isItInteger() {//added by Igor 25.10.15
+//		return isItInteger;
+//	}
+//
+//	public void set_isItInteger(boolean isItInteger) {//added by Igor 25.10.15
+//		this.isItInteger = isItInteger;
+//	}
 
 	public int getStartX() {
 		return startX;
