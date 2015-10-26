@@ -68,7 +68,7 @@
     </target>
     <target name="t4">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="78a4fb5d-2eef-4073-8937-efe33af0b4f1"/>
+            <sysproperty key="jsystem.uuid" value="2dd3c3a8-5f01-4357-878d-95cb74c43314"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.switchPersona"/>

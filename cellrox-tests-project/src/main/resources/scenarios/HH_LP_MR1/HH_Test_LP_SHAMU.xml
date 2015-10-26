@@ -26,6 +26,7 @@
         <antcallback target="t10"/>
         <antcallback target="t11"/>
         <antcallback target="t12"/>
+        <antcallback target="t13"/>
     </target>
     <target name="t0">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/New_Call_and_Answer_LP_shamu.xml">
@@ -100,20 +101,27 @@
         </jsystem-ant>
     </target>
     <target name="t10">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Virtual_Lines_by_Contact_No_contact.xml">
+            <property name="jsystem.uuid" value="bd89cbff-1390-4c09-8b24-3fed155bcf0e"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t11">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/AddContact.xml">
             <property name="jsystem.uuid" value="3b6a7537-8e6b-48ac-9d0b-4205f780f97e"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t11">
+    <target name="t12">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Virtual_Lines_by_Contact.xml">
             <property name="jsystem.uuid" value="4ce8aab9-8cb4-4841-b5c0-369353b9704a"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t12">
+    <target name="t13">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/RemoveContact.xml">
             <property name="jsystem.uuid" value="509b2c54-9a67-4495-a360-81a5f0a53071"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
