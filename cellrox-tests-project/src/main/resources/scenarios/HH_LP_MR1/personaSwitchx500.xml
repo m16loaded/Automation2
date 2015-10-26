@@ -15,18 +15,7 @@
     <target name="execute scenario">
         <antcallback target="t0"/>
         <antcallback target="t1"/>
-        <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.201c7cee-84a9-450a-8221-a7c4ea100790" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
-            <!--#Jsystem#-->
-            <sequential>
-                <echo message="Parameter: myVar=@{myVar}"/>
-                <var name="myVar" value="@{myVar}"/>
-                <jsystemsetantproperties>
-                    <!--Task for updating the ant parameters file - used for reference parameters-->
-                </jsystemsetantproperties>
-                <antcallback target="t2"/>
-                <antcallback target="t3"/>
-            </sequential>
-        </jsystemfor>
+        <antcallback target="t2"/>
     </target>
     <target name="t0">
         <jsystem showoutput="true">
@@ -46,18 +35,10 @@
     </target>
     <target name="t2">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="cfeb2f1c-0795-425d-b878-98e2b0e0697b"/>
+            <sysproperty key="jsystem.uuid" value="283032c7-195c-4031-8842-c5aabb1b4f9c"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.compareCMDoutputFloat"/>
-        </jsystem>
-    </target>
-    <target name="t3">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="8ef472ea-80bf-48c6-a3cd-9d45fe280f8a"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.sleep"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.compareCMDoutputFloatWithLoopInCode"/>
         </jsystem>
     </target>
 </project>

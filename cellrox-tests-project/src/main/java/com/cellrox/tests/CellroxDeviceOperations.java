@@ -90,6 +90,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private String isItInteger;
 	//private int expectedInt;
 	private float expectedFloat;
+	private int loop;
 	
 	
 	
@@ -97,6 +98,14 @@ public class CellroxDeviceOperations extends TestCase {
 	
 
 
+
+	public int getLoop() {
+		return loop;
+	}
+
+	public void setLoop(int loop) {
+		this.loop = loop;
+	}
 
 	public float getExpectedFloat() {
 		return expectedFloat;
@@ -317,6 +326,31 @@ public class CellroxDeviceOperations extends TestCase {
        {
     	   report.report("Didn't find the string",Reporter.FAIL);
        }
+
+    }
+	
+	@Test    //added by Igor 26.9.15
+    @TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedFloat,loop" })
+    public void compareCMDoutputFloatWithLoopInCode() throws Exception {
+        while(loop>0){
+		String msg = devicesMannager.getDevice(currentDevice).executeCommandLocalCliAndReturn(text);
+		float foo = Float.parseFloat(msg);		
+       report.report(msg,ReportAttribute.BOLD); //debugging purpose
+          	 if(foo>expectedFloat){    			 
+    		 	report.report(msg+" the result is too high: "+(foo-expectedFloat)+" points difference",Reporter.FAIL); 
+    	 }
+    	   	 
+    	 else if(foo<expectedFloat)
+    	 {
+    	   report.report("The result is OK ",Reporter.PASS);
+    	 }
+       
+       else
+       {
+    	   report.report("Didn't find the string",Reporter.FAIL);
+       }
+          	 loop --;
+        }
 
     }
       
