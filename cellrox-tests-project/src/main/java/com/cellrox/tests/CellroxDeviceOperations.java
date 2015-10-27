@@ -337,17 +337,17 @@ public class CellroxDeviceOperations extends TestCase {
 		float foo = Float.parseFloat(msg);		
        report.report(msg,ReportAttribute.BOLD); //debugging purpose
           	 if(foo>expectedFloat){    			 
-    		 	report.report(msg+" the result is too high: "+(foo-expectedFloat)+" points difference",Reporter.FAIL); 
+    		 	report.report(msg+" the result is too high: "+(foo-expectedFloat)+" points difference. "+ " failed on loop " + loop,Reporter.FAIL); 
     	 }
     	   	 
     	 else if(foo<expectedFloat)
     	 {
-    	   report.report("The result is OK ",Reporter.PASS);
+    	   report.report("The result is OK " + " Loop number " +loop ,Reporter.PASS);
     	 }
        
        else
        {
-    	   report.report("Didn't find the string",Reporter.FAIL);
+    	   report.report("Didn't find the string " + " Loop number " +loop,Reporter.FAIL);
        }
           	 loop --;
         }
