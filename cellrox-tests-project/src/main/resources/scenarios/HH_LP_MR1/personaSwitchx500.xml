@@ -37,7 +37,7 @@
     </target>
     <target name="t2">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="283032c7-195c-4031-8842-c5aabb1b4f9c"/>
+            <sysproperty key="jsystem.uuid" value="237c8d6b-af5c-4cc3-84fc-1ac087d27fd3"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.compareCMDoutputFloatWithLoopInCode"/>
@@ -53,7 +53,7 @@
     </target>
     <target name="t4">
         <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="d08d9995-58e0-42fa-9b36-0e1386389343"/>
+            <sysproperty key="jsystem.uuid" value="f75897d1-7b57-432e-ab30-c764cd93e949"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
             <test name="com.cellrox.tests.CellroxDeviceOperations.compareCMDoutputFloatWithLoopInCode"/>
