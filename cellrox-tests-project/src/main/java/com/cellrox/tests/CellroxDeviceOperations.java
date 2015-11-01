@@ -91,13 +91,40 @@ public class CellroxDeviceOperations extends TestCase {
 	//private int expectedInt;
 	private float expectedFloat;
 	private int loop;
+	private float expectedFloatGreater;
+	private float expectedFloatLesser;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
 	
 	
 	
 
 	
 
+	public float getExpectedFloatLesser() {
+		return expectedFloatLesser;
+	}
 
+	public void setExpectedFloatLesser(float expectedFloatLesser) {
+		this.expectedFloatLesser = expectedFloatLesser;
+	}
+
+	public float getExpectedFloatGreater() {
+		return expectedFloatGreater;
+	}
+
+	public void setExpectedFloatGreater(float expectedFloatGreater) {
+		this.expectedFloatGreater = expectedFloatGreater;
+	}
 
 	public int getLoop() {
 		return loop;
@@ -307,17 +334,17 @@ public class CellroxDeviceOperations extends TestCase {
         }
 	//TODO - IGOR finish the cosmetics on compare CMD output scenario
 	@Test    //added by Igor 26.9.15
-    @TestProperties(name = "compare CMD output FLOAT after CMD command  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedFloat" })
+    @TestProperties(name = "compare CMD output FLOAT after CMD command if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser" })
     public void compareCMDoutputFloat() throws Exception {
 
 		String msg = devicesMannager.getDevice(currentDevice).executeCommandLocalCliAndReturn(text);
 		float foo = Float.parseFloat(msg);		
        report.report(msg,ReportAttribute.BOLD); //debugging purpose
-          	 if(foo>expectedFloat){    			 
-    		 	report.report(msg+" the result is too high: "+(foo-expectedFloat)+" points difference",Reporter.FAIL); 
+          	 if(!(expectedFloatLesser<=foo&&foo<=expectedFloatGreater)){    			 
+    		 	report.report((expectedFloatGreater-foo)+" points difference",Reporter.FAIL); 
     	 }
     	   	 
-    	 else if(foo<expectedFloat)
+    	 else if(expectedFloatLesser<=foo&&foo<=expectedFloatGreater)
     	 {
     	   report.report("The result is OK ",Reporter.PASS);
     	 }
@@ -330,25 +357,25 @@ public class CellroxDeviceOperations extends TestCase {
     }
 	
 	@Test    //added by Igor 26.9.15
-    @TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  \"${text}\" local shell", paramsInclude = { "currentDevice,text,expectedFloat,loop" })
+    @TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser,loop" })
     public void compareCMDoutputFloatWithLoopInCode() throws Exception {
         while(loop>0){
 		String msg = devicesMannager.getDevice(currentDevice).executeCommandLocalCliAndReturn(text);
 		float foo = Float.parseFloat(msg);		
        report.report(msg,ReportAttribute.BOLD); //debugging purpose
-          	 if(foo>expectedFloat){    			 
-    		 	report.report(msg+" the result is too high: "+(foo-expectedFloat)+" points difference. "+ " failed on loop " + loop,Reporter.FAIL); 
-    	 }
-    	   	 
-    	 else if(foo<expectedFloat)
-    	 {
-    	   report.report("The result is OK " + " Loop number " +loop ,Reporter.PASS);
-    	 }
-       
-       else
-       {
-    	   report.report("Didn't find the string " + " Loop number " +loop,Reporter.FAIL);
-       }
+       if(!(expectedFloatLesser<=foo&&foo<=expectedFloatGreater)){    			 
+		 	report.report((expectedFloatGreater-foo)+" points difference",Reporter.FAIL); 
+	 }
+	   	 
+	 else if(expectedFloatLesser<=foo&&foo<=expectedFloatGreater)
+	 {
+	   report.report("The result is OK ",Reporter.PASS);
+	 }
+  
+  else
+  {
+	   report.report("Didn't find the string",Reporter.FAIL);
+  }
           	 loop --;
         }
 
@@ -566,6 +593,15 @@ public class CellroxDeviceOperations extends TestCase {
 //	public void validateCliLocalCommandOutputExistsOnTheScreen() throws Exception {
 //		devicesMannager.getDevice(currentDevice).validateCliLocalCommandOutputExistsOnTheScreen(text, persona);
 //	} //added by 19.11
+	
+	
+	
+	//added by Igor 01.11.15
+	@Test
+	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,expectedFloat" })
+	public void compareMemory() throws Exception {
+		devicesMannager.getDevice(currentDevice).compareMem(expectedFloat);
+	}
 
 	@Test
 	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,text" })
