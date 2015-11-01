@@ -597,11 +597,11 @@ public class CellroxDeviceOperations extends TestCase {
 	
 	
 	//added by Igor 01.11.15
-	@Test
-	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,expectedFloat" })
-	public void compareMemory() throws Exception {
-		devicesMannager.getDevice(currentDevice).compareMem(expectedFloat);
-	}
+//	@Test
+//	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,expectedFloat" })
+//	public void compareMemory() throws Exception {
+//		devicesMannager.getDevice(currentDevice).compareMem(expectedFloat);
+//	}
 
 	@Test
 	@TestProperties(name = "Execute Command : ${text} in adb shell on : ${currentDevice} as root", paramsInclude = { "currentDevice,text" })
