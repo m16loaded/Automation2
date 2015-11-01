@@ -33,6 +33,9 @@
         <antcallback target="t17"/>
         <antcallback target="t18"/>
         <antcallback target="t19"/>
+        <antcallback target="t20"/>
+        <antcallback target="t21"/>
+        <antcallback target="t22"/>
         <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.3cb3b439-8b2b-45fc-8a75-6b86570fe7fe" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
             <!--#Jsystem#-->
             <sequential>
@@ -41,8 +44,8 @@
                 <jsystemsetantproperties>
                     <!--Task for updating the ant parameters file - used for reference parameters-->
                 </jsystemsetantproperties>
-                <antcallback target="t20"/>
-                <antcallback target="t21"/>
+                <antcallback target="t23"/>
+                <antcallback target="t24"/>
             </sequential>
         </jsystemfor>
     </target>
@@ -163,20 +166,13 @@
         </jsystem-ant>
     </target>
     <target name="t16">
-        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/personaSwitchx500.xml">
-            <property name="jsystem.uuid" value="dd8cb6b6-61b7-4620-acf9-506f95d34aa0"/>
-            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-        </jsystem-ant>
-    </target>
-    <target name="t17">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Camera_Stills_LP.xml">
             <property name="jsystem.uuid" value="f1cb7709-c901-43b0-9f27-e261ea0886e9"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t18">
+    <target name="t17">
         <jsystem showoutput="true">
             <sysproperty key="jsystem.uuid" value="16ae8cb8-ab6b-406b-8d85-2b691360d252"/>
             <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
@@ -184,21 +180,52 @@
             <test name="com.cellrox.tests.CellroxDeviceOperations.openAppByPackageName"/>
         </jsystem>
     </target>
-    <target name="t19">
+    <target name="t18">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/testingLogsCamera.xml">
             <property name="jsystem.uuid" value="36e1f30e-c9ce-4536-a0c4-03d87b6fe2f4"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
+    <target name="t19">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="8a780f15-4296-4edd-b204-47ac35b2619c"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.compareMemory"/>
+        </jsystem>
+    </target>
     <target name="t20">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="60a1df28-cb9d-4e4f-bc1c-9b93967691a3"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.waitforLineInLogcat"/>
+        </jsystem>
+    </target>
+    <target name="t21">
+        <jsystem showoutput="true">
+            <sysproperty key="jsystem.uuid" value="a0c31aff-b4af-4d68-b705-b00286ea2e11"/>
+            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+            <test name="com.cellrox.tests.CellroxDeviceOperations.compareCMDoutputFloat"/>
+        </jsystem>
+    </target>
+    <target name="t22">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/personaSwitchx500.xml">
+            <property name="jsystem.uuid" value="b0ee4705-14f7-45aa-8e62-6407165962ea"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t23">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/3G_LP_shamu.xml">
             <property name="jsystem.uuid" value="a19b5756-ba6e-41fb-aaa2-9fab8b3b0ddc"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t21">
+    <target name="t24">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/WIFI_LP.xml">
             <property name="jsystem.uuid" value="c6551c49-02f2-4a29-a16f-ec795bb0d42f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
