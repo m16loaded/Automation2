@@ -24,6 +24,7 @@ import com.cellrox.infra.CellRoxDevice;
 import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.ElementAttributes;
+import com.cellrox.infra.enums.IgorWantsEnum;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.Platform;
@@ -100,7 +101,15 @@ public class CellroxDeviceOperations extends TestCase {
 	private long retries;
 	//boolean variables must have getter with prefix "get"
 	private boolean boolTest;
-	
+	private IgorWantsEnum igor;
+
+	public IgorWantsEnum getIgor() {
+		return igor;
+	}
+
+	public void setIgor(IgorWantsEnum igor) {
+		this.igor = igor;
+	}
 
 	public boolean getBoolTest() {
 		return boolTest;
@@ -2805,7 +2814,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval,retries,boolTest" })
+	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval,retries,boolTest,igor" })
 	public void waitforLineInLogcat() throws Exception {
 		devicesMannager.getDevice(currentDevice).waitForLineInLogcat(
 				expectedLine, Integer.valueOf(timeout), interval, retries);

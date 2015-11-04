@@ -1908,6 +1908,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		while (!currentLog.contains(line)) {
 			if (System.currentTimeMillis() - start > timeout) {
 				report.report("Could not find the line " + line, Reporter.FAIL);
+				report.report("Click Here to See Logcat Result", currentLog,
+						ReportAttribute.HTML);
 				return false;
 			}
 			Thread.sleep(interval);
