@@ -28,6 +28,7 @@ import com.cellrox.infra.enums.IgorWantsEnum;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.Platform;
+import com.cellrox.infra.enums.SelectorSelection;
 import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
 import com.cellrox.infra.log.LogParser;
@@ -101,6 +102,16 @@ public class CellroxDeviceOperations extends TestCase {
 	private int retries;
 	//boolean variables must have getter with prefix "get"
 	private boolean boolTest;
+	private SelectorSelection selectorType;
+	
+	public SelectorSelection getSelectorType() {
+		return selectorType;
+	}
+
+	public void setSelectorType(SelectorSelection selectorType) {
+		this.selectorType = selectorType;
+	}
+
 	private IgorWantsEnum igor;
 
 	public IgorWantsEnum getIgor() {
@@ -1111,6 +1122,46 @@ public class CellroxDeviceOperations extends TestCase {
 		}
 	}
 
+	
+	/**
+	 * Will click and hold (long click) either an element or by coordinates. 
+	 * If selected "Coordinate" as type, text will be ignored, and the X Y will be used instead
+	 * @throws Exception
+	 */
+	@Test
+	@TestProperties(name = "Click on object by type ${selectorType} with value ${text} ", paramsInclude = {"currentDevice,persona,selectorType,text,x,y"})
+	public void longClick() throws Exception {
+		if (selectorType.equals(SelectorSelection.Coordinate) ) {
+			devicesMannager.getDevice(currentDevice).getPersona(persona).longClick(Integer.valueOf(x), Integer.valueOf(y));
+			return;
+		}
+		Selector s = new Selector();
+		switch (selectorType) {
+		case ClassName:
+			s.setClassName(text);
+			break;
+		case Coordinate:
+			break;
+		case Description:
+			s.setDescription(text);
+			break;
+		case ResourceID:
+			s.setResourceId(text);
+			break;
+		case TextContains:
+			s.setTextContains(text);
+			break;
+		case TextEquals:
+			s.setText(text);
+			break;
+		default:
+			break;
+		}
+		devicesMannager.getDevice(currentDevice).getPersona(persona).longClick(s);
+	}
+	
+	
+	
 	@Test
 	@TestProperties(name = "Click on UiObject by Text Contains \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,selector,persona,waitForNewWindow" })
 	public void clickByTextContains() throws Exception {
@@ -1359,6 +1410,51 @@ public class CellroxDeviceOperations extends TestCase {
 		devicesMannager.getDevice(currentDevice).getPersona(persona)
 				.swipe(new Selector().setClassName(text), dir.getDir(), 20);
 	}
+	
+	
+//	/**
+//	 * Swipe by Class Name to the Given Direction.
+//	 * */
+//	@Test
+//	@TestProperties(name = " Swipe by Class Name on ${persona}", paramsInclude = { "currentDevice,persona,dir,text" })
+//	public void swipe() throws Exception {
+//		
+//		if (selectorType.equals(SelectorSelection.Coordinate) ) {
+//			//Difficulty here is the x/y coordinate according to dir
+//			devicesMannager.getDevice(currentDevice).getPersona(persona).swipe(Integer.valueOf(x), Integer.valueOf(y));
+//			return;
+//		}
+//		Selector s = new Selector();
+//		switch (selectorType) {
+//		case ClassName:
+//			s.setClassName(text);
+//			break;
+//		case Coordinate:
+//			break;
+//		case Description:
+//			s.setDescription(text);
+//			break;
+//		case ResourceID:
+//			s.setResourceId(text);
+//			break;
+//		case TextContains:
+//			s.setTextContains(text);
+//			break;
+//		case TextEquals:
+//			s.setText(text);
+//			break;
+//		default:
+//			break;
+//		}
+//		devicesMannager.getDevice(currentDevice).getPersona(persona).longClick(s);
+//		
+//		devicesMannager.getDevice(currentDevice).getPersona(persona)
+//		.swipe(s, dir.getDir(), /* Velocity*/ 20);
+//	}
+	
+	
+	
+	
 
 	@Test
 	@TestProperties(name = "Click on UiObject by ClassName \"${text}\" on ${persona}", paramsInclude = { "currentDevice,text,selector,persona,waitForNewWindow,index" })

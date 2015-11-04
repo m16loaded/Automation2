@@ -470,8 +470,18 @@ public interface AutomatorService {
 	 * @throws UiObjectNotFoundException
 	 */
 	@JsonRpcErrors({ @JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2) })
-	boolean longClick(Selector obj) throws UiObjectNotFoundException;
 
+	boolean longClick(Selector obj) throws UiObjectNotFoundException;
+	/**
+	 * Long clicks the given coordinates
+	 * @param x
+	 * @param y
+	 * @return
+	 * @throws UiObjectNotFoundException
+	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2) })
+	boolean longClick(int x, int y) throws UiObjectNotFoundException;
+	
 	/**
 	 * Long clicks bottom and right corner of the UI element
 	 * 
@@ -1140,6 +1150,9 @@ public interface AutomatorService {
 	boolean longClick(String obj, String corner)
 			throws UiObjectNotFoundException;
 
+	
+
+	
 	/**
 	 * Drags this object to a destination UiObject. The number of steps
 	 * specified in your input parameter can influence the drag speed, and
@@ -1409,29 +1422,18 @@ public interface AutomatorService {
 	 * @param text
 	 * @return
 	 */
-	
-	@JsonRpcErrors({
-		@JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2),
-		@JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
-	public boolean isNotificationExist(boolean title, String text) throws UiObjectNotFoundException, NotImplementedException;  //check if notification exists//check if the string is a title
-	
-	/**
-	 * 
-	 * @param isTitle
-	 * @param titles
-	 * @return
-	 */
-	
-	@JsonRpcErrors({
-		@JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2),
-		@JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
-	public boolean clearNotifications(boolean isTitle, String ... titles)throws UiObjectNotFoundException, NotImplementedException;     //get 0 or more strings//check if the string is a title
+    @JsonRpcErrors({ //added 06.10.15
+        @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
+	public boolean isNotificationExist(boolean title, String text) throws NotImplementedException;  //check if notification exists//check if the string is a title
 
+/**
+ *
+ * @param isTitle
+ * @param titles
+ * @return
+ */
 
-	
-	
-	
-	
-	
-	
+@JsonRpcErrors({//added 06.10.15
+        @JsonRpcError(exception = NotImplementedException.class, code = ERROR_CODE_BASE - 3) })
+public boolean clearNotifications(boolean isTitle, String ... titles)throws NotImplementedException;     //get 0 or more strings//check if the string is a title
 }

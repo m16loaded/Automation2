@@ -303,6 +303,16 @@ public interface AutomatorService {
     boolean longClick(Selector obj) throws UiObjectNotFoundException;
 
     /**
+	 * Long clicks the given coordinates
+	 * @param x
+	 * @param y
+	 * @return
+	 * @throws UiObjectNotFoundException
+	 */
+	@JsonRpcErrors({ @JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2) })
+	boolean longClick(int x, int y) throws UiObjectNotFoundException;
+    
+    /**
      * Long clicks bottom and right corner of the UI element
      * @param obj the target ui object.
      * @param corner "br"/"bottomright" means BottomRight, "tl"/"topleft" means TopLeft, "center" means Center.

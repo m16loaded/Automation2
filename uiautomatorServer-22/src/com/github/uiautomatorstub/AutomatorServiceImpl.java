@@ -30,6 +30,8 @@ import com.android.uiautomator.core.UiSelector;
 import com.github.uiautomatorstub.watcher.ClickMultiUiObjectsWatcher;
 import com.github.uiautomatorstub.watcher.ClickUiObjectWatcher;
 import com.github.uiautomatorstub.watcher.PressKeysWatcher;
+import com.googlecode.jsonrpc4j.JsonRpcError;
+import com.googlecode.jsonrpc4j.JsonRpcErrors;
 
 public class AutomatorServiceImpl extends NotificationListenerService implements AutomatorService {
 
@@ -41,13 +43,21 @@ public class AutomatorServiceImpl extends NotificationListenerService implements
 	}
 
 	@Override
+	public void onListenerConnected() {
+		super.onListenerConnected();
+		Log.i("Listener successfully connected");
+	};
+	
+	@Override
 	public void onNotificationPosted(StatusBarNotification statusBarNotification) {
-		//Not Implemented
+		super.onNotificationPosted(statusBarNotification);
+		Log.i("Notification posted: " + statusBarNotification);
 	}
 
 	@Override
 	public void onNotificationRemoved(StatusBarNotification statusBarNotification) {
-		//Not Implemented
+		super.onNotificationRemoved(statusBarNotification);
+		Log.i("removed notification :" + statusBarNotification);
 	}
 
 	/**
@@ -807,8 +817,25 @@ public class AutomatorServiceImpl extends NotificationListenerService implements
 	 */
 	@Override
 	public boolean longClick(Selector obj) throws UiObjectNotFoundException {
-		return new UiObject(obj.toUiSelector()).longClick();
+		UiObject uiObj = new UiObject(obj.toUiSelector());
+		//TODO: Igor test longClick method instead of drag
+	//	uiObj.longClick();
+		return uiObj.dragTo(uiObj, 400);
+		
+	//	return swipe(uiObj.getBounds().centerX(), uiObj.getBounds().centerY(), uiObj.getBounds().centerX() + 1, uiObj.getBounds().centerY() + 1, 3000);
+		
 	}
+	
+	/**
+	 * Long clicks the given coordinates
+	 */
+	@Override
+	public boolean longClick(int x, int y) throws UiObjectNotFoundException {
+		return swipe(x, y, x, y, 100);
+	}
+	
+	
+	
 
 	/**
 	 * Long clicks bottom and right corner of the UI element
