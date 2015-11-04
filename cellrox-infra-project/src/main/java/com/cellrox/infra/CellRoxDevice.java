@@ -1901,7 +1901,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean waitForLineInLogcat(String line, long timeout, long interval)
+	public boolean waitForLineInLogcat(String line, long timeout, long interval, long maxRetry)
 			throws Exception {
 		final long start = System.currentTimeMillis();
 		String currentLog = "";
@@ -1911,7 +1911,16 @@ public class CellRoxDevice extends SystemObjectImpl {
 				return false;
 			}
 			Thread.sleep(interval);
-			currentLog = getLogcatLastLines(500);
+			for (int i= 0; i<maxRetry; i++) {
+				try { 
+					currentLog = getLogcatLastLines(500, timeout);
+					break;
+				} catch (Exception e) {
+					report.report("Retrying log command [" + i + "]");
+					currentLog = getLogcatLastLines(500, timeout);
+				}
+			}
+			
 		}
 		String log = currentLog.replace("\n", "<br>").replace(line,
 				"<b>" + line + "</b>");
@@ -1982,10 +1991,11 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	private String getLogcatLastLines(int lines) throws Exception {
+	private String getLogcatLastLines(int lines, long timeout) throws Exception {
 		// logcat -v time -d | tail -n 10 | grep corp
+		
 		String logcat = device.executeShellCommand(String.format(
-				LOG_COMMAND+" -v time -d | tail -n %d", lines));
+				LOG_COMMAND+" -v time -d | tail -n %d", lines, timeout));
 		System.out.println(logcat);
 		return logcat;
 	}

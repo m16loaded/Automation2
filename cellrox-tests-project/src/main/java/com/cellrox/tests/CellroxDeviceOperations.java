@@ -97,6 +97,26 @@ public class CellroxDeviceOperations extends TestCase {
 	private int loop;
 	private float expectedFloatGreater;
 	private float expectedFloatLesser;
+	private long retries;
+	//boolean variables must have getter with prefix "get"
+	private boolean boolTest;
+	
+
+	public boolean getBoolTest() {
+		return boolTest;
+	}
+
+	public void setBoolTest(boolean boolTest) {
+		this.boolTest = boolTest;
+	}
+
+	public long getRetries() {
+		return retries;
+	}
+
+	public void setRetries(long retries) {
+		this.retries = retries;
+	}
 
 	public float getExpectedFloatLesser() {
 		return expectedFloatLesser;
@@ -357,6 +377,7 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	// TODO - IGOR finish the cosmetics on compare CMD output scenario
+	//// TODO - IGOR Add a true false boolean or a enum for dropdown list 
 	@Test
 	// added by Igor 26.9.15
 	@TestProperties(name = "compare CMD output FLOAT after CMD command if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser" })
@@ -2784,10 +2805,10 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	@Test
-	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval" })
+	@TestProperties(name = "Wait For \"${expectedLine}\" in Logcat", paramsInclude = { "currentDevice,expectedLine,timeout,interval,retries,boolTest" })
 	public void waitforLineInLogcat() throws Exception {
 		devicesMannager.getDevice(currentDevice).waitForLineInLogcat(
-				expectedLine, Integer.valueOf(timeout), interval);
+				expectedLine, Integer.valueOf(timeout), interval, retries);
 	}
 
 	// @Test //added by Igor 27.01
