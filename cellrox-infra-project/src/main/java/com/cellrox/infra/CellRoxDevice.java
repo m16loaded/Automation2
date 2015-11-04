@@ -60,7 +60,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 	private final String LOG_PATH = "/data/agent/syslogs/system_logcat.txt";
 	
-	private final String LOG_TAIL = "tail";
+	private final String LOG_TAIL = "tail -n ";
 	
 	private final String LOGCAT_TIME_FORMAT = "MM-dd hh:mm:ss.SSS";
 
@@ -2001,7 +2001,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// logcat -v time -d | tail -n 10 | grep corp
 		
 		String logcat = device.executeShellCommand(String.format(
-				LOG_TAIL + " %d %s", lines, LOG_PATH), timeout);
+				LOG_TAIL + "%d %s", lines, LOG_PATH), timeout);
 		//tail -500 /data/agent/syslogs/system_logcat.txt 
 //		LOG_COMMAND+" -v time -d | tail -n %d"
 		
