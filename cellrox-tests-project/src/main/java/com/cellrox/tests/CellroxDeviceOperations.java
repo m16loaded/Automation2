@@ -98,7 +98,7 @@ public class CellroxDeviceOperations extends TestCase {
 	private int loop;
 	private float expectedFloatGreater;
 	private float expectedFloatLesser;
-	private long retries;
+	private int retries;
 	//boolean variables must have getter with prefix "get"
 	private boolean boolTest;
 	private IgorWantsEnum igor;
@@ -119,11 +119,11 @@ public class CellroxDeviceOperations extends TestCase {
 		this.boolTest = boolTest;
 	}
 
-	public long getRetries() {
+	public int getRetries() {
 		return retries;
 	}
 
-	public void setRetries(long retries) {
+	public void setRetries(int retries) {
 		this.retries = retries;
 	}
 

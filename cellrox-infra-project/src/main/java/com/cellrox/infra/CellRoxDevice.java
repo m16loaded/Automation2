@@ -56,9 +56,13 @@ import com.cellrox.infra.log.Log.LogTypes;
 
 public class CellRoxDevice extends SystemObjectImpl {
 
-	private static final String LOG_COMMAND = "logmux";
+	private final String LOG_COMMAND = "logmux";
 
-	private static final String LOGCAT_TIME_FORMAT = "MM-dd hh:mm:ss.SSS";
+	private final String LOG_PATH = "/data/agent/syslogs/system_logcat.txt";
+	
+	private final String LOG_TAIL = "tail";
+	
+	private final String LOGCAT_TIME_FORMAT = "MM-dd hh:mm:ss.SSS";
 
 	// init from the SUT
 	private int encryptPasseord = 1111;
@@ -1901,7 +1905,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean waitForLineInLogcat(String line, long timeout, long interval, long maxRetry)
+	public boolean waitForLineInLogcat(String line, int timeout, long interval, int maxRetry)
 			throws Exception {
 		final long start = System.currentTimeMillis();
 		String currentLog = "";
@@ -1918,8 +1922,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 					currentLog = getLogcatLastLines(500, timeout);
 					break;
 				} catch (Exception e) {
-					report.report("Retrying log command [" + i + "]");
-					currentLog = getLogcatLastLines(500, timeout);
+					report.report("Retrying log command [" + (i+1) + "]");
+					//currentLog = getLogcatLastLines(500, timeout);
 				}
 			}
 			
@@ -1993,14 +1997,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	private String getLogcatLastLines(int lines, long timeout) throws Exception {
+	private String getLogcatLastLines(int lines, int timeout) throws Exception {
 		// logcat -v time -d | tail -n 10 | grep corp
 		
 		String logcat = device.executeShellCommand(String.format(
-				LOG_COMMAND+" -v time -d | tail -n %d", lines, timeout));
+				LOG_TAIL + " %d %s", lines, LOG_PATH), timeout);
+		//tail -500 /data/agent/syslogs/system_logcat.txt 
+//		LOG_COMMAND+" -v time -d | tail -n %d"
+		
 		System.out.println(logcat);
 		return logcat;
 	}
+	
 
 	/**
 	 * find the expression to find after cli command in the adb shell
