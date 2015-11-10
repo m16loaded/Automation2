@@ -73,7 +73,6 @@ public class CellroxTestListenr implements ExtendTestListener {
 				// Verify logcat
 				logParser.addExpression(Color.RED, "WATCHDOG KILLING SYSTEM PROCESS", "Watchdog", "testLogcat");
 				logParser.addExpression(Color.RED, "FATAL EXCEPTION", "fatal exception", "testLogcat");
-				logParser.addExpression(Color.RED, "camera", "camera", "testLogcat");
 
 				// ADD HERE MORE EXPRESSION IF NEEDED
 //				CellRoxDevice cellRoxDevice = new CellRoxDevice(primaryDeviceId, user, password);
