@@ -25,6 +25,7 @@ import com.cellrox.infra.enums.DeviceNumber;
 import com.cellrox.infra.enums.Direction;
 import com.cellrox.infra.enums.ElementAttributes;
 import com.cellrox.infra.enums.IgorWantsEnum;
+import com.cellrox.infra.enums.ReportHTML;
 import com.cellrox.infra.enums.LogcatHandler;
 import com.cellrox.infra.enums.Persona;
 import com.cellrox.infra.enums.Platform;
@@ -113,6 +114,16 @@ public class CellroxDeviceOperations extends TestCase {
 	}
 
 	private IgorWantsEnum igor;
+	
+	private boolean ReportHTMLvar;
+
+	public boolean getReportHTMLvar() {
+		return ReportHTMLvar;
+	}
+
+	public void setReportHTMLvar(ReportHTML ReportHTMLvar) {
+		ReportHTMLvar = ReportHTMLvar;
+	}
 
 	public IgorWantsEnum getIgor() {
 		return igor;
@@ -424,7 +435,7 @@ public class CellroxDeviceOperations extends TestCase {
 
 	@Test
 	// added by Igor 26.9.15
-	@TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser,loop" })
+	@TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser,loop,ReportHTMLvar" })
 	public void compareCMDoutputFloatWithLoopInCode() throws Exception {
 		while (loop > 0) {
 			String msg = devicesMannager.getDevice(currentDevice)
@@ -434,10 +445,24 @@ public class CellroxDeviceOperations extends TestCase {
 			if (!(expectedFloatLesser <= foo && foo <= expectedFloatGreater)) {
 				report.report((expectedFloatGreater - foo)
 						+ " points difference", Reporter.FAIL);
+				if(ReportHTMLvar){
+					//report HTML
+					Summary.getInstance().setProperty(
+							"cmd output: ",
+							Summary.getInstance() + msg
+									+ "\\");
+				}
 			}
 
 			else if (expectedFloatLesser <= foo && foo <= expectedFloatGreater) {
 				report.report("The result is OK ", Reporter.PASS);
+				if(ReportHTMLvar){
+					//report HTML
+					Summary.getInstance().setProperty(
+							"cmd output: ",
+							Summary.getInstance() + msg
+									+ "\\");
+				}
 			}
 
 			else {
