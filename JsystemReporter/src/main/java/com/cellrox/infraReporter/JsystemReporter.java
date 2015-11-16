@@ -92,7 +92,10 @@ public class JsystemReporter {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null, deviceCrashScnarioName = null, personaCrashScenarioName = null;
-		String compareStatus = null, seconedColor = null, lastTime = null, vellamoResults = "",cmdComparisonOutput="",cmdComparisonOutputBefore="",cmdComparisonOutputAfter=""/*added by Igor 15115*/, corpBootTime = null, privBootTime = null;
+		String compareStatus = null, seconedColor = null, lastTime = null, vellamoResults = "", corpBootTime = null, privBootTime = null;
+		String cmdComparisonOutput= "";//added by Igor 15115
+		String cmdComparisonOutputBefore= "";//added by Igor 15115
+		String cmdComparisonOutputAfter= "" ;//added by Igor 15115
 		int pass = 0, fail = 0, total = 0, index = 0 , warning = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
@@ -156,9 +159,9 @@ public class JsystemReporter {
 			macAdr = prop.getProperty("Mac_address");
 			imei = prop.getProperty("IMEI");
 			vellamoResults = prop.getProperty("Vellamo_Results").replace("\\", " "); 
-			cmdComparisonOutputBefore=prop.getProperty("Memory_Before").replace("\\", " ");/*added by Igor 15115*/
-			cmdComparisonOutputAfter=prop.getProperty("Memory_After").replace("\\", " ");/*added by Igor 15115*/
-			cmdComparisonOutput=prop.getProperty("Cmd_Comparison_Output").replace("\\", " ");/*added by Igor 15115*/
+			cmdComparisonOutputBefore = prop.getProperty("Memory_Before").replace("\\", " ");//added by Igor 15115
+			cmdComparisonOutputAfter = prop.getProperty("Memory_After").replace("\\", " ");//added by Igor 15115
+			cmdComparisonOutput = prop.getProperty("Cmd_Comparison_Output").replace("\\", " ");//added by Igor 15115
 			corpBootTime = prop.getProperty("hostCorpDuration");
 			privBootTime = prop.getProperty("hostPrivDuration");
 
@@ -187,6 +190,9 @@ public class JsystemReporter {
 				}
 			}
 			docHtmlString.append("<p>Vellamo Results : " + vellamoResults + "</p>").append(System.getProperty("line.separator"));
+			docHtmlString.append("<p>Memory_Before : " + cmdComparisonOutputBefore + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			docHtmlString.append("<p>Memory_After : " + cmdComparisonOutputAfter + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			docHtmlString.append("<p>Cmd_Comparison_Output : " + cmdComparisonOutput + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
 			if (doaCrash != null) {
 				if (!doaCrash.trim().equals("0")) {
 					docHtmlString.append("<p>DOA : yes</p>").append(System.getProperty("line.separator"));
