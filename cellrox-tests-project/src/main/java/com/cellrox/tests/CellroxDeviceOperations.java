@@ -32,6 +32,7 @@ import com.cellrox.infra.enums.Platform;
 import com.cellrox.infra.enums.SelectorSelection;
 import com.cellrox.infra.enums.Size;
 import com.cellrox.infra.enums.State;
+import com.cellrox.infra.enums.cmdOutputType;
 import com.cellrox.infra.log.LogParser;
 import com.cellrox.infra.object.LogParserExpression;
 
@@ -105,6 +106,15 @@ public class CellroxDeviceOperations extends TestCase {
 	private boolean boolTest;
 	private SelectorSelection selectorType;
 	
+	private cmdOutputType cmdType;
+	
+	public SelectorSelection getcmdType() {
+		return selectorType;
+	}
+
+	public void setcmdType(cmdOutputType cmdType) {
+		this.cmdType = cmdType;
+	}
 	public SelectorSelection getSelectorType() {
 		return selectorType;
 	}
@@ -435,7 +445,7 @@ public class CellroxDeviceOperations extends TestCase {
 
 	@Test
 	// added by Igor 26.9.15
-	@TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser,loop,ReportHTMLvar" })
+	@TestProperties(name = "compare CMD output FLOAT after CMD command CODE LOOP  if lesser than\"${expectedFloatGreater}\" and greater than \"${expectedFloatLesser}\" running local shell", paramsInclude = { "currentDevice,text,expectedFloatGreater,expectedFloatLesser,loop,ReportHTMLvar,cmdType" })
 	public void compareCMDoutputFloatWithLoopInCode() throws Exception {
 		while (loop > 0) {
 			String msg = devicesMannager.getDevice(currentDevice)
@@ -447,10 +457,32 @@ public class CellroxDeviceOperations extends TestCase {
 						+ " points difference", Reporter.FAIL);
 				if(ReportHTMLvar){
 					//report HTML
-					Summary.getInstance().setProperty(
-							"cmd output: ",
-							Summary.getInstance() + msg
-									+ "\\");
+					switch(cmdType){
+					case memoryBefore:
+						//report memoryBefore
+						Summary.getInstance().setProperty(
+								"Memory_Before",
+								Summary.getInstance().getProperty("Memory_Before") + msg + "\\");
+						
+					case memoryAfter:
+						//report memory After
+						Summary.getInstance().setProperty(
+								"Memory_After",
+								Summary.getInstance().getProperty("Memory_After") + msg + "\\");
+						report.report((expectedFloatGreater - foo)
+								+ " points difference", Reporter.FAIL);
+						
+					case cmdOutput:
+						//report cmdOutput
+						Summary.getInstance().setProperty(
+								"Cmd_Comparison_Output",
+								Summary.getInstance().getProperty("Cmd_Comparison_Output") + msg + "\\");
+						
+					}
+//					Summary.getInstance().setProperty(
+//							"cmd output: ",
+//							Summary.getInstance() + msg
+//									+ "\\");
 				}
 			}
 
@@ -458,10 +490,31 @@ public class CellroxDeviceOperations extends TestCase {
 				report.report("The result is OK ", Reporter.PASS);
 				if(ReportHTMLvar){
 					//report HTML
-					Summary.getInstance().setProperty(
-							"cmd output: ",
-							Summary.getInstance() + msg
-									+ "\\");
+					
+					switch(cmdType){
+					case memoryBefore:
+						//report memoryBefore
+						Summary.getInstance().setProperty(
+								"Memory_Before",
+								Summary.getInstance().getProperty("Memory_Before") + msg + "\\");
+						
+					case memoryAfter:
+						//report memory After
+						Summary.getInstance().setProperty(
+								"Memory_After",
+								Summary.getInstance().getProperty("Memory_After") + msg + "\\");
+						
+					case cmdOutput:
+						//report cmdOutput
+						Summary.getInstance().setProperty(
+								"Cmd_Comparison_Output",
+								Summary.getInstance().getProperty("Cmd_Comparison_Output") + msg + "\\");
+						
+					}
+//					Summary.getInstance().setProperty(
+//							"cmd output: ",
+//							Summary.getInstance() + msg
+//									+ "\\");
 				}
 			}
 
