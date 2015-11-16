@@ -108,8 +108,8 @@ public class CellroxDeviceOperations extends TestCase {
 	
 	private cmdOutputType cmdType;
 	
-	public SelectorSelection getcmdType() {
-		return selectorType;
+	public cmdOutputType getcmdType() {
+		return cmdType;
 	}
 
 	public void setcmdType(cmdOutputType cmdType) {
