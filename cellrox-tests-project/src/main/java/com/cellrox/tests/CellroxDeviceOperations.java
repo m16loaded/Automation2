@@ -463,6 +463,7 @@ public class CellroxDeviceOperations extends TestCase {
 						Summary.getInstance().setProperty(
 								"Memory_Before",
 								Summary.getInstance().getProperty("Memory_Before") + msg + "\\");
+						        break;
 						
 					case memoryAfter:
 						//report memory After
@@ -471,12 +472,14 @@ public class CellroxDeviceOperations extends TestCase {
 								Summary.getInstance().getProperty("Memory_After") + msg + "\\");
 						report.report((expectedFloatGreater - foo)
 								+ " points difference", Reporter.FAIL);
+						        break;
 						
 					case cmdOutput:
 						//report cmdOutput
 						Summary.getInstance().setProperty(
 								"Cmd_Comparison_Output",
 								Summary.getInstance().getProperty("Cmd_Comparison_Output") + msg + "\\");
+						        break;
 						
 					}
 //					Summary.getInstance().setProperty(
@@ -497,18 +500,21 @@ public class CellroxDeviceOperations extends TestCase {
 						Summary.getInstance().setProperty(
 								"Memory_Before",
 								Summary.getInstance().getProperty("Memory_Before") + msg + "\\");
+						break;
 						
 					case memoryAfter:
 						//report memory After
 						Summary.getInstance().setProperty(
 								"Memory_After",
 								Summary.getInstance().getProperty("Memory_After") + msg + "\\");
+						break;
 						
 					case cmdOutput:
 						//report cmdOutput
 						Summary.getInstance().setProperty(
 								"Cmd_Comparison_Output",
 								Summary.getInstance().getProperty("Cmd_Comparison_Output") + msg + "\\");
+						break;
 						
 					}
 //					Summary.getInstance().setProperty(
