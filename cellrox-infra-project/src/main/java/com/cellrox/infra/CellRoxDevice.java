@@ -605,6 +605,9 @@ public class CellRoxDevice extends SystemObjectImpl {
 		}
 
 		Summary.getInstance().setProperty("Vellamo_Results", "");
+		Summary.getInstance().setProperty("Memory_Before", "");//added by Igor 15115
+		Summary.getInstance().setProperty("Memory_After", "");//added by Igor 15115
+		Summary.getInstance().setProperty("Cmd_Comparison_Output", "");//added by Igor 15115
 
 		cli.disconnect();
 		report.stopLevel();
