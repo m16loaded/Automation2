@@ -205,6 +205,12 @@ public class JsystemReporter {
 							.append(System.getProperty("line.separator"));
 				}
 			}
+			//cmdComparisonOutput,cmdComparisonOutputBefore,cmdComparisonOutputAfter
+
+			docHtmlString.append("<p>Memory_Before : " + cmdComparisonOutputBefore + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			docHtmlString.append("<p>Memory_After : " + cmdComparisonOutputAfter + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			docHtmlString.append("<p>Cmd_Comparison_Output : " + cmdComparisonOutput + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			
 
 			docHtmlString.append("<p>Persona Crash count: " + personaCrash + "</p>").append(System.getProperty("line.separator"));
 			// if persona crash was detected
