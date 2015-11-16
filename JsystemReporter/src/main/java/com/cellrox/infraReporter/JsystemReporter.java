@@ -92,7 +92,7 @@ public class JsystemReporter {
 		Map<String, String> testsStatusMap = new HashMap<String, String>();
 		Map<String, String> testsTimesMap = new HashMap<String, String>();
 		String doaCrash = null, deviceCrash = null, personaCrash = null, deviceCrashScnarioName = null, personaCrashScenarioName = null;
-		String compareStatus = null, seconedColor = null, lastTime = null, vellamoResults = "",cmdComparisonOutput,cmdComparisonOutputBefore,cmdComparisonOutputAfter/*added by Igor 15115*/, corpBootTime = null, privBootTime = null;
+		String compareStatus = null, seconedColor = null, lastTime = null, vellamoResults = "",cmdComparisonOutput="",cmdComparisonOutputBefore="",cmdComparisonOutputAfter=""/*added by Igor 15115*/, corpBootTime = null, privBootTime = null;
 		int pass = 0, fail = 0, total = 0, index = 0 , warning = 0;
 		String version = null, nameOfReport = null, summaryLocation = null, newNameOfReport = null, currentLogLocation = null, startTime = null, endTime = null, hardware = null, imei = null, macAdr = null, duration = null;
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
