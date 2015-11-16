@@ -192,7 +192,9 @@ public class JsystemReporter {
 			docHtmlString.append("<p>Vellamo Results : " + vellamoResults + "</p>").append(System.getProperty("line.separator"));
 			docHtmlString.append("<p>Memory_Before : " + cmdComparisonOutputBefore + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
 			docHtmlString.append("<p>Memory_After : " + cmdComparisonOutputAfter + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			if(!cmdComparisonOutput.isEmpty()){
 			docHtmlString.append("<p>Cmd_Comparison_Output : " + cmdComparisonOutput + "</p>").append(System.getProperty("line.separator")); //added by Igor 151116
+			}
 			if (doaCrash != null) {
 				if (!doaCrash.trim().equals("0")) {
 					docHtmlString.append("<p>DOA : yes</p>").append(System.getProperty("line.separator"));
