@@ -131,8 +131,8 @@ public class CellroxDeviceOperations extends TestCase {
 		return ReportHTMLvar;
 	}
 
-	public void setReportHTMLvar(ReportHTML ReportHTMLvar) {
-		ReportHTMLvar = ReportHTMLvar;
+	public void setReportHTMLvar(boolean ReportHTMLvar) {
+		this.ReportHTMLvar = ReportHTMLvar;
 	}
 
 	public IgorWantsEnum getIgor() {
