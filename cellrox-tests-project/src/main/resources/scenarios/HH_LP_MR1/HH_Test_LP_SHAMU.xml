@@ -21,6 +21,7 @@
         <antcallback target="t5"/>
         <antcallback target="t6"/>
         <antcallback target="t7"/>
+        <antcallback target="t8"/>
         <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.21be077e-8cae-49a3-b8a6-b3fadaa1928b" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
             <!--#Jsystem#-->
             <sequential>
@@ -29,7 +30,7 @@
                 <jsystemsetantproperties>
                     <!--Task for updating the ant parameters file - used for reference parameters-->
                 </jsystemsetantproperties>
-                <antcallback target="t8"/>
+                <antcallback target="t9"/>
             </sequential>
         </jsystemfor>
     </target>
@@ -73,27 +74,34 @@
         </jsystem-ant>
     </target>
     <target name="t5">
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/BT_Pairing_LP.xml">
+            <property name="jsystem.uuid" value="435977f7-c641-4a49-beee-d8b9f4f129c0"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
+    </target>
+    <target name="t6">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/AddContact.xml">
             <property name="jsystem.uuid" value="16479cae-475a-4f7e-a2d6-bff4b2098792"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t6">
+    <target name="t7">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/smsSendReceive_by_Contact.xml">
             <property name="jsystem.uuid" value="07b3ff99-f430-4da6-b82e-282fbc26b13f"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t7">
+    <target name="t8">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/RemoveContact.xml">
             <property name="jsystem.uuid" value="90b69d5f-bda8-453c-8b45-5de202d3fd76"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
             <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
         </jsystem-ant>
     </target>
-    <target name="t8">
+    <target name="t9">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Sensors.xml">
             <property name="jsystem.uuid" value="f44de3c9-e8b9-44d4-8b36-672a7a843b53"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
