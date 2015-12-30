@@ -5,7 +5,8 @@ FILE=memTmp.$$
 
 #adb root
 sleep 1
-adb shell cat /proc/meminfo > $FILE
+#adb shell cat /proc/meminfo > $FILE
+adb -s ZX1G428DZP  shell cat /proc/meminfo > $FILE
 
 Buffers=`grep -w "Buffers" $FILE | grep -e "[0-9]*" -o`
 Cached=`grep -w "Cached" $FILE | grep -e "[0-9]*" -o`
