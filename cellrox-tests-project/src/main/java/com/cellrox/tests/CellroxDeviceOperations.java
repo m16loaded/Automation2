@@ -242,8 +242,12 @@ public class CellroxDeviceOperations extends TestCase {
 		try {
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.priv)
 					.ping();
+//			devicesMannager.getDevice(currentDevice).getPersona(Persona.p1)  //added by Igor 10.1.16
+//			.ping();
 			devicesMannager.getDevice(currentDevice).getPersona(Persona.corp)
 					.ping();
+//			devicesMannager.getDevice(currentDevice).getPersona(Persona.p2) //added by Igor 10.1.16
+//			.ping();
 		} catch (Exception e) {
 			report.report("Error with the automation servers, about to configure and connect.");
 			devicesMannager.getDevice(currentDevice)
@@ -1717,6 +1721,8 @@ public class CellroxDeviceOperations extends TestCase {
 	public void rebootDevice() throws Exception {
 		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted,
 				deviceEncryptedPriv, Persona.priv, Persona.corp);
+//		devicesMannager.getDevice(currentDevice).rebootDevice(deviceEncrypted,
+//		deviceEncryptedPriv, Persona.p1, Persona.p2);
 	}
 
 	@Test

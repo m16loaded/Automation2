@@ -1046,7 +1046,8 @@ public class CellRoxDevice extends SystemObjectImpl {
 		Thread.sleep(2000);
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 		Thread.sleep(2000);
-		executeCliCommand("cell console corp");
+//		executeCliCommand("cell console corp");
+		executeCliCommand("cell console p2");   //added by Igor 10.1.16
 		Thread.sleep(2000);
 		executeCliCommand("");
 		executeCliCommand("y");
@@ -1606,10 +1607,18 @@ public class CellRoxDevice extends SystemObjectImpl {
 				Persona.priv.ordinal(),
 				DeviceClient.getUiAutomatorClient("http://localhost:"
 						+ privePort));
+//		uiClient.add(
+//				Persona.p1.ordinal(), //added by Igor 10.1.16
+//				DeviceClient.getUiAutomatorClient("http://localhost:"
+//						+ privePort));
 		uiClient.add(
 				Persona.corp.ordinal(),
 				DeviceClient.getUiAutomatorClient("http://localhost:"
 						+ corpPort));
+//		uiClient.add(
+//				Persona.p2.ordinal(),    //added by Igor 10.1.16
+//				DeviceClient.getUiAutomatorClient("http://localhost:"
+//						+ corpPort));
 		addWatchers();
 
 	}

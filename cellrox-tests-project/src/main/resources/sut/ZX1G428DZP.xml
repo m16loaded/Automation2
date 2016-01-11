@@ -11,8 +11,8 @@
 	<runStatus>full</runStatus>
 	<primary>ZX1G428DZP</primary>
 	<secondery>08726194998cf3ad</secondery>
-	<primaryPriv>priv</primaryPriv>
-	<primaryCorp>corp</primaryCorp>
+	<primaryPriv>p1</primaryPriv>
+	<primaryCorp>p2</primaryCorp>
 	<secPriv>priv</secPriv>
 	<secCorp>corp</secCorp>
     </devicesMannager>
