@@ -559,7 +559,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
 
 		// add build sdk version prop
-		executeCliCommand("getprop | fgrep ro.build.version.sdk");
+		executeCliCommand("getprop | grep ro.build.version.sdk"); //changed to grep with the absence of busybox
 		prop = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_sdk_version", prop);// propToParse.split(":")[1].trim());
 
@@ -570,12 +570,12 @@ public class CellRoxDevice extends SystemObjectImpl {
 		// propToParse.split(":")[1].trim());
 
 		// add Build_date prop
-		executeCliCommand("getprop | fgrep ro.build.date]");
+		executeCliCommand("getprop | grep ro.build.date]"); //changed to grep with the absence of busybox
 		prop = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_date", prop);// propToParse.split(":")[1].trim());
 
 		// add hardware prop
-		executeCliCommand("getprop | fgrep ro.hardware]");
+		executeCliCommand("getprop | grep ro.hardware]"); //changed to grep with the absence of busybox
 
 		prop = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("hardware", prop);
@@ -599,7 +599,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 			}
 		} else {
 			// in this case bring the IMIE
-			executeCliCommand("getprop | fgrep IMEI]");
+			executeCliCommand("getprop | grep IMEI]"); //changed to grep with the absence of busybox
 			prop = getPropFromCli(cli.getTestAgainstObject().toString());
 			Summary.getInstance().setProperty("IMEI", prop);
 		}
@@ -726,7 +726,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 			executeCliCommand("rm /data/local/tmp/local_pipe");
-			executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+			executeCliCommand("busybox mkfifo /data/local/tmp/local_pipe"); //adding busybox before mkfifo as a workaround
 			executeCliCommand("rm /data/unix_soc");
 			executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
@@ -744,7 +744,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 			executeCliCommand("rm /data/local/tmp/local_pipe");
-			executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+			executeCliCommand("busybox mkfifo /data/local/tmp/local_pipe"); //adding busybox before mkfifo as a workaround
 			executeCliCommand("rm /data/unix_soc");
 			executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
@@ -754,14 +754,14 @@ public class CellRoxDevice extends SystemObjectImpl {
 
 		// configure priv pipes on host
 		executeCliCommand("rm /data/local/tmp/local_pipe");
-		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+		executeCliCommand("busybox mkfifo /data/local/tmp/local_pipe"); //adding busybox before mkfifo as a workaround
 		executeCliCommand("nc -lk "
 				+ privePort
 				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/"+privName+"/data/unix_soc >/data/local/tmp/local_pipe &");
 
 		// configure corp pipes on host
 		executeCliCommand("rm /data/local/tmp/local_pipe");
-		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+		executeCliCommand("busybox mkfifo /data/local/tmp/local_pipe"); //adding busybox before mkfifo as a workaround
 		executeCliCommand("nc -lk "
 				+ corpPort
 				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/"+corpName+"/data/unix_soc >/data/local/tmp/local_pipe &");
@@ -789,7 +789,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		if (runServer) {
 			executeCliCommand("uiautomator runtest uiautomator-stub.jar bundle.jar -c com.github.uiautomatorstub.Stub &");
 			executeCliCommand("rm /data/local/tmp/local_pipe");
-			executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+			executeCliCommand("busybox mkfifo /data/local/tmp/local_pipe"); //adding busybox before mkfifo as a workaround
 			executeCliCommand("rm /data/unix_soc");
 			executeCliCommand("(nc -lkU /data/unix_soc </data/local/tmp/local_pipe | nc localhost 9008  >/data/local/tmp/local_pipe) &");
 		}
@@ -797,7 +797,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.switchToHost();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("rm /data/local/tmp/local_pipe");
-		executeCliCommand("mkfifo /data/local/tmp/local_pipe");
+		executeCliCommand("busybox mkfifo /data/local/tmp/local_pipe"); //adding busybox before mkfifo as a workaround
 		executeCliCommand("nc -lk "
 				+ privePort
 				+ " < /data/local/tmp/local_pipe  | nc -U /data/containers/"+privName+"/data/unix_soc >/data/local/tmp/local_pipe &");
@@ -964,7 +964,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-		executeCliCommand("getprop | fgrep ro.build.display.id");
+		executeCliCommand("getprop | grep ro.build.display.id"); //changed to grep with the absence of busybox
 		prop1 = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_display_id", prop1);// propToParse.split(":")[1].trim());
 	}
@@ -987,7 +987,7 @@ public class CellRoxDevice extends SystemObjectImpl {
 		cli.connect();
 		executeCliCommand("adb -s " + getDeviceSerial() + " root");
 		executeCliCommand("adb -s " + getDeviceSerial() + " shell");
-		executeCliCommand("getprop | fgrep ro.build.display.id");
+		executeCliCommand("getprop | grep ro.build.display.id"); //changed to grep with the absence of busybox
 		prop1 = getPropFromCli(cli.getTestAgainstObject().toString());
 		Summary.getInstance().setProperty("Build_display_id", prop1);// propToParse.split(":")[1].trim());
 		//
