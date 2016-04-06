@@ -23,41 +23,6 @@
         <antcallback target="t7"/>
         <antcallback target="t8"/>
         <antcallback target="t9"/>
-        <antcallback target="t10"/>
-        <antcallback target="t11"/>
-        <antcallback target="t12"/>
-        <antcallback target="t13"/>
-        <antcallback target="t14"/>
-        <antcallback target="t15"/>
-        <antcallback target="t16"/>
-        <antcallback target="t17"/>
-        <antcallback target="t18"/>
-        <antcallback target="t19"/>
-        <antcallback target="t20"/>
-        <antcallback target="t21"/>
-        <antcallback target="t22"/>
-        <antcallback target="t23"/>
-        <antcallback target="t24"/>
-        <antcallback target="t25"/>
-        <antcallback target="t26"/>
-        <antcallback target="t27"/>
-        <antcallback target="t28"/>
-        <antcallback target="t29"/>
-        <antcallback target="t30"/>
-        <antcallback target="t31"/>
-        <antcallback target="t32"/>
-        <antcallback target="t33"/>
-        <antcallback target="t34"/>
-        <antcallback target="t35"/>
-        <antcallback target="t36"/>
-        <antcallback target="t37"/>
-        <antcallback target="t38"/>
-        <antcallback target="t39"/>
-        <antcallback target="t40"/>
-        <antcallback target="t41"/>
-        <antcallback target="t42"/>
-        <antcallback target="t43"/>
-        <antcallback target="t44"/>
         <jsystemfor delimiter=";" fullUuid="${jsystem.parent.uuid}.${jsystem.uuid}.21be077e-8cae-49a3-b8a6-b3fadaa1928b" list="a;b;c;d" param="myVar" parentName="${jsystem.parent.name}.${ant.project.name}">
             <!--#Jsystem#-->
             <sequential>
@@ -66,371 +31,81 @@
                 <jsystemsetantproperties>
                     <!--Task for updating the ant parameters file - used for reference parameters-->
                 </jsystemsetantproperties>
-                <antcallback target="t45"/>
+                <antcallback target="t10"/>
             </sequential>
         </jsystemfor>
     </target>
     <target name="t0">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="6ca37ffa-3b88-4edf-b014-cbef908d61c3"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="8d0d190c-ddc6-40e9-abc4-ae21484b9b7a"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t1">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="4add055a-0329-4d7c-891a-d0e55b1ab75b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="fbbaa335-2e9b-4c76-aa45-d8ab17449c1f"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t2">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="6171e6da-c2f0-4684-adf2-426933999739"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="d1405e84-f95f-418c-a480-eb2d67044cb7"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t3">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="362169f7-1b8f-4349-bf48-18ecf4b6955a"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="21df9dd8-83ea-42e8-8478-c6ad7cd7dea2"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t4">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="db69aae0-5cb9-4217-a053-fc2fcd91f9c4"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="0a83fe40-53e6-4779-9a96-c4deed865d87"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t5">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="0030aa38-f30f-475e-b797-a04df1f09591"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="96626b84-1273-48c5-b190-f66987b54149"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t6">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="76cd2d66-3239-4e89-9308-ae5d84949ab0"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="42925dc5-6031-46cf-8b13-613480abecef"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t7">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="8703b084-6752-4acb-8450-31093aba5a46"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="c4fa5f5e-fb7a-4bbf-8ec1-314a526437ea"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t8">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="2bae9031-8c34-4116-b052-aa0acadeec65"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="9b2cb2be-ec92-4d1e-b46e-85e8acbd6599"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t9">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="64e4fd0f-7c26-40c2-9523-978ca124cb89"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
+        <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Install_New_Version_One_Devices_Configre_Two_Device_Hammerhead_lp_shamu_P1P2.xml">
+            <property name="jsystem.uuid" value="ff8d39a7-8757-4572-b28c-cf610bfcf4a7"/>
+            <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
+            <property name="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
+        </jsystem-ant>
     </target>
     <target name="t10">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="a7b3fe3a-3c10-43f4-838b-dfc0bfbac214"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t11">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="23972b39-3aeb-4b92-a3e3-ebb4b8488ba8"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t12">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="7174297a-192f-4d64-bce6-e3869114dba2"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t13">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="4ea081cb-e4a4-434e-b70c-f209406b8196"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t14">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="c7cb456c-1d67-4a7f-838f-20257c9ab643"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t15">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="6bad1f8c-feaa-4b62-93f6-016e17e1caf2"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t16">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="d2dbf612-0ee8-4f09-99a5-ecbda841fc48"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t17">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="ee776419-0140-4805-b49e-c4cabfbe8fe5"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t18">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="91be47c2-6c32-4e61-a8dc-c57f43e1f185"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t19">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="7dc0376c-9c77-49ee-815f-6d3cb1e9e209"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t20">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="fa2dd7bd-1e72-4b10-a83b-920cbacc00af"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t21">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="2d224fa2-f7c3-40f6-8c6c-38e4f5934575"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t22">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="055cafa5-51e5-4370-9eb3-8dc4a484dbf9"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t23">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="4121073a-23ab-414c-bf8a-daaeed090c40"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t24">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="885ae844-d91f-4fa9-a6e5-ac66eba0fa11"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t25">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="1147c002-9f68-4729-b234-5610b47b395b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t26">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="c45abdf2-2c7a-4d42-832e-bd25a5b244de"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t27">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="8da56c0a-5b83-4232-9ce1-df27aabeeb84"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t28">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="a583c679-9089-455e-a10b-3a28b2269956"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t29">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="cffbc52c-5077-4627-ab39-38bdcf68ae23"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t30">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="7f80c8c7-e159-4b7d-b157-585035eb4e6d"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t31">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="74a0cfcc-2866-4523-8a80-c9794d8180d6"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t32">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="ad12e7e0-d6bd-4d35-8e03-5f6c7852424a"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t33">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="d4eb6d09-e5b7-4344-8d88-d9f3c64bc90e"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t34">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="a830ce48-e486-4a38-bf28-f49240f90a5a"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t35">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="60f20aee-cadd-497a-af2f-fe6f0cbcf69b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t36">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="72ab2a5d-6076-4c07-b317-fd420437eac7"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t37">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="f7f14d1f-7db3-4b18-a64a-1a3d58872a17"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t38">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="93664407-d08e-49bc-8eda-b109791d7359"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t39">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="c15366ee-2576-419f-8e51-8f29dd159f62"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t40">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="e223b3b0-a3fd-4b38-abdd-15d98afa4b91"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t41">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="5eabfede-1ce1-4fa4-8c47-faaedbced27b"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t42">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="3b69cb68-15af-4b74-9ffc-d1854bac3db7"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.beforeTestConfigureConnectValidation"/>
-        </jsystem>
-    </target>
-    <target name="t43">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="d9672d78-366c-4d18-b3e2-7b9a57645b33"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.connectToServers"/>
-        </jsystem>
-    </target>
-    <target name="t44">
-        <jsystem showoutput="true">
-            <sysproperty key="jsystem.uuid" value="6cb8cd9f-bbe1-4806-b4ce-9e244f5175c1"/>
-            <sysproperty key="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
-            <sysproperty key="jsystem.parent.name" value="${jsystem.parent.name}.${ant.project.name}"/>
-            <test name="com.cellrox.tests.CellroxDeviceOperations.rebootDevice"/>
-        </jsystem>
-    </target>
-    <target name="t45">
         <jsystem-ant antfile="${scenarios.base}/scenarios/HH_LP_MR1/Sensors.xml">
             <property name="jsystem.uuid" value="f44de3c9-e8b9-44d4-8b36-672a7a843b53"/>
             <property name="jsystem.parent.uuid" value="${jsystem.parent.uuid}.${jsystem.uuid}"/>
